@@ -26,17 +26,32 @@ public class LostVictoriesClientLauncher {
         String playerID, serverIP, gameVersion;
         int port = 5055;
 
+        if(args.length>0) {
+            String s = args.length > 1 ? args[1].substring("lostVictoriesLauncher/game=".length()) : args[0].substring("lostvic://lostVictoriesLauncher/game=".length());
 
-        String s = args.length>1?args[1].substring("lostVictoriesLauncher/game=".length()):args[0].substring("lostvic://lostVictoriesLauncher/game=".length());
+            System.out.println("s:" + s);
 
-        System.out.println("s:"+s);
+            JsonNode gameJson = getJsonNode(s);
+            playerID = gameJson.get("avatarID").asText();
+            serverIP = gameJson.get("host").asText();
+            port = Integer.parseInt(gameJson.get("port").asText());
+            gameVersion = gameJson.get("gameVersion").asText();
+        }else{
+            Map<String, String> env = System.getenv();
+            playerID = env.get("player_id");
+            serverIP = env.get("server_ip");
+            if(playerID==null){
+                playerID = "2fbe421f-f701-49c9-a0d4-abb0fa904204"; //german
+    //               playerID = "d993932f-a185-4a6f-8d86-4ef6e2c5ff95"; //american 1
+                //playerID = "844fd93d-e65a-438a-82c5-dab9ad58e854"; //american 2
+            }
+            if(serverIP == null){
+    //                serverIP = "localhost";
+                serverIP = "connect.lostvictories.com";
+            }
+            gameVersion = "pre_alpha";
 
-        JsonNode gameJson = getJsonNode(s);
-        playerID = gameJson.get("avatarID").asText();
-        serverIP = gameJson.get("host").asText();
-        port = Integer.parseInt(gameJson.get("port").asText());
-        gameVersion = gameJson.get("gameVersion").asText();
-
+        }
 
         LostVictory app = new LostVictory(UUID.fromString(playerID), serverIP, port, gameVersion);
         app.start();
