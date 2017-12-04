@@ -20,6 +20,7 @@
     </properties>
 
     <dependencies>
+
         <dependency>
             <groupId>org.jmonkeyengine</groupId>
             <artifactId>jme3-core</artifactId>
@@ -75,7 +76,6 @@
             <artifactId>jme3-niftygui</artifactId>
             <version>${jmeVersion}</version>
         </dependency>
-
 
         <dependency>
             <groupId>commons-codec</groupId>
@@ -140,48 +140,25 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>com.akathist.maven.plugins.launch4j</groupId>
-                <artifactId>launch4j-maven-plugin</artifactId>
-                <version>1.7.21</version>
-                <executions>
-                    <execution>
-                        <id>l4j-gui</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>launch4j</goal>
-                        </goals>
-                        <configuration>
-                            <headerType>gui</headerType>
-                            <outfile>target/LostVictoriesLauncher.exe</outfile>
-                            <jar>target/lostVictoriesLauncher-1.1-SNAPSHOT.jar</jar>
-                            <errTitle>Lost Victories Launcher</errTitle>
-                            <classPath>
-                                <mainClass>com.lostVictories.LostVictoriesClientLauncher</mainClass>
-                            </classPath>
-                            <jre>
-                                <path>./jre</path>
-                                <bundledJre64Bit>false</bundledJre64Bit>
-                                <bundledJreAsFallback>false</bundledJreAsFallback>
-                                <minVersion>1.8.0_121</minVersion>
-                                <jdkPreference>jdkOnly</jdkPreference>
-                                <runtimeBits>64</runtimeBits>
-                                <initialHeapSize>2048</initialHeapSize>
-                                <maxHeapSize>2048</maxHeapSize>
-                            </jre>
-                            <versionInfo>
-                                <fileVersion>1.1.1.1</fileVersion>
-                                <txtFileVersion>1.1.1.1</txtFileVersion>
-                                <fileDescription>executable to run lost victories client through deep link</fileDescription>
-                                <copyright>Lost Victory Productions</copyright>
-                                <productVersion>1.1.1.1</productVersion>
-                                <txtProductVersion>1.1.1.1</txtProductVersion>
-                                <originalFilename>LostVictoriesLauncher.exe</originalFilename>
-                                <productName>Lost Victories</productName>
-                                <internalName>lostVictories</internalName>
-                            </versionInfo>
-                        </configuration>
-                    </execution>
-                </executions>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>com.lostVictories.LostVictoriesClientLauncher</mainClass>
+                        </manifest>
+                    </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
             </plugin>
         </plugins>
     </build>
