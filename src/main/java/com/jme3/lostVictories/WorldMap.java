@@ -281,6 +281,10 @@ public class WorldMap implements Runnable {
         return houses.get(id);
     }
 
+    public Optional<GameBunkerNode> getDefensiveStructure(UUID defenciveStructure) {
+        return structures.stream().filter(s->s instanceof GameBunkerNode).map(d->(GameBunkerNode)d).filter(b->b.getIdentity().equals(defenciveStructure)).findAny();
+    }
+
     public boolean hasUnclaimedEquipment(UnClaimedEquipmentMessage eq) {
         return  unclaimedEquipment.containsKey(eq.getId());
     }
@@ -343,12 +347,12 @@ public class WorldMap implements Runnable {
 
     public Set<GameSector> getGameSectors() {
         if(gameSectors==null){
-            gameSectors = calculateGameSectorHouses(getAllHouses());
+            gameSectors = calculateGameSector(getAllStructures());
         }
         return gameSectors;
     }
     
-    public static <T extends GameStructureNode> Set<GameSector> calculateGameSector(Set<T> allHouses) {
+    public static <T extends GameStructureNode> Set<GameSector> calculateGameSector(Set<T> allStructures) {
         Set<GameSector> ret = new HashSet<>();
 
         for(int y = WorldMap.mapBounds.y;y<=WorldMap.mapBounds.getMaxY();y=y+50){
@@ -357,16 +361,16 @@ public class WorldMap implements Runnable {
             }
         }
         
-        for(GameStructureNode house:allHouses){
+        for(GameStructureNode structure:allStructures){
             for(GameSector sector:ret){
-                if(sector.containsHouse(house)){
-                    sector.add(house);
+                if(sector.containsStructure(structure)){
+                    sector.add(structure);
                 }
             }
         }
         
         for(Iterator<GameSector> it = ret.iterator();it.hasNext();){
-            if(it.next().structures.isEmpty()){
+            if(it.next().getStructures().isEmpty()){
                 it.remove();
             }
         }
@@ -394,8 +398,8 @@ public class WorldMap implements Runnable {
             }
         		
         }
-        
-        
+
+
         return merged;
     }
     
@@ -408,14 +412,9 @@ public class WorldMap implements Runnable {
         return Optional.empty();
     }
 
-    public static Set<GameSector> calculateGameSectorHouses(Set<GameHouseNode> allHouses) {
-        return calculateGameSector(allHouses);
-    }
-
     public Optional<GameSector> findSector(Vector centre) {
         return getGameSectors().stream().filter(sector->sector.containsPoint(centre.x, centre.z)).findAny();
     }
 
 
-    
 }

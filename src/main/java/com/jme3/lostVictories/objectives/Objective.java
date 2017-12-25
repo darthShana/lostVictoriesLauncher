@@ -66,5 +66,6 @@ public abstract class Objective<T extends GameCharacterNode> {
     abstract public ObjectNode toJson();
     
     abstract public Objective fromJson(JsonNode json, GameCharacterNode character, NavigationProvider pathFinder, Node rootNode, WorldMap map) throws IOException;
-    
+
+
 }

@@ -5,6 +5,7 @@
  */
 package com.jme3.lostVictories;
 
+import com.jme3.lostVictories.structures.GameBunkerNode;
 import com.jme3.lostVictories.structures.GameHouseNode;
 import com.jme3.lostVictories.structures.GameStructureNode;
 import com.jme3.math.Vector3f;
@@ -13,11 +14,12 @@ import java.awt.*;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class GameSector {
     
     private final Set<Rectangle> rects = new HashSet<Rectangle>();
-    final Set<GameStructureNode> structures = new HashSet<GameStructureNode>();
+    private final Set<GameStructureNode> structures = new HashSet<GameStructureNode>();
 
     public GameSector(Rectangle rect) {
         this.rects.add(rect);
@@ -40,7 +42,7 @@ public class GameSector {
         rects.addAll(neighbour.rects);
     }
 
-    boolean containsHouse(GameStructureNode house) {
+    boolean containsStructure(GameStructureNode house) {
         for(Rectangle r:rects){
             if(r.contains(house.getLocalTranslation().x, house.getLocalTranslation().z)){
                 return true;
@@ -65,6 +67,9 @@ public class GameSector {
     }
 
     public void add(GameStructureNode structure) {
+        if(structure instanceof GameBunkerNode){
+            System.out.println("adding bunker to sector:"+structure.getLocalTranslation());
+        }
         structures.add(structure);
     }
 
@@ -78,16 +83,15 @@ public class GameSector {
     }
 
     public Set<GameHouseNode> getHouses(){
-        Set<GameHouseNode> hh = new HashSet<GameHouseNode>();
-        for(GameStructureNode h: structures){
-            if(h instanceof GameHouseNode){
-                hh.add((GameHouseNode) h);
-            }
-        }
-        return hh;
+        return structures.stream().filter(s->s instanceof GameHouseNode).map(s->(GameHouseNode)s).collect(Collectors.toSet());
     }
 
-    public Iterable<GameStructureNode> structures() {
+    public Set<GameBunkerNode> getDefences() {
+        return structures.stream().filter(s->s instanceof GameBunkerNode).map(s->(GameBunkerNode)s).collect(Collectors.toSet());
+    }
+
+    public Set<GameStructureNode> getStructures() {
         return structures;
     }
+
 }

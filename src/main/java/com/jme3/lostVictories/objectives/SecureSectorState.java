@@ -12,6 +12,7 @@ import com.jme3.lostVictories.characters.Commandable;
 import com.jme3.lostVictories.characters.Lieutenant;
 import com.jme3.lostVictories.characters.Rank;
 import com.jme3.lostVictories.network.messages.SquadType;
+import com.jme3.lostVictories.structures.GameBunkerNode;
 import com.jme3.lostVictories.structures.GameHouseNode;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
@@ -26,20 +27,23 @@ import java.util.*;
  */
 enum SecureSectorState {
     
-    WAIT_FOR_REENFORCEMENTS{
+    WAIT_FOR_REINFORCEMENTS{
     
         AIAction<AICharacterNode> planObjective(Lieutenant c, WorldMap worldMap, Node rootNode, SecureSector objective){
             return null;
         }
 
         SecureSectorState transition(Lieutenant c, WorldMap worldMap, SecureSector objective){
+            if(objective.boundary.contains(new Point2D.Float(c.getLocation().x, c.getLocation().z))){
+                return DEFEND_SECTOR;
+            }
             if(!c.getEnemyActivity().activity().isEmpty()){
                 return ATTACK_TARGET;
             }
             if(c.getCurrentStrength()>=objective.deploymentStrength){
                 return DEPLOY_TO_SECTOR;
             }
-            return WAIT_FOR_REENFORCEMENTS;
+            return WAIT_FOR_REINFORCEMENTS;
         }
     },
     
@@ -62,7 +66,7 @@ enum SecureSectorState {
         SecureSectorState transition(Lieutenant c, WorldMap worldMap, SecureSector objective){
             final Objective get = objective.issuedOrders.get(c.getIdentity());
             if(get==null || get.isComplete){
-                return WAIT_FOR_REENFORCEMENTS;
+                return WAIT_FOR_REINFORCEMENTS;
             }
             return RETREAT;
         }
@@ -107,15 +111,12 @@ enum SecureSectorState {
     CAPTURE_HOUSES{
         @Override
         AIAction<AICharacterNode> planObjective(Lieutenant c, WorldMap worldMap, Node rootNode, final SecureSector objective) {
-            List<GameHouseNode> sortedHouses = new ArrayList<GameHouseNode>(objective.houses);
-            Collections.sort(sortedHouses, new Comparator<GameHouseNode>(){
-
-                public int compare(GameHouseNode o1, GameHouseNode o2) {
-                    if(o1.getLocalTranslation().distance(objective.centre)>o2.getLocalTranslation().distance(objective.centre)){
-                        return 1;
-                    }else{
-                        return -1;
-                    }
+            List<GameHouseNode> sortedHouses = new ArrayList<>(objective.houses);
+            Collections.sort(sortedHouses, (o1, o2) -> {
+                if(o1.getLocalTranslation().distance(objective.centre)>o2.getLocalTranslation().distance(objective.centre)){
+                    return 1;
+                }else{
+                    return -1;
                 }
             });
             for(Iterator<Map.Entry<UUID, Objective>> it = objective.issuedOrders.entrySet().iterator();it.hasNext();){
@@ -157,83 +158,27 @@ enum SecureSectorState {
 
 
     },
-    DEFEND_SECTOR {
+
+    DEFEND_SECTOR{
         @Override
         AIAction<AICharacterNode> planObjective(Lieutenant c, WorldMap worldMap, Node rootNode, SecureSector objective) {
-            Rectangle2D.Float sb = calculateSectorBoundry(objective.houses);
-            final Iterator<Commandable> iterator = c.getCharactersUnderCommand().iterator();
-            if(iterator.hasNext()){
-                Commandable c1 = iterator.next();
-                if(!objective.issuedOrders.containsKey(c1.getIdentity())){
-                    final Vector3f mc = new Vector3f(sb.x, 0, sb.y);
-                    CoverFront cf = new CoverFront(mc, mc.add(mc.subtract(objective.centre)), rootNode);
-                    objective.issuedOrders.put(c1.getIdentity(), cf);
-                    c1.addObjective(cf);
-                }
-            }
-            if(iterator.hasNext()){
-                Commandable c1 = iterator.next();
-                if(!objective.issuedOrders.containsKey(c1.getIdentity())){
-                    final Vector3f mc = new Vector3f(sb.x+sb.width, 0, sb.y);
-                    CoverFront cf = new CoverFront(mc, mc.add(mc.subtract(objective.centre)), rootNode);
-                    objective.issuedOrders.put(c1.getIdentity(), cf);
-                    c1.addObjective(cf);
-                }
-            }
-            if(iterator.hasNext()){
-                Commandable c1 = iterator.next();
-                if(!objective.issuedOrders.containsKey(c1.getIdentity())){
-                    final Vector3f mc = new Vector3f(sb.x, 0, sb.y+sb.height);
-                    CoverFront cf = new CoverFront(mc, mc.add(mc.subtract(objective.centre)), rootNode);
-                    objective.issuedOrders.put(c1.getIdentity(), cf);
-                    c1.addObjective(cf);
-                }
-            }
-            if(iterator.hasNext()){
-                Commandable c1 = iterator.next();
-                if(!objective.issuedOrders.containsKey(c1.getIdentity())){
-                    final Vector3f mc = new Vector3f(sb.x+sb.width, 0, sb.y+sb.height);
-                    CoverFront cf = new CoverFront(mc, mc.add(mc.subtract(objective.centre)), rootNode);
-                    objective.issuedOrders.put(c1.getIdentity(), cf);
-                    c1.addObjective(cf);
-                }
-            }
+            c.getCharactersUnderCommand().stream()
+                    .filter(unit->!objective.issuedOrders.containsKey(unit.getIdentity()))
+                    .forEach(unit->{
+                        Optional<GameBunkerNode> defenciveStructure = objective.getVacantDefence();
+                        if(defenciveStructure.isPresent()) {
+                            OccupyStructure occupyStructure = new OccupyStructure(defenciveStructure.get());
+                            unit.addObjective(occupyStructure);
+                            objective.issuedOrders.put(unit.getIdentity(), occupyStructure);
+                        }
+                    });
             return null;
         }
 
         @Override
         SecureSectorState transition(Lieutenant c, WorldMap worldMap, SecureSector objective) {
-            if(c.getCurrentStrength()<=objective.minimumFightingStrenght){
-                return RETREAT;
-            }
-            if(!c.getEnemyActivity().activity().isEmpty()){
-                return ATTACK_TARGET;
-            }
             return DEFEND_SECTOR;
-        }   
-
-        private Rectangle2D.Float calculateSectorBoundry(Set<GameHouseNode> houses) {
-            Float minX = null;
-            Float maxX = null;
-            Float minZ = null;
-            Float maxZ = null;
-            for(GameHouseNode house:houses){
-                if(minX==null || house.getLocalTranslation().x<minX){
-                    minX = house.getLocalTranslation().x;
-                }
-                if(minZ==null || house.getLocalTranslation().z<minZ){
-                    minZ = house.getLocalTranslation().z;
-                }
-                if(maxX==null || house.getLocalTranslation().x>maxX){
-                    maxX = house.getLocalTranslation().x;
-                }
-                if(maxZ==null || house.getLocalTranslation().z>maxZ){
-                    maxZ = house.getLocalTranslation().z;
-                }
-            }
-            return new Rectangle2D.Float(minX, minZ, maxX-minX, maxZ-minZ);
-        }            
-
+        }
     },
         
     ATTACK_TARGET{

@@ -66,7 +66,7 @@ public class CaptureTown extends Objective<Soldier>{
         }
 
         if(toUse!=null){
-            final SecureSector secureSector = new SecureSector(toSecure.getHouses(), rootNode, 10, 5, character.getLocalTranslation());
+            final SecureSector secureSector = new SecureSector(toSecure.getHouses(), toSecure.getDefences(), rootNode, 10, 5, character.getLocalTranslation());
             toUse.addObjective(secureSector);
             sectorAssignments.put(toSecure, toUse.getIdentity());
         }

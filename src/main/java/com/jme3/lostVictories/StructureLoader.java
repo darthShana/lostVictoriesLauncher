@@ -98,10 +98,10 @@ public class StructureLoader {
             addHouse(h, worldMap);
         }
 
-        final Set<GameSector> calculateGameSector = WorldMap.calculateGameSector(worldMap.getAllStructures());
+        final Set<GameSector> calculateGameSector = WorldMap.calculateGameSector(worldMap.getAllHouses());
         for(GameSector sector:calculateGameSector){
             Node sec = new Node();
-            for(GameStructureNode s:sector.structures()){
+            for(GameStructureNode s:sector.getHouses()){
                 sec.attachChild(s);
             }
             Spatial a = GeometryBatchFactory.optimize(sec);

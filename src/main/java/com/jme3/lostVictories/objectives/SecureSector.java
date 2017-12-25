@@ -18,6 +18,7 @@ import com.jme3.lostVictories.characters.GameCharacterNode;
 import com.jme3.lostVictories.characters.Lieutenant;
 import com.jme3.lostVictories.minimap.MinimapPresentable;
 import com.jme3.lostVictories.network.messages.Vector;
+import com.jme3.lostVictories.structures.GameBunkerNode;
 import com.jme3.lostVictories.structures.GameHouseNode;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
@@ -36,6 +37,7 @@ import static com.jme3.lostVictories.characters.RemoteBehaviourControler.MAPPER;
  * @author dharshanar
  */
 public class SecureSector extends Objective<Lieutenant> implements MinimapPresentable{
+    private Set<GameBunkerNode> defences;
     Set<GameHouseNode> houses;
     private Node rootNode;
     
@@ -44,15 +46,16 @@ public class SecureSector extends Objective<Lieutenant> implements MinimapPresen
     int minimumFightingStrenght;
     Map<UUID, Objective> issuedOrders = new HashMap<UUID, Objective>();
     Set<UUID> attemptedHouses = new HashSet<UUID>();
-    SecureSectorState state = SecureSectorState.WAIT_FOR_REENFORCEMENTS;
+    SecureSectorState state = SecureSectorState.WAIT_FOR_REINFORCEMENTS;
     SecureSectorState lastState;
     Vector3f homeBase;
     Rectangle.Float boundary;
 
     private SecureSector(){}
     
-    SecureSector(Set<GameHouseNode> houses, Node rooNode, int deploymentStrength, int minimumFightingStrenght, Vector3f homeBase) {
+    SecureSector(Set<GameHouseNode> houses, Set<GameBunkerNode> defences, Node rooNode, int deploymentStrength, int minimumFightingStrenght, Vector3f homeBase) {
         this.houses = houses;
+        this.defences = defences;
         this.rootNode = rooNode;
         
         float totalX = 0, totalY = 0,totalZ = 0;
@@ -131,9 +134,11 @@ public class SecureSector extends Objective<Lieutenant> implements MinimapPresen
         Vector cent = MAPPER.treeToValue(json.get("centre"), Vector.class);
 
         Set<GameHouseNode> hs = new HashSet<>();
+        Set<GameBunkerNode> defences = new HashSet<>();
         Optional<GameSector> sector = map.findSector(cent);
         if(sector.isPresent()){            
             hs.addAll(sector.get().getHouses());
+            defences.addAll(sector.get().getDefences());
         }else{
             System.out.println("unable to find sector:"+cent);
         }
@@ -142,7 +147,7 @@ public class SecureSector extends Objective<Lieutenant> implements MinimapPresen
             System.out.println("found rank mismatch:"+character.getIdentity());
         }
         
-        return new SecureSector(hs, rootNode, ds, mfs, h.toVector());
+        return new SecureSector(hs, defences, rootNode, ds, mfs, h.toVector());
     }
 
 
@@ -173,6 +178,12 @@ public class SecureSector extends Objective<Lieutenant> implements MinimapPresen
         return centre;
     }
 
-    
-    
+
+    public Optional<GameBunkerNode> getVacantDefence() {
+        Set<GameBunkerNode> collect = issuedOrders.entrySet().stream()
+                .filter(e -> e.getValue() instanceof OccupyStructure)
+                .map(e -> ((OccupyStructure) e.getValue()).getStructure()).collect(Collectors.toSet());
+
+        return defences.stream().filter(defence->!collect.contains(defence)).findFirst();
+    }
 }

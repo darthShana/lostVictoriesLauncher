@@ -61,7 +61,7 @@ class TransportSquad extends Objective<Soldier> {
     @Override
     public ObjectNode toJson() {
         ObjectNode node = MAPPER.createObjectNode();
-        node.put("destination", MAPPER.valueToTree(new Vector(destination)));
+        node.set("destination", MAPPER.valueToTree(new Vector(destination)));
         return node;
     }
 
