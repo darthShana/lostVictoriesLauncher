@@ -47,6 +47,12 @@ import static com.jme3.lostVictories.characters.RemoteBehaviourControler.MAPPER;
         this.facePoint = facePoint;
         this.destination = destination;      
     }
+
+    public TravelObjective(Commandable c, Vector3f destination, Vector3f facePoint, MoveAction path) {
+        this.facePoint = facePoint;
+        this.destination = destination;
+        this.computePath = path;
+    }
     
     public TravelObjective(Vector3f destination, Vector3f facePoint, boolean avoidTraffic) {
         this.facePoint = facePoint;

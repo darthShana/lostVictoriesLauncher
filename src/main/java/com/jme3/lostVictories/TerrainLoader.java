@@ -48,19 +48,21 @@ class TerrainLoader {
             if("Models/Objects/bench.j3o".equals(obj.getName())){
                 GameObjectNode g = new GameObjectNode((Node) obj, bulletAppState, 0, false, false);
                 unMovable.add(g);
-//                obj.removeFromParent();
+                obj.removeFromParent();
             }
             if("Models/Objects/OldLampPost.j3o".equals(obj.getName())){
                 GameObjectNode g = new GameObjectNode((Node) obj, bulletAppState, 0, false, true);
                 unMovable.add(g);
-//                obj.removeFromParent();
+                obj.removeFromParent();
             }
             if("Models/Structures/Well.j3o".equals(obj.getName())){
                 GameObjectNode g = new GameObjectNode((Node) obj, bulletAppState, 0, false, false);
                 unMovable.add(g);
-//                obj.removeFromParent();
+                obj.removeFromParent();
             }
             if("Models/Structures/Dugout_.plain.j3o".equals(obj.getName())){
+                System.out.println("bonker.add(new BunkerMessage(\""+obj.getName()+"\", new Vector("+obj.getLocalTranslation()+"), new Quaternion("+obj.getLocalRotation()+")));");
+
                 GameBunkerNode g = new GameBunkerNode((Node) obj, bulletAppState, new CollisionShapeFactoryProvider());
                 worldMap.addStructure(g);
                 traversableSurfaces.attachChild(g);
@@ -68,12 +70,12 @@ class TerrainLoader {
             if("Models/Objects/wagon.j3o".equals(obj.getName())){
                 GameObjectNode g = new GameObjectNode((Node) obj, bulletAppState, 0, false, false);
                 movableObjects.add(g);
-//                obj.removeFromParent();
+                obj.removeFromParent();
             }
             if("Models/Objects/containers_1.j3o".equals(obj.getName())){
                 GameObjectNode g = new GameObjectNode((Node) obj, bulletAppState, 0, false, false);
                 movableObjects.add(g);
-//                obj.removeFromParent();
+                obj.removeFromParent();
             }
             if("Models/Structures/ponte bridge.j3o".equals(obj.getName()) || "Models/Structures/bridge_short.j3o".equals(obj.getName())){
                 new GameObjectNode((Node)obj, bulletAppState, 0, false, true);

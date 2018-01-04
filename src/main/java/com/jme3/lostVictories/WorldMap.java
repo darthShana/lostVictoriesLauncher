@@ -19,6 +19,7 @@ import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -131,8 +132,8 @@ public class WorldMap implements Runnable {
         return getCharactersInBoundingRect(rectangle);
     }
 
-    public Set<GameStructureNode> getAllStructures() {
-        return new HashSet<>(structures);
+    public Set<GameBunkerNode> getAllBunkers() {
+        return structures.stream().filter(s->s instanceof GameBunkerNode).map(b->(GameBunkerNode)b).collect(Collectors.toSet());
     }
     
     public Set<GameHouseNode> getAllHouses(){
@@ -347,7 +348,10 @@ public class WorldMap implements Runnable {
 
     public Set<GameSector> getGameSectors() {
         if(gameSectors==null){
-            gameSectors = calculateGameSector(getAllStructures());
+            Set<GameStructureNode> set = new HashSet<>();
+            set.addAll(getAllHouses());
+            set.addAll(getAllBunkers());
+            gameSectors = calculateGameSector(set);
         }
         return gameSectors;
     }
@@ -375,8 +379,7 @@ public class WorldMap implements Runnable {
             }
         }
         
-//        merge adjoing sectorors together with limit number of houses
-        Set<GameSector> merged = new HashSet<GameSector>();
+        Set<GameSector> merged = new HashSet<>();
         GameSector next = ret.iterator().next();
         merged.add(next);
         ret.remove(next);
@@ -398,7 +401,7 @@ public class WorldMap implements Runnable {
             }
         		
         }
-
+        System.out.println("calculated game sectors:"+merged.size());
 
         return merged;
     }

@@ -134,5 +134,7 @@ public class MoveAction implements AIAction<Soldier> {
     }
 
 
-   
+    public List<Vector3f> getPath() {
+        return waypoints;
+    }
 }

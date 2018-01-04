@@ -39,8 +39,8 @@ public class CaptureTown extends Objective<Soldier>{
         
         Set<GameSector> gameSectors = worldMap.getGameSectors();
 
-        Set<Commandable> available = new HashSet<Commandable>();
-        Set<UUID> stillAround = new HashSet<UUID>();
+        Set<Commandable> available = new HashSet<>();
+        Set<UUID> stillAround = new HashSet<>();
 
         for(Commandable c: this.character.getCharactersUnderCommand()){
             if(!c.isBusy()){

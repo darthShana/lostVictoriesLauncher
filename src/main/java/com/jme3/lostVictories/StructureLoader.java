@@ -8,6 +8,7 @@ import com.jme3.asset.AssetManager;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.lostVictories.network.ServerResponse;
 import com.jme3.lostVictories.network.messages.HouseMessage;
+import com.jme3.lostVictories.network.messages.Vector;
 import com.jme3.lostVictories.structures.*;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
@@ -84,10 +85,14 @@ public class StructureLoader {
         
         for(Spatial s: sceneGraph.getChildren()){
             if(structureTypes.contains(s.getName())){
+//                Vector3f t = s.getLocalTranslation();
+//                Quaternion r = s.getLocalRotation();
+//                System.out.println("houses.add(new HouseMessage(\""+s.getName()+"\", new Vector("+ t.x+"f, "+t.y+"f, "+t.z+"f), new Quaternion("+ r.getX()+"f, "+r.getY()+"f, "+r.getZ()+"f, "+r.getW() +"f)));");
                 s.removeFromParent();
             }else if(otherStructures.contains(s.getName())){
                 s.removeFromParent();
-                addStructure((Node) s, worldMap);
+                GameStructureNode gameStructureNode = addStructure((Node) s, worldMap);
+                sceneGraph.attachChild(gameStructureNode);
             }
             
         }

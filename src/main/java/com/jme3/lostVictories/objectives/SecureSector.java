@@ -44,8 +44,8 @@ public class SecureSector extends Objective<Lieutenant> implements MinimapPresen
     Vector3f centre;
     int deploymentStrength;
     int minimumFightingStrenght;
-    Map<UUID, Objective> issuedOrders = new HashMap<UUID, Objective>();
-    Set<UUID> attemptedHouses = new HashSet<UUID>();
+    Map<UUID, Objective> issuedOrders = new HashMap<>();
+    Set<UUID> attemptedHouses = new HashSet<>();
     SecureSectorState state = SecureSectorState.WAIT_FOR_REINFORCEMENTS;
     SecureSectorState lastState;
     Vector3f homeBase;
@@ -83,7 +83,7 @@ public class SecureSector extends Objective<Lieutenant> implements MinimapPresen
         this.deploymentStrength = deploymentStrength;
         this.minimumFightingStrenght = minimumFightingStrenght;
         this.homeBase = homeBase;
-        System.out.println("secure sector:"+centre+" houses:"+houses.size());
+        System.out.println("secure sector:"+boundary+" houses:"+houses.size()+" bunkers:"+defences.size());
     }
 
     @Override

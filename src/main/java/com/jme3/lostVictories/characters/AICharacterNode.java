@@ -40,7 +40,9 @@ public abstract class AICharacterNode<T extends GameCharacterControl> extends Ga
     EnemyActivityReport enemyActivityReport;
     List<Geometry> boxes = new ArrayList<Geometry>();
     protected BehaviorControler behaviorControler;
-    
+    private List<Vector3f> path;
+    private boolean pathPlotted;
+
     public AICharacterNode(UUID id, Node model, Country country, CommandingOfficer commandingOfficer, Vector3f worldCoodinates, Vector3f rotation, Node rootNode, BulletAppState bulletAppState, CharcterParticleEmitter emitter, ParticleManager particleManager, NavigationProvider pathFinder, AssetManager assetManager, BlenderModel m, BehaviorControler behaviorControler, Camera camera) {
         super(id, model, country, commandingOfficer, worldCoodinates, rotation, rootNode, bulletAppState, emitter, particleManager, pathFinder, assetManager, m, camera);
         this.behaviorControler = behaviorControler;
@@ -51,6 +53,11 @@ public abstract class AICharacterNode<T extends GameCharacterControl> extends Ga
         behaviorControler.doActions(this, rootNode, channel, tpf);
         if(getLocalTranslation().y<-100){
             die(this);
+        }
+
+        if(path!=null && !pathPlotted){
+            pathPlotted = true;
+            plotPath(path);
         }
             
 //          if("ce0e6166-7299-4222-9f1a-938cdc9b24cb".equals(getIdentity().toString())){
@@ -235,7 +242,7 @@ public abstract class AICharacterNode<T extends GameCharacterControl> extends Ga
     }
 
 
-    public void plotPath(List<Vector3f> waypoints){
+    private void plotPath(List<Vector3f> waypoints){
         for(Geometry g: boxes){
             rootNode.detachChild(g);
         }
@@ -243,8 +250,12 @@ public abstract class AICharacterNode<T extends GameCharacterControl> extends Ga
         float i =.5f;
         for(Vector3f p:waypoints){
             rootNode.attachChild(getBox(i, p.x, p.y, p.z));
-            i = i+.5f;
+//            i = i+.5f;
         }
+    }
+
+    public void showPath(List<Vector3f> path) {
+        this.path = path;
     }
 
 //    public void plotpoints(Collection<Vector3f> values) {

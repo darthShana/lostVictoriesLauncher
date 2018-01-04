@@ -43,8 +43,10 @@ public class GameStructureNode extends Node {
         this.bounds = (BoundingBox)house.getWorldBound();
 
         RigidBodyControl r = collisionShapeFactoryProvider.createRigidBodyControl(house);
-        house.addControl(r);  
-        bulletAppState.getPhysicsSpace().add(r);
+        if(r!=null) {
+            house.addControl(r);
+            bulletAppState.getPhysicsSpace().add(r);
+        }
         
         calulateCoverPosstions(house);
     }
