@@ -89,11 +89,13 @@ public class SecureSector extends Objective<Lieutenant> implements MinimapPresen
     @Override
     public AIAction<AICharacterNode> planObjective(final Lieutenant c, WorldMap worldMap) {
 //        MoveToSector -> CaptureHouses-> DefendSector -> AttackThreat->Retreat
+        Set<UUID> units = c.getCharactersUnderCommand().stream().map(cc -> cc.getIdentity()).collect(Collectors.toSet());
+        issuedOrders = issuedOrders.entrySet().stream().filter(e -> units.contains(e.getKey())).collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()));
+
         AIAction<AICharacterNode> action = state.planObjective(c, worldMap, rootNode, this);
         SecureSectorState newState = state.transition(c, worldMap, this);
         if(newState!=state){
             System.out.println(c.getCountry()+" "+c.getRank()+":"+c.getIdentity()+" new state:"+newState+" houses:"+houses.size()+" loc:"+c.getLocation()+" centre:"+centre);
-            issuedOrders.clear();
             attemptedHouses.clear();
             lastState = state;
             state = newState;
@@ -129,7 +131,7 @@ public class SecureSector extends Objective<Lieutenant> implements MinimapPresen
     public Objective fromJson(JsonNode json, GameCharacterNode character, NavigationProvider pathFinder, Node rootNode, WorldMap map) throws IOException {
         JavaType type = MAPPER.getTypeFactory().constructCollectionType(Set.class, UUID.class);
         int ds = json.get("deploymentStrength").asInt();
-        int mfs = json.get("minimumFightingStrenght").asInt();
+        int mfs = json.get("minimumFightingStrength").asInt();
         Vector h = MAPPER.treeToValue(json.get("homeBase"), Vector.class);
         Vector cent = MAPPER.treeToValue(json.get("centre"), Vector.class);
 

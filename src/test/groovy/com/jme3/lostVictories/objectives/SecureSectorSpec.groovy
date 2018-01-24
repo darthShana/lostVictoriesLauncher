@@ -55,16 +55,50 @@ class SecureSectorSpec extends Specification {
 
         when:
         character.getCharactersUnderCommand() >> [corp1, corp2]
+        character.getCurrentStrength() >> 20
+        character.getEnemyActivity() >> new EnemyActivityReport(null)
+        secureSector.state = SecureSectorState.CAPTURE_HOUSES
         secureSector.planObjective(character, Mock(WorldMap.class))
+        secureSector.issuedOrders.values().each{ o -> o.isComplete = true }
+        secureSector.planObjective(character, Mock(WorldMap.class))
+
+        then:
         SecureSectorState.DEFEND_SECTOR == secureSector.state
+
+        when:
         secureSector.planObjective(character, Mock(WorldMap.class))
 
         then:
         SecureSectorState.DEFEND_SECTOR == secureSector.state
         secureSector.issuedOrders.get(corp1.getIdentity()) instanceof OccupyStructure
         secureSector.issuedOrders.get(corp2.getIdentity()) instanceof OccupyStructure
-
-
-
     }
+
+    def "re occupy bunker if the defenders have been killed"(){
+        given:
+        def corp1 = Mock(CadetCorporal.class)
+        corp1.getIdentity() >> UUID.randomUUID()
+        def corp2 = Mock(CadetCorporal.class)
+        corp2.getIdentity() >> UUID.randomUUID()
+        def character = Mock(Lieutenant.class)
+        character.getIdentity() >> UUID.randomUUID()
+
+        and:
+        secureSector.boundary = new Rectangle2D.Float(10, 10, 10, 10)
+        secureSector.houses = [Mock(GameHouseNode.class)]
+        character.getLocation() >> new Vector3f(11, 0, 11)
+
+        when:
+        character.getCharactersUnderCommand() >> [corp2]
+        secureSector.state = SecureSectorState.DEFEND_SECTOR
+        secureSector.issuedOrders[corp1.identity] = new OccupyStructure()
+        character.getEnemyActivity() >> new EnemyActivityReport([new Vector3f(100, 10, 100)] as Set, [] as Set)
+        secureSector.planObjective(character, Mock(WorldMap.class))
+
+        then:
+        secureSector.state == SecureSectorState.DEFEND_SECTOR
+        !secureSector.issuedOrders[corp1.identity]
+        secureSector.issuedOrders[corp2.identity] instanceof OccupyStructure
+    }
+
 }

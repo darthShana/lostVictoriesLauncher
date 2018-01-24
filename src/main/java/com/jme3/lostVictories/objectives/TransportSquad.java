@@ -71,7 +71,7 @@ class TransportSquad extends Objective<Soldier> {
         return new TransportSquad(d.toVector());
     }
 
-    static enum State {
+    enum State {
         
         BOARD_PASSENGERS{            
             @Override
