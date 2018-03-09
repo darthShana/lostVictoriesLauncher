@@ -4,6 +4,7 @@
  */
 package com.jme3.lostVictories.characters;
 
+import akka.actor.ActorRef;
 import com.jme3.ai.navmesh.NavigationProvider;
 import com.jme3.asset.AssetManager;
 import com.jme3.bullet.BulletAppState;
@@ -40,8 +41,8 @@ public class CadetCorporal extends Soldier implements CommandingOfficer{
     List<Commandable> charactersToCommand = new ArrayList<Commandable>();
     
     
-    public CadetCorporal(UUID id, Node player, Country country, CommandingOfficer commandingOfficer, Vector3f position, Vector3f rotation, Node rootNode, BulletAppState bulletAppState, CharcterParticleEmitter characterParticleEmitters, ParticleManager particleManager, NavigationProvider navMeshPathfinder, AssetManager assetManager, BlenderModel model, BehaviorControler behaviorControler, Camera camera) {
-        super(id, player, country, commandingOfficer, position, rotation, rootNode, bulletAppState, characterParticleEmitters, particleManager, navMeshPathfinder, assetManager, model, behaviorControler, camera);
+    public CadetCorporal(UUID id, Node player, Country country, CommandingOfficer commandingOfficer, Vector3f position, Vector3f rotation, Node rootNode, BulletAppState bulletAppState, CharcterParticleEmitter characterParticleEmitters, ParticleManager particleManager, NavigationProvider navMeshPathfinder, AssetManager assetManager, BlenderModel model, BehaviorControler behaviorControler, ActorRef shootssFiredListener) {
+        super(id, player, country, commandingOfficer, position, rotation, rootNode, bulletAppState, characterParticleEmitters, particleManager, navMeshPathfinder, assetManager, model, behaviorControler, shootssFiredListener);
         if(getWeapon()==Weapon.cannon()){
             throw new RuntimeException("invalid weapon");
         }

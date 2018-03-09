@@ -12,6 +12,7 @@ import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.lostVictories.structures.CollisionShapeFactoryProvider;
 import com.jme3.lostVictories.structures.GameBunkerNode;
 import com.jme3.lostVictories.structures.GameObjectNode;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.Node;
@@ -61,7 +62,10 @@ class TerrainLoader {
                 obj.removeFromParent();
             }
             if("Models/Structures/Dugout_.plain.j3o".equals(obj.getName())){
-                System.out.println("bonker.add(new BunkerMessage(\""+obj.getName()+"\", new Vector("+obj.getLocalTranslation()+"), new Quaternion("+obj.getLocalRotation()+")));");
+
+//                Vector3f t = obj.getLocalTranslation();
+//                Quaternion r = obj.getLocalRotation();
+//                System.out.println("houses.add(new BunkerMessage(UUID.randomUUID(), new Vector("+ t.x+"f, "+t.y+"f, "+t.z+"f), new Quaternion("+ r.getX()+"f, "+r.getY()+"f, "+r.getZ()+"f, "+r.getW() +"f)));");
 
                 GameBunkerNode g = new GameBunkerNode((Node) obj, bulletAppState, new CollisionShapeFactoryProvider());
                 worldMap.addStructure(g);

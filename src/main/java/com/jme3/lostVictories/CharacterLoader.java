@@ -4,6 +4,8 @@
  */
 package com.jme3.lostVictories;
 
+import akka.actor.ActorRef;
+import akka.actor.ActorSystem;
 import com.jme3.ai.navmesh.NavMesh;
 import com.jme3.ai.navmesh.NavMeshPathfinder;
 import com.jme3.ai.navmesh.NavigationProvider;
@@ -19,6 +21,8 @@ import com.jme3.lostVictories.network.messages.CharacterMessage;
 import com.jme3.lostVictories.network.messages.CharacterType;
 import com.jme3.lostVictories.network.messages.RankMessage;
 import com.jme3.lostVictories.network.messages.UnClaimedEquipmentMessage;
+import com.jme3.lostVictories.objectives.reactiveObjectives.CharacterTurnToFaceAttackActor;
+import com.jme3.lostVictories.objectives.reactiveObjectives.ShootsFiredActor;
 import com.jme3.lostVictories.structures.UnclaimedEquipmentNode;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.BatchNode;
@@ -36,10 +40,11 @@ import java.util.UUID;
 public class CharacterLoader {
     private static CharacterLoader instance;
     private final WorldMap worldMap;
+    private final ActorRef shootsFiredListener;
 
-    static CharacterLoader instance(Node rootNode, AssetManager assetManager, BulletAppState bulletAppState, NavMesh navMesh, ParticleEmitterFactory pf, HeadsUpDisplayAppState hud, ParticleManager particleManager, LostVictory app, WorldMap worldMap) {
+    static CharacterLoader instance(Node rootNode, AssetManager assetManager, BulletAppState bulletAppState, NavMesh navMesh, ParticleEmitterFactory pf, HeadsUpDisplayAppState hud, ParticleManager particleManager, LostVictory app, WorldMap worldMap, ActorSystem actorSystem) {
         if(instance == null){
-            instance = new CharacterLoader(rootNode, assetManager, bulletAppState, navMesh, pf, hud, particleManager, app, worldMap);
+            instance = new CharacterLoader(rootNode, assetManager, bulletAppState, navMesh, pf, hud, particleManager, app, worldMap, actorSystem);
         }
         return instance;
     }
@@ -56,7 +61,7 @@ public class CharacterLoader {
     private final LostVictory app;
     
 
-    private CharacterLoader(Node rootNode, AssetManager assetManager, BulletAppState bulletAppState, NavMesh navMesh, ParticleEmitterFactory pf, HeadsUpDisplayAppState hud, ParticleManager particleManager, LostVictory app, WorldMap worldMap) {
+    private CharacterLoader(Node rootNode, AssetManager assetManager, BulletAppState bulletAppState, NavMesh navMesh, ParticleEmitterFactory pf, HeadsUpDisplayAppState hud, ParticleManager particleManager, LostVictory app, WorldMap worldMap, ActorSystem actorSystem) {
         this.rootNode = rootNode;
         this.assetManager = assetManager;
         this.bulletAppState = bulletAppState;
@@ -67,6 +72,7 @@ public class CharacterLoader {
         this.particleManager = particleManager;
         this.app = app;
         this.worldMap = worldMap;
+        shootsFiredListener = actorSystem.actorOf(ShootsFiredActor.props(worldMap), "ShootsFiredListener");
     }
     
     public AvatarCharacterNode loadCharacters(ServerResponse checkout, UUID avatarID) throws InterruptedException {
@@ -118,13 +124,13 @@ public class CharacterLoader {
     
     private AvatarCharacterNode loadAvatar(UUID id, Vector3f position, Vector3f rotation, BlenderModel model, Country country, CommandingOfficer commandingOfficer, HeadsUpDisplayAppState hud, Rank rank) {
         Node player =  load(model);
-        AvatarCharacterNode a = new AvatarCharacterNode(id, player, country, commandingOfficer, position, rotation, rootNode, bulletAppState, pf.getCharacterParticleEmitters(), particleManager, pathFinder, assetManager, model, rank, hud, app.getCamera());
+        AvatarCharacterNode a = new AvatarCharacterNode(id, player, country, commandingOfficer, position, rotation, rootNode, bulletAppState, pf.getCharacterParticleEmitters(), particleManager, pathFinder, assetManager, model, rank, hud, shootsFiredListener);
         return a;
     }
     
     private GameCharacterNode loadCharacter(UUID id, Vector3f position, Vector3f rotation, BlenderModel model, Country country, CommandingOfficer commandingOfficer, BehaviorControler behaviorControler) {
         Node player =  load(model);
-        GameCharacterNode a = new Private(id, player, country, commandingOfficer, position, rotation, rootNode, bulletAppState, pf.getCharacterParticleEmitters(), particleManager, pathFinder, assetManager, model, behaviorControler, app.getCamera());
+        GameCharacterNode a = new Private(id, player, country, commandingOfficer, position, rotation, rootNode, bulletAppState, pf.getCharacterParticleEmitters(), particleManager, pathFinder, assetManager, model, behaviorControler, shootsFiredListener);
         return a;
     }
 
@@ -133,7 +139,7 @@ public class CharacterLoader {
         Node vehicle =  load(halfTrackBlenderModel);
         
         
-        final GameVehicleNode v = new HalfTrackNode(id, vehicle, getOperators(), country, commandingOfficer, position, rotation, rootNode, bulletAppState, pf.getCharacterParticleEmitters(), particleManager, pathFinder, assetManager, halfTrackBlenderModel, behaviorControler, app.getCamera());
+        final GameVehicleNode v = new HalfTrackNode(id, vehicle, getOperators(), country, commandingOfficer, position, rotation, rootNode, bulletAppState, pf.getCharacterParticleEmitters(), particleManager, pathFinder, assetManager, halfTrackBlenderModel, behaviorControler, shootsFiredListener);
         if(commandingOfficer!=null){
             commandingOfficer.addCharactersUnderCommand(new HashSet<Commandable>(){{add(v);}});
         }
@@ -148,7 +154,7 @@ public class CharacterLoader {
         Node turret = (Node) assetManager.loadModel("Models/Vehicles/PanzerIV.j3o");
         turret.detachChildNamed("PanzerIV");
         turret.setLocalScale(panzer4BlenderModel.getModelScale());
-        final GameVehicleNode v = new MediumTankNode(id, chassis, turret, getOperators(), country, commandingOfficer, position, rotation, rootNode, bulletAppState, pf.getCharacterParticleEmitters(), particleManager, pathFinder, assetManager, panzer4BlenderModel, behaviorControler, app.getCamera());
+        final GameVehicleNode v = new MediumTankNode(id, chassis, turret, getOperators(), country, commandingOfficer, position, rotation, rootNode, bulletAppState, pf.getCharacterParticleEmitters(), particleManager, pathFinder, assetManager, panzer4BlenderModel, behaviorControler, shootsFiredListener);
         if(commandingOfficer!=null){
             commandingOfficer.addCharactersUnderCommand(new HashSet<Commandable>(){{add(v);}});
         }
@@ -164,7 +170,7 @@ public class CharacterLoader {
         turret.detachChildNamed("body");
         turret.detachChildNamed("chain");
         turret.setLocalScale(m4A2ShermanBlenderModel.getModelScale());
-        final GameVehicleNode v = new MediumTankNode(id, chassis, turret, getOperators(), country, commandingOfficer, position, rotation, rootNode, bulletAppState, pf.getCharacterParticleEmitters(), particleManager, pathFinder, assetManager, m4A2ShermanBlenderModel, behaviorControler, app.getCamera());
+        final GameVehicleNode v = new MediumTankNode(id, chassis, turret, getOperators(), country, commandingOfficer, position, rotation, rootNode, bulletAppState, pf.getCharacterParticleEmitters(), particleManager, pathFinder, assetManager, m4A2ShermanBlenderModel, behaviorControler, shootsFiredListener);
         if(commandingOfficer!=null){
             commandingOfficer.addCharactersUnderCommand(new HashSet<Commandable>(){{add(v);}});
         }
@@ -175,7 +181,7 @@ public class CharacterLoader {
         final AmoredCarBlenderModel amoredCarBlenderModel = new AmoredCarBlenderModel("Models/Vehicles/M3_Scout.j3o", 1, Weapon.mg42());
         Node vehicle =  load(amoredCarBlenderModel);
 
-        final GameVehicleNode v = new HalfTrackNode(id, vehicle, getOperators(), country, commandingOfficer, position, rotation, rootNode, bulletAppState, pf.getCharacterParticleEmitters(), particleManager, pathFinder, assetManager, amoredCarBlenderModel, behaviorControler, app.getCamera());
+        final GameVehicleNode v = new HalfTrackNode(id, vehicle, getOperators(), country, commandingOfficer, position, rotation, rootNode, bulletAppState, pf.getCharacterParticleEmitters(), particleManager, pathFinder, assetManager, amoredCarBlenderModel, behaviorControler, shootsFiredListener);
         if(commandingOfficer!=null){
             commandingOfficer.addCharactersUnderCommand(new HashSet<Commandable>(){{add(v);}});
         }
@@ -186,7 +192,7 @@ public class CharacterLoader {
         final AntiTankGunModel antiTankGunModel = new AntiTankGunModel("Models/Vehicles/Anti_Tank_Gun.j3o", 1, Weapon.cannon());
         Node vehicle =  load(antiTankGunModel);
         
-        final GameVehicleNode v = new AntiTankGunNode(id, vehicle, getOperators(), country, commandingOfficer, position, rotation, rootNode, bulletAppState, pf.getCharacterParticleEmitters(), particleManager, pathFinder, assetManager, antiTankGunModel, behaviorControler, app.getCamera());
+        final GameVehicleNode v = new AntiTankGunNode(id, vehicle, getOperators(), country, commandingOfficer, position, rotation, rootNode, bulletAppState, pf.getCharacterParticleEmitters(), particleManager, pathFinder, assetManager, antiTankGunModel, behaviorControler, shootsFiredListener);
         if(commandingOfficer!=null){
             commandingOfficer.addCharactersUnderCommand(new HashSet<Commandable>(){{add(v);}});
         }
@@ -195,19 +201,19 @@ public class CharacterLoader {
 
     private Lieutenant loadLieutenant(UUID id, Vector3f position, Vector3f rotation, BlenderModel model, Country country, CommandingOfficer commandingOfficer, BehaviorControler behaviorControler) {
         Node player =  load(model);
-        Lieutenant a = new Lieutenant(id, player, country, commandingOfficer, position, rotation, rootNode, bulletAppState, pf.getCharacterParticleEmitters(), particleManager, pathFinder, assetManager, model, behaviorControler, app.getCamera());
+        Lieutenant a = new Lieutenant(id, player, country, commandingOfficer, position, rotation, rootNode, bulletAppState, pf.getCharacterParticleEmitters(), particleManager, pathFinder, assetManager, model, behaviorControler, shootsFiredListener);
         return a;
     }
     
     private CadetCorporal loadCorporal(UUID id, Vector3f position, Vector3f rotation, BlenderModel model, Country country, CommandingOfficer commandingOfficer, BehaviorControler behaviorControler) {
         Node player =  load(model);
-        CadetCorporal a = new CadetCorporal(id, player, country, commandingOfficer, position, rotation, rootNode, bulletAppState, pf.getCharacterParticleEmitters(), particleManager, pathFinder, assetManager, model, behaviorControler, app.getCamera());
+        CadetCorporal a = new CadetCorporal(id, player, country, commandingOfficer, position, rotation, rootNode, bulletAppState, pf.getCharacterParticleEmitters(), particleManager, pathFinder, assetManager, model, behaviorControler, shootsFiredListener);
         return a;
     }
     
     private HeerCaptain loadHeerCaptain(UUID id, Vector3f position, Vector3f rotation, BlenderModel model, Country country, BehaviorControler behaviorControler) {
         Node player =  load(model);
-        HeerCaptain a = new HeerCaptain(id, player, country, null, position, rotation, rootNode, bulletAppState, pf.getCharacterParticleEmitters(), particleManager, pathFinder, assetManager, model, behaviorControler, app.getCamera());
+        HeerCaptain a = new HeerCaptain(id, player, country, null, position, rotation, rootNode, bulletAppState, pf.getCharacterParticleEmitters(), particleManager, pathFinder, assetManager, model, behaviorControler, shootsFiredListener);
         return a;
     }
 

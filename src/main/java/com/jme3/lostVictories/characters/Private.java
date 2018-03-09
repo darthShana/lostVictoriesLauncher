@@ -4,6 +4,7 @@
  */
 package com.jme3.lostVictories.characters;
 
+import akka.actor.ActorRef;
 import com.jme3.ai.navmesh.NavigationProvider;
 import com.jme3.asset.AssetManager;
 import com.jme3.bullet.BulletAppState;
@@ -23,8 +24,8 @@ import java.util.UUID;
  */
 public class Private extends Soldier{
 
-    public Private(UUID id, Node model, Country country, CommandingOfficer commandingOfficer, Vector3f worldCoodinates, Vector3f rotation, Node rootNode, BulletAppState bulletAppState, CharcterParticleEmitter emitter, ParticleManager particleManager, NavigationProvider pathFinder, AssetManager assetManager, BlenderModel m, BehaviorControler behaviorControler, Camera camera) {
-        super(id, model, country, commandingOfficer, worldCoodinates, rotation, rootNode, bulletAppState, emitter, particleManager, pathFinder, assetManager, m, behaviorControler, camera);
+    public Private(UUID id, Node model, Country country, CommandingOfficer commandingOfficer, Vector3f worldCoodinates, Vector3f rotation, Node rootNode, BulletAppState bulletAppState, CharcterParticleEmitter emitter, ParticleManager particleManager, NavigationProvider pathFinder, AssetManager assetManager, BlenderModel m, BehaviorControler behaviorControler, ActorRef shootsFiredListener) {
+        super(id, model, country, commandingOfficer, worldCoodinates, rotation, rootNode, bulletAppState, emitter, particleManager, pathFinder, assetManager, m, behaviorControler, shootsFiredListener);
     }
 
 

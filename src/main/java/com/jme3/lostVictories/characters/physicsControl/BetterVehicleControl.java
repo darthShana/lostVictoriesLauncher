@@ -8,6 +8,7 @@ package com.jme3.lostVictories.characters.physicsControl;
 import com.jme3.asset.AssetManager;
 import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.bullet.control.VehicleControl;
+import com.jme3.lostVictories.WorldMap;
 import com.jme3.lostVictories.characters.GameVehicleNode;
 import com.jme3.lostVictories.characters.blenderModels.VehicleBlenderModel;
 import com.jme3.material.Material;
@@ -32,6 +33,7 @@ public class BetterVehicleControl extends VehicleControl implements GameCharacte
     protected boolean gravitybreakOn;
     protected boolean isBreaking;
     protected final int myMass;
+    private Vector3f lastLocation;
 
 
     public BetterVehicleControl(int mass, GameVehicleNode vehicleNode, VehicleBlenderModel blenderModel, AssetManager assetManager) {
@@ -184,6 +186,11 @@ public class BetterVehicleControl extends VehicleControl implements GameCharacte
         brake(0);
         accelerate(enginePower);
         isBreaking = false;
+        if(lastLocation==null || !WorldMap.isClose(lastLocation, vehicleNode.getLocalTranslation(), 1)) {
+            WorldMap.get().characterMoved(vehicleNode);
+            lastLocation = new Vector3f(vehicleNode.getLocalTranslation());
+        }
+
     }
 
     public void turboBoost() {
@@ -191,6 +198,10 @@ public class BetterVehicleControl extends VehicleControl implements GameCharacte
         brake(0);
         accelerate(vehicleNode.getEnginePower()*2.5f);  
         isBreaking = false;
+        if(lastLocation==null || !WorldMap.isClose(lastLocation, vehicleNode.getLocalTranslation(), 1)) {
+            WorldMap.get().characterMoved(vehicleNode);
+            lastLocation = new Vector3f(vehicleNode.getLocalTranslation());
+        }
     }
 
     public void backward() {

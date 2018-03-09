@@ -6,6 +6,8 @@ package com.jme3.lostVictories.characters;
 
 import com.jme3.ai.navmesh.NavigationProvider;
 import com.jme3.lostVictories.WorldMap;
+import com.jme3.lostVictories.actions.AIAction;
+import com.jme3.lostVictories.actions.ShootTargetAction;
 import com.jme3.lostVictories.objectives.Objective;
 import com.jme3.scene.Node;
 
@@ -20,18 +22,19 @@ import java.util.Set;
  */
 public interface BehaviorControler {
 
-    public void doActions(AICharacterNode aThis, Node rootNode, GameAnimChannel channel, float tpf);
+    void doActions(AICharacterNode aThis, Node rootNode, GameAnimChannel channel, float tpf);
 
-    public void addObjective(Objective o);
+    void addObjective(Objective o);
     
-    public void planObjectives(GameCharacterNode character, WorldMap worldMap);
+    void planObjectives(GameCharacterNode character, WorldMap worldMap);
 
-    public void addObjectivesFromRemoteCharacters(Map<String, String> objectives, GameCharacterNode character, NavigationProvider pathfinder, Node rootNode, WorldMap map) throws IllegalAccessException, NoSuchMethodException, SecurityException, InvocationTargetException, InstantiationException, IllegalArgumentException, ClassNotFoundException, IOException;
+    void addObjectivesFromRemoteCharacters(Map<String, String> objectives, GameCharacterNode character, NavigationProvider pathfinder, Node rootNode, WorldMap map) throws IllegalAccessException, NoSuchMethodException, SecurityException, InvocationTargetException, InstantiationException, IllegalArgumentException, ClassNotFoundException, IOException;
 
-    public Set<Objective> getAllObjectives();
+    Set<Objective> getAllObjectives();
 
-    public boolean isBusy();
+    boolean isBusy();
 
-    public boolean isAttacking();
-    
+    boolean isAttacking();
+
+    void addAction(AIAction action);
 }

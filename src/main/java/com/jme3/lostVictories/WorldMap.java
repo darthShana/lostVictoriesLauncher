@@ -4,12 +4,15 @@
  */
 package com.jme3.lostVictories;
 
+import akka.actor.ActorRef;
+import akka.actor.ActorSystem;
 import com.jme3.ai.steering.Obstacle;
 import com.jme3.collision.CollisionResult;
 import com.jme3.collision.CollisionResults;
 import com.jme3.lostVictories.characters.GameCharacterNode;
 import com.jme3.lostVictories.network.messages.UnClaimedEquipmentMessage;
 import com.jme3.lostVictories.network.messages.Vector;
+import com.jme3.lostVictories.objectives.reactiveObjectives.CharacterMovedActor;
 import com.jme3.lostVictories.structures.*;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
@@ -25,30 +28,26 @@ import java.util.stream.Collectors;
  *
  * @author dharshanar
  */
-public class WorldMap implements Runnable {
+public class WorldMap {
 
     public static Rectangle mapBounds = new Rectangle(-512, -512, 1024, 1024);
     
     public static final int AUTO_ATTACK_RANGE = 15;
     public static final float CHARACTER_SIZE = .5f;
-    public static final int RESPOND_RANGE = 5;
-
     public static final int BLAST_RANGE = 2;
 
     private static WorldMap instance;
     private Node traversableSurfaces;
+    private final ActorRef characterLocator;
 
-    static WorldMap instance(Node traversableSurfaces) {
+    static WorldMap instance(Node traversableSurfaces, ActorSystem actorSystem) {
         if(instance==null){
-            instance = new WorldMap(traversableSurfaces);
+            instance = new WorldMap(traversableSurfaces, actorSystem);
         }
         return instance;
     }
     
-    static  void clear(){
-        instance = null;
-    }
-    
+
     public static WorldMap get(){
         return instance;
     }
@@ -61,8 +60,9 @@ public class WorldMap implements Runnable {
     private final Map<UUID, UnclaimedEquipmentNode> unclaimedEquipment = new HashMap<UUID, UnclaimedEquipmentNode>();
     Set<GameSector> gameSectors;
 
-    private WorldMap(Node traversableSurfaces) {
+    private WorldMap(Node traversableSurfaces, ActorSystem actorSystem) {
         this.traversableSurfaces = traversableSurfaces;
+        characterLocator = actorSystem.actorOf(CharacterMovedActor.props(this), "characterLocator");
     }
 
     public void addHouse(GameHouseNode addHouse) {
@@ -78,24 +78,6 @@ public class WorldMap implements Runnable {
         final Vector3f localTranslation = objectNode.getLocalTranslation();
         final Rectangle.Float rectangle = new Rectangle.Float(localTranslation.x-CHARACTER_SIZE, localTranslation.z-CHARACTER_SIZE, CHARACTER_SIZE*2, CHARACTER_SIZE*2);
         objects.putCharacter(rectangle, objectNode);
-    }
-
-    public void run() {
-        synchronized(this) {
-            try{
-                final Collection<GameCharacterNode> values = new HashSet<GameCharacterNode>(characters.allCharacters());
-                BiDirectionalMap newMap = new BiDirectionalMap(mapBounds);
-
-                for(GameCharacterNode c: values){
-                    final Vector3f localTranslation = c.getLocalTranslation();
-                    final Rectangle.Float rectangle = new Rectangle.Float(localTranslation.x-CHARACTER_SIZE, localTranslation.z-CHARACTER_SIZE, CHARACTER_SIZE*2, CHARACTER_SIZE*2);
-                    newMap.putCharacter(rectangle, c);
-                }
-                this.characters = newMap;
-            }catch(Exception e){
-                e.printStackTrace();
-            }
-        }
     }
 
     public List<GameCharacterNode> getCharactersInAutoAttackRange(GameCharacterNode character) {
@@ -165,7 +147,7 @@ public class WorldMap implements Runnable {
         Vector3f p8 = p.add(v1.mult(140));
         coveringBounds.add(new Rectangle.Float(p8.x-20.5f, p8.z-20.5f, 41, 41));
 
-        List<GameCharacterNode> ret = new ArrayList<GameCharacterNode>();
+        List<GameCharacterNode> ret = new ArrayList<>();
         if(debug){
             System.out.println("calculating charaters from "+p+" in direction:"+v1);
         }
@@ -420,4 +402,14 @@ public class WorldMap implements Runnable {
     }
 
 
+    public void characterMoved(GameCharacterNode node) {
+        characterLocator.tell(new LocateCharacterRequest(node), ActorRef.noSender());
+    }
+
+    public void updateCharacterLocation(GameCharacterNode character) {
+        Vector3f localTranslation = character.getLocalTranslation();
+        Rectangle.Float rectangle = new Rectangle.Float(localTranslation.x-CHARACTER_SIZE, localTranslation.z-CHARACTER_SIZE, CHARACTER_SIZE*2, CHARACTER_SIZE*2);
+
+        characters.updateCharacter(rectangle, character);
+    }
 }

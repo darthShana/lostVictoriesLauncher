@@ -21,10 +21,10 @@ class BiDirectionalMap<T extends Node> {
     
     private Map<Rectangle.Float, T> boundsToCharacters = new HashMap<Rectangle.Float, T>();
     private Map<T, Rectangle.Float> charactersToBounds = new HashMap<T, Rectangle.Float>();
-    private volatile Quadtree<T> characterRoot;
+    private volatile QuadTree<T> characterRoot;
 
     public BiDirectionalMap(Rectangle mapBounds) {
-        characterRoot = new Quadtree(mapBounds.x-CHARACTER_SIZE, mapBounds.y-CHARACTER_SIZE, mapBounds.width+(CHARACTER_SIZE*2), 4);
+        characterRoot = new QuadTree(mapBounds.x-CHARACTER_SIZE, mapBounds.y-CHARACTER_SIZE, mapBounds.width+(CHARACTER_SIZE*2), 4);
     }
     
     
@@ -49,10 +49,21 @@ class BiDirectionalMap<T extends Node> {
         characterRoot.insert(c);
     }
 
+    public void updateCharacter(Rectangle.Float rectangle, T c) {
+        final Rectangle.Float remove = charactersToBounds.remove(c);
+        if(remove!=null){
+            boundsToCharacters.remove(remove);
+        }
+        boundsToCharacters.put(rectangle, c);
+        charactersToBounds.put(c, rectangle);
+        characterRoot.update(c);
+    }
+
     void remove(T c) {
         final Rectangle.Float remove = charactersToBounds.remove(c);
         if(remove!=null){
             boundsToCharacters.remove(remove);
+            characterRoot.remove(c);
         }
     }
 
@@ -67,5 +78,6 @@ class BiDirectionalMap<T extends Node> {
     void retrieve(ArrayList<T> arrayList, Rectangle2D.Float rectangle) {
         characterRoot.query(rectangle, arrayList);
     }
-    
+
+
 }

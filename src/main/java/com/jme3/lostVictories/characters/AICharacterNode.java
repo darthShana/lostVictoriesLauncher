@@ -5,6 +5,7 @@
 package com.jme3.lostVictories.characters;
 
 
+import akka.actor.ActorRef;
 import com.jme3.ai.navmesh.NavigationProvider;
 import com.jme3.asset.AssetManager;
 import com.jme3.bullet.BulletAppState;
@@ -13,6 +14,7 @@ import com.jme3.collision.CollisionResults;
 import com.jme3.lostVictories.CharcterParticleEmitter;
 import com.jme3.lostVictories.Country;
 import com.jme3.lostVictories.WorldMap;
+import com.jme3.lostVictories.actions.ShootTargetAction;
 import com.jme3.lostVictories.characters.blenderModels.BlenderModel;
 import com.jme3.lostVictories.characters.physicsControl.GameCharacterControl;
 import com.jme3.lostVictories.effects.ParticleManager;
@@ -43,8 +45,8 @@ public abstract class AICharacterNode<T extends GameCharacterControl> extends Ga
     private List<Vector3f> path;
     private boolean pathPlotted;
 
-    public AICharacterNode(UUID id, Node model, Country country, CommandingOfficer commandingOfficer, Vector3f worldCoodinates, Vector3f rotation, Node rootNode, BulletAppState bulletAppState, CharcterParticleEmitter emitter, ParticleManager particleManager, NavigationProvider pathFinder, AssetManager assetManager, BlenderModel m, BehaviorControler behaviorControler, Camera camera) {
-        super(id, model, country, commandingOfficer, worldCoodinates, rotation, rootNode, bulletAppState, emitter, particleManager, pathFinder, assetManager, m, camera);
+    public AICharacterNode(UUID id, Node model, Country country, CommandingOfficer commandingOfficer, Vector3f worldCoodinates, Vector3f rotation, Node rootNode, BulletAppState bulletAppState, CharcterParticleEmitter emitter, ParticleManager particleManager, NavigationProvider pathFinder, AssetManager assetManager, BlenderModel m, BehaviorControler behaviorControler, ActorRef shootssFiredListener) {
+        super(id, model, country, commandingOfficer, worldCoodinates, rotation, rootNode, bulletAppState, emitter, particleManager, pathFinder, assetManager, m, shootssFiredListener);
         this.behaviorControler = behaviorControler;
 
     }
@@ -256,6 +258,10 @@ public abstract class AICharacterNode<T extends GameCharacterControl> extends Ga
 
     public void showPath(List<Vector3f> path) {
         this.path = path;
+    }
+
+    public void doAction(ShootTargetAction shootTargetAction){
+        behaviorControler.addAction(shootTargetAction);
     }
 
 //    public void plotpoints(Collection<Vector3f> values) {

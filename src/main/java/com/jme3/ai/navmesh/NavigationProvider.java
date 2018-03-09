@@ -43,7 +43,6 @@ public class NavigationProvider {
         Vector3f dest = new Vector3f(destination);
         navMeshPathFinder.warpInside(dest);
         final DebugInfo debugInfo = new DebugInfo();
-        WorldMap worldMap = WorldMap.get();
 
         if(navMeshPathFinder.computePath(dest, debugInfo)){
             if(navMeshPathFinder.getPath().getEnd().getPosition().distance(destination)>10){

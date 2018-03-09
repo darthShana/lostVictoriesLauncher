@@ -13,6 +13,7 @@ import com.jme3.ai.navmesh.NavigationProvider;
 import com.jme3.asset.AssetManager;
 import com.jme3.lostVictories.NetworkClientAppState;
 import com.jme3.lostVictories.WorldMap;
+import com.jme3.lostVictories.actions.AIAction;
 import com.jme3.lostVictories.actions.StopAction;
 import com.jme3.lostVictories.actions.TeleportAction;
 import com.jme3.lostVictories.network.messages.CharacterMessage;
@@ -53,7 +54,7 @@ public class RemoteBehaviourControler implements BehaviorControler {
     private long shootCommandTime;    
     private final UUID characterID;
     private Geometry reqPosBox;
-    RemoteControleVehicleControle vehicleControle = new RemoteControleVehicleControle();
+    RemoteVehicleControl vehicleControle = new RemoteVehicleControl();
 //    private ManualControlByAvatar manulaDriveObjective;
     public WorldMap worldMap;
 
@@ -126,7 +127,12 @@ public class RemoteBehaviourControler implements BehaviorControler {
         
         
     }
-    
+
+    @Override
+    public void addAction(AIAction action) {
+
+    }
+
     public Geometry getBox(AssetManager assetManager, float x, float y, float z) {
         Box b= new Box(.5f, .5f, .5f);
         Geometry mark = new Geometry("selected", b);

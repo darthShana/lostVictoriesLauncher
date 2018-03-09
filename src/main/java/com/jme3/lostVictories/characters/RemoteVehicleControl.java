@@ -20,10 +20,7 @@ import static com.jme3.lostVictories.actions.DriveAction.qRight;
  *
  * @author dharshanar
  */
-class RemoteControleVehicleControle {
-    
-    
-    
+class RemoteVehicleControl {
 
     void handleLocationUpdates(Vector3f requiredPossition, Vector3f requiredOrientation, GameVehicleNode character, Node rootNode, GameAnimChannel channel, CharacterMessage message) {
         final Vector3f localTranslation = character.getLocalTranslation();

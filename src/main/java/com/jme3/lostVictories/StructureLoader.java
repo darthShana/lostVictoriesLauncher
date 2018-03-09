@@ -85,9 +85,6 @@ public class StructureLoader {
         
         for(Spatial s: sceneGraph.getChildren()){
             if(structureTypes.contains(s.getName())){
-//                Vector3f t = s.getLocalTranslation();
-//                Quaternion r = s.getLocalRotation();
-//                System.out.println("houses.add(new HouseMessage(\""+s.getName()+"\", new Vector("+ t.x+"f, "+t.y+"f, "+t.z+"f), new Quaternion("+ r.getX()+"f, "+r.getY()+"f, "+r.getZ()+"f, "+r.getW() +"f)));");
                 s.removeFromParent();
             }else if(otherStructures.contains(s.getName())){
                 s.removeFromParent();

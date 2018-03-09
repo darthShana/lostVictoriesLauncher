@@ -4,6 +4,7 @@
  */
 package com.jme3.lostVictories.characters;
 
+import akka.actor.ActorRef;
 import com.jme3.ai.navmesh.NavigationProvider;
 import com.jme3.animation.AnimChannel;
 import com.jme3.animation.AnimControl;
@@ -34,8 +35,8 @@ public class AntiTankGunNode extends GameVehicleNode{
     
     private final BlenderModel gunnerModel;
     
-    public AntiTankGunNode(UUID id, Node model, Map<Country, Node> operator, Country country, CommandingOfficer commandingOfficer, Vector3f worldCoodinates, Vector3f rotation, Node rootNode, BulletAppState bulletAppState, CharcterParticleEmitter emitter, ParticleManager particleManager, NavigationProvider pathFinder, AssetManager assetManager, VehicleBlenderModel m, BehaviorControler behaviorControler, Camera camera) {
-        super(id, model, operator, country, commandingOfficer, worldCoodinates, rotation, rootNode, bulletAppState, emitter, particleManager, pathFinder, assetManager, m, behaviorControler, camera);
+    public AntiTankGunNode(UUID id, Node model, Map<Country, Node> operator, Country country, CommandingOfficer commandingOfficer, Vector3f worldCoodinates, Vector3f rotation, Node rootNode, BulletAppState bulletAppState, CharcterParticleEmitter emitter, ParticleManager particleManager, NavigationProvider pathFinder, AssetManager assetManager, VehicleBlenderModel m, BehaviorControler behaviorControler, ActorRef shootsFiredListener) {
+        super(id, model, operator, country, commandingOfficer, worldCoodinates, rotation, rootNode, bulletAppState, emitter, particleManager, pathFinder, assetManager, m, behaviorControler, shootsFiredListener);
         
         gunnerModel = new SoldierBlenderModel("", 2, Weapon.cannon());
         if(operatorChannel.get(country)!=null){

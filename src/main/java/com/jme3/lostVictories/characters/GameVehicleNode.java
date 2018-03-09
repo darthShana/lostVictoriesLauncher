@@ -4,6 +4,7 @@
  */
 package com.jme3.lostVictories.characters;
 
+import akka.actor.ActorRef;
 import com.jme3.ai.navmesh.NavigationProvider;
 import com.jme3.animation.AnimChannel;
 import com.jme3.animation.AnimControl;
@@ -51,8 +52,8 @@ public abstract class GameVehicleNode extends AICharacterNode<BetterVehicleContr
     boolean finishedGunnerDeath;
     
     
-    public GameVehicleNode(UUID id, Node model, Map<Country, Node> operator, Country country, CommandingOfficer commandingOfficer, Vector3f worldCoodinates, Vector3f rotation, Node rootNode, BulletAppState bulletAppState, CharcterParticleEmitter emitter, ParticleManager particleManager, NavigationProvider pathFinder, AssetManager assetManager, VehicleBlenderModel m, BehaviorControler behaviorControler, Camera camera) {
-        super(id, model, country, commandingOfficer, worldCoodinates, rotation, rootNode, bulletAppState, emitter, particleManager, pathFinder, assetManager, m, behaviorControler, camera);
+    public GameVehicleNode(UUID id, Node model, Map<Country, Node> operator, Country country, CommandingOfficer commandingOfficer, Vector3f worldCoodinates, Vector3f rotation, Node rootNode, BulletAppState bulletAppState, CharcterParticleEmitter emitter, ParticleManager particleManager, NavigationProvider pathFinder, AssetManager assetManager, VehicleBlenderModel m, BehaviorControler behaviorControler, ActorRef shootssFiredListener) {
+        super(id, model, country, commandingOfficer, worldCoodinates, rotation, rootNode, bulletAppState, emitter, particleManager, pathFinder, assetManager, m, behaviorControler, shootssFiredListener);
         shell.setLocalTranslation(shell.getLocalTranslation().add(m.getOperatorTranslation()));
         this.operator = operator;
         
@@ -61,16 +62,10 @@ public abstract class GameVehicleNode extends AICharacterNode<BetterVehicleContr
             final AnimControl control1 = n.getValue().getControl(AnimControl.class);
             if(control1!=null){
                 operatorChannel.put(n.getKey(), new GameAnimChannel(control1.createChannel(), m));
-//                SkeletonControl skeletonControl = n.getValue().getControl(SkeletonControl.class);
-//                skeletonControl.setHardwareSkinningPreferred(false);
                 control1.addListener(this);
             }
         }
         characterNode.attachChild(operator.get(country));
-        
-//        try{
-//            playerControl.applyBreak();
-//        }catch(Exception e){}
         setName(getCountry()+":"+getClass());
     }
 

@@ -85,9 +85,11 @@ public class NetworkClientAppState extends AbstractAppState {
     }
 
     boolean needsToBeSent(GameCharacterNode hc) {
-        return !lastSent.containsKey(hc.getIdentity()) ||
-        !lastSent.get(hc.getIdentity()).hasBeenSentRecently() ||
-        (!lastSent.get(hc.getIdentity()).isSameAs(hc) && lastSent.get(hc.getIdentity()).isOlderVersion(hc.getVersion()));
+        if(!lastSent.containsKey(hc.getIdentity())){
+            lastSent.put(hc.getIdentity(), hc.toMessage());
+        }
+        return  !lastSent.get(hc.getIdentity()).hasBeenSentRecently() ||
+                (!lastSent.get(hc.getIdentity()).isSameAs(hc) && lastSent.get(hc.getIdentity()).isOlderVersion(hc.getVersion()));
     }
 
 

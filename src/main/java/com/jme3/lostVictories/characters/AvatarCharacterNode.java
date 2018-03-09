@@ -5,6 +5,7 @@
 package com.jme3.lostVictories.characters;
 
 
+import akka.actor.ActorRef;
 import com.jme3.ai.navmesh.NavigationProvider;
 import com.jme3.animation.AnimChannel;
 import com.jme3.animation.AnimControl;
@@ -52,8 +53,8 @@ public class AvatarCharacterNode extends GameCharacterNode<BetterSoldierControl>
     private ManualControlByAvatar boaredVehicleControl;
     protected Vector3f fpsPossition = new Vector3f(0, 3f, 0);
 
-    public AvatarCharacterNode(UUID id, Node model, Country country, CommandingOfficer commandingOfficer, Vector3f worldCoodinates, Vector3f rotation, Node rootNode, BulletAppState bulletAppState, CharcterParticleEmitter particleEmitter, ParticleManager particleManager, NavigationProvider pathFinder, AssetManager assetManager, BlenderModel m, Rank rank, HeadsUpDisplayAppState hud, Camera camera) {
-        super(id, model, country, commandingOfficer, worldCoodinates, rotation, rootNode, bulletAppState, particleEmitter, particleManager, pathFinder, assetManager, m, camera);
+    public AvatarCharacterNode(UUID id, Node model, Country country, CommandingOfficer commandingOfficer, Vector3f worldCoodinates, Vector3f rotation, Node rootNode, BulletAppState bulletAppState, CharcterParticleEmitter particleEmitter, ParticleManager particleManager, NavigationProvider pathFinder, AssetManager assetManager, BlenderModel m, Rank rank, HeadsUpDisplayAppState hud, ActorRef shootssFiredListener) {
+        super(id, model, country, commandingOfficer, worldCoodinates, rotation, rootNode, bulletAppState, particleEmitter, particleManager, pathFinder, assetManager, m, shootssFiredListener);
         this.rank = rank;
         this.hud = hud;
     }
@@ -395,7 +396,7 @@ public class AvatarCharacterNode extends GameCharacterNode<BetterSoldierControl>
     }
     
     protected BetterSoldierControl createCharacterControl(AssetManager manager) {
-        BetterSoldierControl pc = new BetterSoldierControl(.5f, 2f, 150);
+        BetterSoldierControl pc = new BetterSoldierControl(this,.5f, 2f, 150);
         pc.setGravity(new Vector3f(0f,10,0f));
         pc.setJumpForce(new Vector3f(0f,.1f,0f));
         

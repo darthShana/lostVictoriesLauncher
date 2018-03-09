@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.jme3.ai.navmesh.NavigationProvider;
 import com.jme3.lostVictories.WorldMap;
 import com.jme3.lostVictories.actions.AIAction;
+import com.jme3.lostVictories.actions.ShootTargetAction;
 import com.jme3.lostVictories.objectives.Objective;
 import com.jme3.lostVictories.objectives.Objectives;
 import com.jme3.lostVictories.objectives.SecureSector;
@@ -28,8 +29,10 @@ import static com.jme3.lostVictories.characters.RemoteBehaviourControler.MAPPER;
 public class LocalAIBehaviourControler implements BehaviorControler{
 
     PriorityBlockingQueue<AIAction> aiActions = new PriorityBlockingQueue<>(1, new ActionComparator());
+    //have only one action of a type
     Objectives objectives = new Objectives<>();
     private final Set<UUID> receivedObjectives = new HashSet<>();
+    private boolean shootTargetAdded;
 
     @Override
     public void doActions(AICharacterNode character, Node rootNode, GameAnimChannel channel, float tpf) {
@@ -58,6 +61,18 @@ public class LocalAIBehaviourControler implements BehaviorControler{
     public void planObjectives(GameCharacterNode character, WorldMap worldMap) {
         aiActions.clear();
         aiActions.addAll(objectives.planObjectives(character, worldMap));
+        shootTargetAdded = false;
+    }
+
+    @Override
+    public void addAction(AIAction action) {
+        if(action instanceof ShootTargetAction){
+            if(shootTargetAdded){
+                return;
+            }
+            shootTargetAdded = true;
+        }
+        aiActions.add(action);
     }
 
     public void addObjective(Objective o) {

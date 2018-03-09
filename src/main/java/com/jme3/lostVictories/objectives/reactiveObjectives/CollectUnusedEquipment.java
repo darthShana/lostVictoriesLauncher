@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.jme3.lostVictories.objectives;
+package com.jme3.lostVictories.objectives.reactiveObjectives;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -14,6 +14,8 @@ import com.jme3.lostVictories.characters.Commandable;
 import com.jme3.lostVictories.characters.GameCharacterNode;
 import com.jme3.lostVictories.characters.GameVehicleNode;
 import com.jme3.lostVictories.characters.weapons.Weapon;
+import com.jme3.lostVictories.objectives.BoardVehicle;
+import com.jme3.lostVictories.objectives.Objective;
 import com.jme3.scene.Node;
 
 import java.io.IOException;
@@ -28,7 +30,7 @@ import static com.jme3.lostVictories.characters.RemoteBehaviourControler.MAPPER;
  *
  * @author dharshanar
  */
-public class CollectUnusedEquipment extends Objective<CadetCorporal> implements PassiveObjective{
+public class CollectUnusedEquipment {
 
     Map<GameVehicleNode, Commandable> orders = new HashMap<GameVehicleNode, Commandable>();
 
@@ -64,7 +66,6 @@ public class CollectUnusedEquipment extends Objective<CadetCorporal> implements 
         return node;
     }
 
-    @Override
     public CollectUnusedEquipment fromJson(JsonNode json, GameCharacterNode character, NavigationProvider pathFinder, Node rootNode, WorldMap map) throws IOException {
         return new CollectUnusedEquipment();
     }

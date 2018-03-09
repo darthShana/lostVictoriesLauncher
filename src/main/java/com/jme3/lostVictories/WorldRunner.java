@@ -47,11 +47,6 @@ public class WorldRunner implements Runnable {
                 e.printStackTrace();
             }
         }
-        if(System.currentTimeMillis()-lastClearTime>4000){
-            lastClearTime = System.currentTimeMillis();
-            ShotsFiredListener.instance().clear();
-        }
-
 
     }
 

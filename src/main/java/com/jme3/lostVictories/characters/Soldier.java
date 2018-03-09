@@ -4,6 +4,7 @@
  */
 package com.jme3.lostVictories.characters;
 
+import akka.actor.ActorRef;
 import com.jme3.ai.navmesh.NavigationProvider;
 import com.jme3.asset.AssetManager;
 import com.jme3.bullet.BulletAppState;
@@ -34,8 +35,8 @@ public abstract class Soldier extends AICharacterNode<BetterSoldierControl>{
     private MoveMode currentMoveMode;
     private Long moveModeToggleTime;
     
-    public Soldier(UUID id, Node model, Country country, CommandingOfficer commandingOfficer, Vector3f worldCoodinates, Vector3f rotation, Node rootNode, BulletAppState bulletAppState, CharcterParticleEmitter emitter, ParticleManager particleManager, NavigationProvider pathFinder, AssetManager assetManager, BlenderModel m, BehaviorControler behaviorControler, Camera camera) {
-        super(id, model, country, commandingOfficer, worldCoodinates, rotation, rootNode, bulletAppState, emitter, particleManager, pathFinder, assetManager, m, behaviorControler, camera);
+    public Soldier(UUID id, Node model, Country country, CommandingOfficer commandingOfficer, Vector3f worldCoodinates, Vector3f rotation, Node rootNode, BulletAppState bulletAppState, CharcterParticleEmitter emitter, ParticleManager particleManager, NavigationProvider pathFinder, AssetManager assetManager, BlenderModel m, BehaviorControler behaviorControler, ActorRef shootssFiredListener) {
+        super(id, model, country, commandingOfficer, worldCoodinates, rotation, rootNode, bulletAppState, emitter, particleManager, pathFinder, assetManager, m, behaviorControler, shootssFiredListener);
         
     }
     
@@ -127,7 +128,7 @@ public abstract class Soldier extends AICharacterNode<BetterSoldierControl>{
     }
     
     protected BetterSoldierControl createCharacterControl(AssetManager manager) {
-        BetterSoldierControl pc = new BetterSoldierControl(.4f, 2f, 150);
+        BetterSoldierControl pc = new BetterSoldierControl(this,.4f, 2f, 150);
         pc.setGravity(new Vector3f(0f, 10f,0f));
         pc.setJumpForce(new Vector3f(0f,.1f,0f));
         return pc;

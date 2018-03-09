@@ -5,6 +5,7 @@
  */
 package com.jme3.lostVictories.characters;
 
+import akka.actor.ActorRef;
 import com.jme3.ai.navmesh.NavigationProvider;
 import com.jme3.animation.AnimControl;
 import com.jme3.animation.LoopMode;
@@ -34,8 +35,8 @@ public class MediumTankNode extends GameVehicleNode{
     private final Node turretModel;
     private GameAnimChannel turretChannel;
 
-    public MediumTankNode(UUID id, Node chassisModel, Node turretModel, Map<Country, Node> operator, Country country, CommandingOfficer commandingOfficer, Vector3f worldCoodinates, Vector3f rotation, Node rootNode, BulletAppState bulletAppState, CharcterParticleEmitter emitter, ParticleManager particleManager, NavigationProvider pathFinder, AssetManager assetManager, VehicleBlenderModel m, BehaviorControler behaviorControler, Camera camera) {
-        super(id, chassisModel, operator, country, commandingOfficer, worldCoodinates, rotation, rootNode, bulletAppState, emitter, particleManager, pathFinder, assetManager, m, behaviorControler, camera);
+    public MediumTankNode(UUID id, Node chassisModel, Node turretModel, Map<Country, Node> operator, Country country, CommandingOfficer commandingOfficer, Vector3f worldCoodinates, Vector3f rotation, Node rootNode, BulletAppState bulletAppState, CharcterParticleEmitter emitter, ParticleManager particleManager, NavigationProvider pathFinder, AssetManager assetManager, VehicleBlenderModel m, BehaviorControler behaviorControler, ActorRef shootsFiredListener) {
+        super(id, chassisModel, operator, country, commandingOfficer, worldCoodinates, rotation, rootNode, bulletAppState, emitter, particleManager, pathFinder, assetManager, m, behaviorControler, shootsFiredListener);
         this.turretModel = turretModel;
         final AnimControl control1 = turretModel.getControl(AnimControl.class);
         if(control1!=null){

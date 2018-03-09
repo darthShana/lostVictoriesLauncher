@@ -76,7 +76,7 @@ public class FollowCommander extends Objective<AICharacterNode> {
     }
 
     public boolean clashesWith(Objective objective) {
-        return !(objective instanceof SurvivalObjective); 
+        return !(objective instanceof PassiveObjective);
     }
     
     public ObjectNode toJson() {

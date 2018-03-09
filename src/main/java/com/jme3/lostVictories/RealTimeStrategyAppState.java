@@ -137,7 +137,7 @@ public class RealTimeStrategyAppState extends AbstractAppState implements Action
         minimapNode.updateMinimap(tpf, chaseCamera.getHorizontalRotation());
     }
 
-    /** Custom Keybinding: Map named actions to inputs. */
+    /** Custom Keybinding: Map named messages to inputs. */
     private void initKeys() {
         app.getInputManager().addMapping("Forward", new KeyTrigger(KeyInput.KEY_W));
         app.getInputManager().addListener(this, "Forward");

@@ -5,6 +5,7 @@
 package com.jme3.lostVictories.characters;
 
 
+import akka.actor.ActorRef;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.jme3.ai.navmesh.NavigationProvider;
 import com.jme3.ai.steering.Obstacle;
@@ -32,6 +33,8 @@ import com.jme3.lostVictories.network.messages.actions.SetupWeapon;
 import com.jme3.lostVictories.network.messages.actions.Shoot;
 import com.jme3.lostVictories.objectives.EnemyActivityReport;
 import com.jme3.lostVictories.objectives.Objective;
+import com.jme3.lostVictories.objectives.reactiveObjectives.ShootsFiredActor;
+import com.jme3.lostVictories.objectives.reactiveObjectives.messages.ShootsFired;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState.BlendMode;
 import com.jme3.math.*;
@@ -55,6 +58,7 @@ import static com.jme3.lostVictories.characters.RemoteBehaviourControler.MAPPER;
  */
 public abstract class GameCharacterNode<T extends GameCharacterControl> extends Node implements Commandable, AnimEventListener, CanInteractWith, Obstacle{
     protected T playerControl;
+    private ActorRef shootsFiredListener;
     protected CharacterAction characterAction = new CharacterAction();
     protected Node rootNode;
     protected Node characterNode = new Node();
@@ -78,8 +82,8 @@ public abstract class GameCharacterNode<T extends GameCharacterControl> extends 
 
     protected final BulletAppState bulletAppState;
     protected final AssetManager assetManager;
-    protected List<Ray> rays = new ArrayList<Ray>();
-    protected List<Vector3f> blasts = new ArrayList<Vector3f>();
+    protected List<Ray> rays = new ArrayList<>();
+    protected List<Vector3f> blasts = new ArrayList<>();
     protected String unitName;
 
     int kills;
@@ -91,7 +95,7 @@ public abstract class GameCharacterNode<T extends GameCharacterControl> extends 
     private final Vector3f initialRotation;
     private long version;
 
-    GameCharacterNode(UUID id, Node model, Country country, CommandingOfficer commandingOfficer, Vector3f worldCoodinates, Vector3f rotation, Node rootNode, BulletAppState bulletAppState, CharcterParticleEmitter particleEmitter, ParticleManager particleManager, NavigationProvider pathFinder, AssetManager assetManager, BlenderModel m, Camera cam) {
+    GameCharacterNode(UUID id, Node model, Country country, CommandingOfficer commandingOfficer, Vector3f worldCoodinates, Vector3f rotation, Node rootNode, BulletAppState bulletAppState, CharcterParticleEmitter particleEmitter, ParticleManager particleManager, NavigationProvider pathFinder, AssetManager assetManager, BlenderModel m, ActorRef shootsFiredListener) {
         this.country = country;
         this.commandingOfficer = commandingOfficer;
         this.rootNode = rootNode;
@@ -107,6 +111,7 @@ public abstract class GameCharacterNode<T extends GameCharacterControl> extends 
         this.geometry = model;
         this.identity = id;
         playerControl=createCharacterControl(assetManager);
+        this.shootsFiredListener = shootsFiredListener;
 
         if(Vector3f.ZERO.equals(rotation) || rotation.length()==0){
             rotation = Vector3f.UNIT_Z;
@@ -118,8 +123,6 @@ public abstract class GameCharacterNode<T extends GameCharacterControl> extends 
             control = geometry.getControl(AnimControl.class);
             control.addListener(this);
             channel = new GameAnimChannel(control.createChannel(), m);
-//            SkeletonControl skeletonControl = geometry.getControl(SkeletonControl.class);
-//            skeletonControl.setHardwareSkinningPreferred(false);
             idle();
         }
                 
@@ -164,7 +167,6 @@ public abstract class GameCharacterNode<T extends GameCharacterControl> extends 
     public abstract void planObjectives(WorldMap worldMap);
     
     public abstract void simpleUpate(float tpf, WorldMap map, Node rootNode);
-
 
     public abstract boolean isBusy();
 
@@ -278,6 +280,7 @@ public abstract class GameCharacterNode<T extends GameCharacterControl> extends 
             
             if(!rays.isEmpty()){
                 model.doFireEffect(smokeTrail, particleManager, this, getAimingDirection(), rays, collitionLifes);
+                shootsFiredListener.tell(new ShootsFired(this, getAimingDirection()), ActorRef.noSender());
             }
             if(isControledLocaly()){
                 for(CollisionResult result:results){
@@ -296,7 +299,7 @@ public abstract class GameCharacterNode<T extends GameCharacterControl> extends 
                 muzzelFlash.killAllParticles();
                 muzzelFlash.setEnabled(false);
             }
-            ShotsFiredListener.instance().register(getLocalTranslation());
+
         }
 
         model.transitionFireingSequence(getShootingChannel(), animName, muzzelFlash);

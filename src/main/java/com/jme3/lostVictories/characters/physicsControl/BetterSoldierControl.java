@@ -9,8 +9,11 @@ import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.bullet.collision.PhysicsRayTestResult;
 import com.jme3.bullet.control.BetterCharacterControl;
 import com.jme3.bullet.objects.PhysicsRigidBody;
+import com.jme3.lostVictories.WorldMap;
+import com.jme3.lostVictories.characters.GameCharacterNode;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
+import com.jme3.scene.Node;
 
 import java.util.List;
 
@@ -20,18 +23,21 @@ import java.util.List;
  */
 public class BetterSoldierControl extends BetterCharacterControl implements GameCharacterControl{
 
+    private final GameCharacterNode node;
     boolean tooSteep = false;
     boolean isWalkableStep = false;
     boolean helpingUpStep = false;
 
     float maxSlope = 45;
     float maxStepHeight = .5f;
+    private Vector3f lastLocation;
 
 
-    public BetterSoldierControl(float radius, float height, int mass) {
+    public BetterSoldierControl(GameCharacterNode node, float radius, float height, int mass) {
         this.radius = radius;
         this.height = height;
         this.mass = mass;
+        this.node = node;
         rigidBody = new PhysicsRigidBody(getShape(), mass);
         //jumpForce = new Vector3f(0, mass * 5, 0);
         rigidBody.setAngularFactor(0);
@@ -114,6 +120,18 @@ public class BetterSoldierControl extends BetterCharacterControl implements Game
         }
 
         isWalkableStep = false;
+    }
+
+    @Override
+    public void setWalkDirection(Vector3f vec) {
+        super.setWalkDirection(vec);
+        if(!Vector3f.ZERO.equals(vec)){
+            if(lastLocation==null || !WorldMap.isClose(lastLocation, node.getLocalTranslation(), 1)) {
+                WorldMap.get().characterMoved(node);
+                lastLocation = new Vector3f(node.getLocalTranslation());
+            }
+        }
+
     }
 
     @Override

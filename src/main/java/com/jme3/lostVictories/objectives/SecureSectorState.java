@@ -91,7 +91,7 @@ enum SecureSectorState {
 
         @Override
         SecureSectorState transition(Lieutenant c, WorldMap worldMap, SecureSector objective) {
-            if(c.getCurrentStrength()<=objective.minimumFightingStrenght){
+            if(c.getCurrentStrength()<=objective.minimumFightingStrength){
                 return RETREAT;
             }
             if(!c.getEnemyActivity().activity().isEmpty()){
@@ -142,7 +142,7 @@ enum SecureSectorState {
 
         @Override
         SecureSectorState transition(Lieutenant c, WorldMap worldMap, SecureSector objective) {
-            if(c.getCurrentStrength()<=objective.minimumFightingStrenght){
+            if(c.getCurrentStrength()<=objective.minimumFightingStrength){
                 return RETREAT;
             }
             if(!c.getEnemyActivity().activity().isEmpty()){
@@ -199,7 +199,6 @@ enum SecureSectorState {
                     if(unit.getSquadType(SquadType.RIFLE_TEAM, true)==SquadType.MORTAR_TEAM){
                         ab = new BombardTargets(enemyActivity.activity(), rootNode);
                     }else{
-                        System.out.println("attacking enemies at:"+enemyActivity.activity());
                         ab = new AttackBoggies(enemyActivity.activity(), rootNode);
                     }
                     objective.issuedOrders.put(unit.getIdentity(), ab);
@@ -212,7 +211,7 @@ enum SecureSectorState {
 
         @Override
         SecureSectorState transition(Lieutenant c, WorldMap worldMap, SecureSector objective) {
-            if(c.getCurrentStrength()<=objective.minimumFightingStrenght){
+            if(c.getCurrentStrength()<=objective.minimumFightingStrength){
                 return RETREAT;
             }
             if(c.getEnemyActivity().activity().isEmpty()) {

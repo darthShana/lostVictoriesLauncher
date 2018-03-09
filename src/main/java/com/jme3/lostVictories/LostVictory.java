@@ -1,5 +1,6 @@
 package com.jme3.lostVictories;
 
+import akka.actor.ActorSystem;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.jme3.ai.navmesh.CustomNavMeshBuilder;
 import com.jme3.ai.navmesh.NavMesh;
@@ -137,7 +138,9 @@ public class LostVictory extends SimpleApplication implements ActionListener {
         bulletAppState.getPhysicsSpace().addCollisionGroupListener(new VehicleCOllisionListener(), PhysicsCollisionObject.COLLISION_GROUP_01);
 
         Node traversableSurfaces = new Node();
-        this.worldMap = WorldMap.instance(traversableSurfaces);
+        ActorSystem actorSystem = ActorSystem.create("lostVictorySystem");
+
+        this.worldMap = WorldMap.instance(traversableSurfaces, actorSystem);
         sceneGraph = TerrainLoader.instance().loadTerrain(assetManager, bulletAppState, cam, "Scenes/testScene4.j3o", traversableSurfaces, worldMap);
         terrain = (TerrainQuad) sceneGraph.getChild("terrain-testScene4");
 
@@ -160,7 +163,7 @@ public class LostVictory extends SimpleApplication implements ActionListener {
 
         ParticleEmitterFactory pf = ParticleEmitterFactory.instance(assetManager);
         ParticleManager particleManager = new ParticleManager(sceneGraph, assetManager, renderManager);
-        characterLoader = CharacterLoader.instance(sceneGraph, assetManager, bulletAppState, navMesh, pf, headsUpDisplayAppState, particleManager, this, worldMap);
+        characterLoader = CharacterLoader.instance(sceneGraph, assetManager, bulletAppState, navMesh, pf, headsUpDisplayAppState, particleManager, this, worldMap, actorSystem);
         ResponseFromServerMessageHandler serverSync = new ResponseFromServerMessageHandler(this, characterLoader, structureLoader, avatarUUID, particleManager, headsUpDisplayAppState);
         networkClientAppState = NetworkClientAppState.init(this, new NetworkClient(ipAddress, port, avatarUUID, serverSync), serverSync);
         
@@ -177,14 +180,10 @@ public class LostVictory extends SimpleApplication implements ActionListener {
 
         setPauseOnLostFocus(false);
         rootNode.attachChild(sceneGraph);
-
         rootNode.attachChild(SkyFactory.createSky(assetManager, "Textures/Sky/Bright/FullskiesBlueClear03.dds", false));
 
+
         worldRunnerService = Executors.newSingleThreadScheduledExecutor();
-
-        worldRunnerService.scheduleAtFixedRate(this.worldMap, 0, 2, TimeUnit.SECONDS);
-
-
         worldRunner = WorldRunner.instance(this.worldMap);
         worldRunnerService.scheduleAtFixedRate(worldRunner, 1, 2, TimeUnit.SECONDS);
         
@@ -241,7 +240,7 @@ public class LostVictory extends SimpleApplication implements ActionListener {
         super.destroy(); //To change body of generated methods, choose Tools | Templates.
     }
 
-    /** Custom Keybinding: Map named actions to inputs. */
+    /** Custom Keybinding: Map named messages to inputs. */
     private void initKeys() {
         inputManager.addMapping("switchMode", new KeyTrigger(KeyInput.KEY_TAB));
         inputManager.addListener(this, "switchMode");  

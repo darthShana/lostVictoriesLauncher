@@ -43,7 +43,7 @@ public class SecureSector extends Objective<Lieutenant> implements MinimapPresen
     
     Vector3f centre;
     int deploymentStrength;
-    int minimumFightingStrenght;
+    int minimumFightingStrength;
     Map<UUID, Objective> issuedOrders = new HashMap<>();
     Set<UUID> attemptedHouses = new HashSet<>();
     SecureSectorState state = SecureSectorState.WAIT_FOR_REINFORCEMENTS;
@@ -81,7 +81,7 @@ public class SecureSector extends Objective<Lieutenant> implements MinimapPresen
             boundary = new Rectangle.Float(minX, minZ, (maxX - minX), (maxZ - minZ));
         }
         this.deploymentStrength = deploymentStrength;
-        this.minimumFightingStrenght = minimumFightingStrenght;
+        this.minimumFightingStrength = minimumFightingStrenght;
         this.homeBase = homeBase;
         System.out.println("secure sector:"+boundary+" houses:"+houses.size()+" bunkers:"+defences.size());
     }
@@ -123,7 +123,7 @@ public class SecureSector extends Objective<Lieutenant> implements MinimapPresen
         node.set("centre", MAPPER.valueToTree(new Vector(centre)));
         node.set("homeBase", MAPPER.valueToTree(new Vector(homeBase)));
         node.put("deploymentStrength", deploymentStrength);
-        node.put("minimumFightingStrenght", minimumFightingStrenght);
+        node.put("minimumFightingStrength", minimumFightingStrength);
         return node;
     }
 
