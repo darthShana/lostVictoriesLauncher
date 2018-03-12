@@ -45,7 +45,7 @@ public class Mg42 extends Weapon{
 
     @Override
     public Vector3f getMuzzelLocation() {
-        return new Vector3f(0f, .3f, 2.25f);
+        return new Vector3f(-0.17f, 1.04f, 1.55f);
     }
 
     @Override
