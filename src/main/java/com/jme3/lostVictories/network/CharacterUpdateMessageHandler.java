@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
  *
  * @author dharshanar
  */
-public class ResponseFromServerMessageHandler  {
+public class CharacterUpdateMessageHandler {
 
     private final StructureLoader structureLoader;
 
@@ -28,26 +28,24 @@ public class ResponseFromServerMessageHandler  {
     private final CharacterLoader characterLoader;
 
     private final ParticleManager particleManager;
-    private final HeadsUpDisplayAppState hud;
-    private final ServerMessageAssembler serverMessageAssembler;
+    private final CharacterUpdateMessageAssembler characterUpdateMessageAssembler;
     private final Map<UUID, Long> receivedCharacterMessages = new HashMap<>();
-    private final Map<UUID, Long> receivedEquipmentMessages = new HashMap<>();
+
 
     Map<UUID, CharacterMessage> relatedCharacters = new HashMap<>();
 
-    public ResponseFromServerMessageHandler(LostVictory app, CharacterLoader characterLoader, StructureLoader structureLoader, UUID clientID, ParticleManager particleManager, HeadsUpDisplayAppState hud) {
+    public CharacterUpdateMessageHandler(LostVictory app, CharacterLoader characterLoader, StructureLoader structureLoader, UUID clientID, ParticleManager particleManager) {
         this.structureLoader = structureLoader;
         this.clientID = clientID;
         this.app = app;
         this.characterLoader = characterLoader;
         this.particleManager = particleManager;
-        this.hud = hud;
-        this.serverMessageAssembler = new ServerMessageAssembler();
+        this.characterUpdateMessageAssembler = new CharacterUpdateMessageAssembler();
     }
 
-    public void syncroniseWithServerView(){
+    public void synchroniseWithServerView(){
         final WorldMap worldMap = WorldMap.get();
-        final ServerResponse popResponces = serverMessageAssembler.popResponces();
+        final CharacterUpdate popResponces = characterUpdateMessageAssembler.popResponse();
 
         popResponces.getAllRelatedUnits().forEach(c->{
             c.setCreationTime(System.currentTimeMillis());
@@ -109,40 +107,7 @@ public class ResponseFromServerMessageHandler  {
             }
         }
 
-        popResponces.getAllHouses().forEach(houseMessage->{
-            if(worldMap.getHouse(houseMessage.getId())!=null){
-                worldMap.getHouse(houseMessage.getId()).updateOwership(houseMessage);
-            }else{
-                System.out.println("adding new house after initial load:"+houseMessage.getId());
-                structureLoader.addHouse(houseMessage, worldMap);
-            }
-        });
 
-        if(popResponces.getMessages()!=null){
-            popResponces.getMessages().forEach(m->hud.addMessage(m));
-        }
-        if(popResponces.getGameStatistics()!=null){
-            WorldRunner.get().setGameStatistics(popResponces.getGameStatistics());
-        }
-        if(popResponces.getAchivementStatus()!=null){
-             WorldRunner.get().setAchiveemntStatus(popResponces.getAchivementStatus());
-        }
-
-        popResponces.getAllEquipment().forEach(eq->{
-            receivedEquipmentMessages.put(eq.getId(), System.currentTimeMillis());
-            if(!worldMap.hasUnclaimedEquipment(eq)){
-                characterLoader.laodUnclaimedEquipment(eq);
-            }
-        });
-
-        for(Iterator<Entry<UUID, Long>> it = receivedEquipmentMessages.entrySet().iterator();it.hasNext();){
-            final Entry<UUID, Long> next = it.next();
-            final UnclaimedEquipmentNode equipment = (UnclaimedEquipmentNode) WorldMap.get().getEquipment(next.getKey());
-            if(equipment!=null && System.currentTimeMillis()-next.getValue()>3000){
-                equipment.destroy();
-                worldMap.removeEquipment(equipment);
-            }
-        }
 
 
 
@@ -152,7 +117,7 @@ public class ResponseFromServerMessageHandler  {
 
 
     public void messageReceived(com.lostVictories.api.LostVictoryMessage value) {
-        serverMessageAssembler.append(value);
+        characterUpdateMessageAssembler.append(value);
         messagesReceivedCounter++;
     }
 
@@ -210,9 +175,6 @@ public class ResponseFromServerMessageHandler  {
                     ((CommandingOfficer)n).addCharactersUnderCommand(unit);
                 }else if(relatedCharacters.get(u)!=null){
                     boolean selected = false;
-//                    if(u.equals(removedSelectedCharacter)){
-//                        selected = true;
-//                    }
                     final VirtualGameCharacterNode virtualGameCharacterNode = new VirtualGameCharacterNode(relatedCharacters.get(u), selected);
                     ((CommandingOfficer)n).addCharactersUnderCommand(virtualGameCharacterNode);
                     if(selected){
@@ -269,8 +231,8 @@ public class ResponseFromServerMessageHandler  {
 
     }
 
-    public ServerResponse getServerResponces() {
-        return serverMessageAssembler.popResponces();
+    public CharacterUpdate getServerResponces() {
+        return characterUpdateMessageAssembler.popResponse();
     }
 
 

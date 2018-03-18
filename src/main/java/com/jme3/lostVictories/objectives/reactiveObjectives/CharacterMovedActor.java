@@ -21,7 +21,7 @@ public class CharacterMovedActor extends AbstractActor {
 
     public CharacterMovedActor(WorldMap map) {
         this.map = map;
-        proximityAttackRouter = getContext().getSystem().actorOf(CharacterAttackActor.props().withRouter(new RoundRobinPool(2)), "proximityAttackRouter");
+        proximityAttackRouter = getContext().getSystem().actorOf(CharacterAttackActor.props(), "proximityAttackRouter");
     }
 
 

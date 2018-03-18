@@ -16,22 +16,24 @@ import com.jme3.lostVictories.characters.blenderModels.*;
 import com.jme3.lostVictories.characters.weapons.Weapon;
 import com.jme3.lostVictories.effects.ParticleEmitterFactory;
 import com.jme3.lostVictories.effects.ParticleManager;
-import com.jme3.lostVictories.network.ServerResponse;
+import com.jme3.lostVictories.network.CharacterUpdate;
 import com.jme3.lostVictories.network.messages.CharacterMessage;
 import com.jme3.lostVictories.network.messages.CharacterType;
 import com.jme3.lostVictories.network.messages.RankMessage;
 import com.jme3.lostVictories.network.messages.UnClaimedEquipmentMessage;
-import com.jme3.lostVictories.objectives.reactiveObjectives.CharacterTurnToFaceAttackActor;
 import com.jme3.lostVictories.objectives.reactiveObjectives.ShootsFiredActor;
 import com.jme3.lostVictories.structures.UnclaimedEquipmentNode;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.BatchNode;
 import com.jme3.scene.Node;
+import com.lostVictories.api.LostVictoryCheckout;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.UUID;
+
+import static com.jme3.lostVictories.network.CharacterUpdateMessageAssembler.fromMessage;
 
 /**
  *
@@ -75,7 +77,7 @@ public class CharacterLoader {
         shootsFiredListener = actorSystem.actorOf(ShootsFiredActor.props(worldMap), "ShootsFiredListener");
     }
     
-    public AvatarCharacterNode loadCharacters(ServerResponse checkout, UUID avatarID) throws InterruptedException {
+    public AvatarCharacterNode loadCharacters(LostVictoryCheckout checkout, UUID avatarID) throws InterruptedException {
        
         //System.out.println("recived async response:"+checkout);
         Map<UUID, GameCharacterNode> characterIdMap = new HashMap<UUID, GameCharacterNode>();
@@ -83,12 +85,11 @@ public class CharacterLoader {
         
         HashSet<GameCharacterNode> characters = new HashSet<>();
 
-
-        for(CharacterMessage c:checkout.getAllUnits()){
+        checkout.getCharactersList().stream().map(c->fromMessage(c)).forEach(c->{
             characterIdMap.put(c.getId(), loadCharacter(c, avatarID));
             characterMessageMap.put(c.getId(), c);
+        });
 
-        }
 
         AvatarCharacterNode a1 = null;
 
@@ -108,9 +109,6 @@ public class CharacterLoader {
             characters.add(n);
         }
 
-        for(UnClaimedEquipmentMessage e:checkout.getAllEquipment()){
-            laodUnclaimedEquipment(e);
-        }
         for(GameCharacterNode n:characters){
             try{
                 n.checkForNewObjectives(characterMessageMap.get(n.getIdentity()).getObjectives());

@@ -22,7 +22,7 @@ public class ShootsFiredActor extends AbstractActor{
 
     public ShootsFiredActor(WorldMap worldMap) {
         this.worldMap = worldMap;
-        proximityAttackRouter = getContext().getSystem().actorOf(CharacterTurnToFaceAttackActor.props().withRouter(new RoundRobinPool(2)), "responseToShootsFiredRouter");
+        proximityAttackRouter = getContext().getSystem().actorOf(CharacterTurnToFaceAttackActor.props(), "responseToShootsFiredRouter");
     }
 
     @Override

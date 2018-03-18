@@ -6,9 +6,8 @@ package com.jme3.lostVictories;
 
 import com.jme3.asset.AssetManager;
 import com.jme3.bullet.BulletAppState;
-import com.jme3.lostVictories.network.ServerResponse;
+import com.jme3.lostVictories.network.CharacterUpdate;
 import com.jme3.lostVictories.network.messages.HouseMessage;
-import com.jme3.lostVictories.network.messages.Vector;
 import com.jme3.lostVictories.structures.*;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
@@ -17,6 +16,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.terrain.geomipmap.TerrainQuad;
+import com.lostVictories.api.LostVictoryCheckout;
 import jme3tools.optimize.GeometryBatchFactory;
 
 import java.util.EnumMap;
@@ -56,15 +56,15 @@ public class StructureLoader {
     }
 
 
-    void loadStuctures(WorldMap worldMap, ServerResponse checkout) {
-                
+    void loadStructures(WorldMap worldMap, LostVictoryCheckout checkout) {
+
         structureTypes.add("Models/Structures/casaMedieval.j3o");
         structureTypes.add("Models/Structures/house.j3o");
         structureTypes.add("Models/Structures/house2.j3o");
         structureTypes.add("Models/Structures/house_1.j3o");
         structureTypes.add("Models/Structures/cottage.j3o");
         
-        Set<String> otherStructures = new HashSet<String>();
+        Set<String> otherStructures = new HashSet<>();
         otherStructures.add("church1");
         otherStructures.add("Models/Structures/fountain1.j3o");
         otherStructures.add("Models/Structures/market.j3o");
@@ -85,6 +85,9 @@ public class StructureLoader {
         
         for(Spatial s: sceneGraph.getChildren()){
             if(structureTypes.contains(s.getName())){
+                Vector3f l = s.getLocalTranslation();
+                Quaternion q = s.getLocalRotation();
+//                System.out.println("houses.add(new HouseMessage(\""+s.getName()+"\", new Vector("+l.x+"f, "+l.y+"f, "+l.z+"f), Quaternion("+q.getX()+"f, "+q.getY()+"f, "+q.getZ()+"f, "+q.getW()+"f)));");
                 s.removeFromParent();
             }else if(otherStructures.contains(s.getName())){
                 s.removeFromParent();
@@ -94,11 +97,9 @@ public class StructureLoader {
             
         }
 
-        final Set<HouseMessage> allHouses = checkout.getAllHouses();
+        checkout.getHousesList().stream().map(h->new HouseMessage(h)).forEach(h->addHouse(h, worldMap));
         
-        for(HouseMessage h:allHouses){
-            addHouse(h, worldMap);
-        }
+
 
         final Set<GameSector> calculateGameSector = WorldMap.calculateGameSector(worldMap.getAllHouses());
         for(GameSector sector:calculateGameSector){
@@ -123,7 +124,7 @@ public class StructureLoader {
     }
     
     private GameHouseNode addHouse(Map flags, LostVictory app, HouseMessage house, TerrainQuad terrain, Node rootNode) {
-        Node n = (Node) assetManager.loadModel("Models/Structures/"+house.getType());
+        Node n = (Node) assetManager.loadModel(house.getType());
         final Vector3f l = house.getLocalTranslation();
         n.setLocalTranslation(l.x, terrain.getHeight(new Vector2f(l.x, l.z)), l.z);
 

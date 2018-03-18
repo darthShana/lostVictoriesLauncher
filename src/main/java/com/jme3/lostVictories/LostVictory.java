@@ -19,9 +19,10 @@ import com.jme3.lostVictories.characters.GameCharacterNode;
 import com.jme3.lostVictories.effects.ParticleEmitterFactory;
 import com.jme3.lostVictories.effects.ParticleManager;
 import com.jme3.lostVictories.minimap.MinimapNode;
+import com.jme3.lostVictories.network.GameStatusMessageHandler;
 import com.jme3.lostVictories.network.NetworkClient;
-import com.jme3.lostVictories.network.ResponseFromServerMessageHandler;
-import com.jme3.lostVictories.network.ServerResponse;
+import com.jme3.lostVictories.network.CharacterUpdateMessageHandler;
+import com.jme3.lostVictories.network.CharacterUpdate;
 import com.jme3.lostVictories.structures.GameHouseNode;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
@@ -30,6 +31,7 @@ import com.jme3.scene.Node;
 import com.jme3.system.AppSettings;
 import com.jme3.terrain.geomipmap.TerrainQuad;
 import com.jme3.util.SkyFactory;
+import com.lostVictories.api.LostVictoryCheckout;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Base64;
 
@@ -164,14 +166,14 @@ public class LostVictory extends SimpleApplication implements ActionListener {
         ParticleEmitterFactory pf = ParticleEmitterFactory.instance(assetManager);
         ParticleManager particleManager = new ParticleManager(sceneGraph, assetManager, renderManager);
         characterLoader = CharacterLoader.instance(sceneGraph, assetManager, bulletAppState, navMesh, pf, headsUpDisplayAppState, particleManager, this, worldMap, actorSystem);
-        ResponseFromServerMessageHandler serverSync = new ResponseFromServerMessageHandler(this, characterLoader, structureLoader, avatarUUID, particleManager, headsUpDisplayAppState);
-        networkClientAppState = NetworkClientAppState.init(this, new NetworkClient(ipAddress, port, avatarUUID, serverSync), serverSync);
+        CharacterUpdateMessageHandler characterSync = new CharacterUpdateMessageHandler(this, characterLoader, structureLoader, avatarUUID, particleManager);
+        GameStatusMessageHandler gameStatusSync = new GameStatusMessageHandler(worldMap, characterLoader, headsUpDisplayAppState);
+        networkClientAppState = NetworkClientAppState.init(this, new NetworkClient(ipAddress, port, avatarUUID, characterSync, gameStatusSync), characterSync, gameStatusSync);
         
         try {
-            ServerResponse checkout = networkClientAppState.checkoutSceenSynchronous(avatarUUID);
-            structureLoader.loadStuctures(worldMap, checkout);
+            LostVictoryCheckout checkout = networkClientAppState.checkoutSceenSynchronous(avatarUUID);
+            structureLoader.loadStructures(worldMap, checkout);
             avatar = characterLoader.loadCharacters(checkout, avatarUUID);
-            sceneGraph.addControl(new SimpleGrassControl(assetManager, bulletAppState, (Node) sceneGraph, terrain, checkout.getAllTrees(), "Resources/Textures/Grass/grass.png"));
         } catch (InterruptedException ex) {
             throw new RuntimeException(ex);
         }

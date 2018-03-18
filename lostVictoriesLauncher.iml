@@ -117,7 +117,6 @@
     <orderEntry type="library" name="Maven: io.grpc:grpc-protobuf-lite:1.7.0" level="project" />
     <orderEntry type="library" name="Maven: io.grpc:grpc-stub:1.7.0" level="project" />
     <orderEntry type="library" name="Maven: com.lostVictories:jme3-testdata:1.1-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: com.lostVictories:jme3-Forester:1.1-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.spockframework:spock-core:1.1-groovy-2.4" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.codehaus.groovy:groovy-all:2.4.9" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.12" level="project" />

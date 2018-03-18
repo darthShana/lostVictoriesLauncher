@@ -25,21 +25,19 @@ import java.util.stream.Collectors;
  */
 public class NetworkClient {
     
-    EventLoopGroup group = new NioEventLoopGroup();
-    Channel channel;
     final ManagedChannel grpcChannel;
-    
+
     private final UUID clientID;
     private final String ipAddress;
     private final int port;
     private final LostVictoriesServerGrpc.LostVictoriesServerStub lostVictoriesServerStub;
     private final StreamObserver<LostVictoryMessage> ignoreObserver;
-    private final StreamObserver<LostVictoryMessage> lostVictoryMessageStreamObserver;
+    private final StreamObserver<LostVictoryMessage> updateCharacterResponseStreamObserver;
     private final StreamObserver<UpdateCharactersRequest> updateCharactersRequestStreamObserver;
     public int backoff = 0;
 
 
-    public NetworkClient(String ipAddress, int port, UUID clientID, final ResponseFromServerMessageHandler responseFromServerMessageHandler) {
+    public NetworkClient(String ipAddress, int port, UUID clientID, final CharacterUpdateMessageHandler characterUpdateMessageHandler, final GameStatusMessageHandler gameStatusMessageHandler) {
         this.ipAddress = ipAddress;
         this.port = port;
         this.clientID = clientID;
@@ -50,7 +48,7 @@ public class NetworkClient {
 
         lostVictoriesServerStub = LostVictoriesServerGrpc.newStub(grpcChannel);
 
-        lostVictoryMessageStreamObserver = new StreamObserver<LostVictoryMessage>() {
+        updateCharacterResponseStreamObserver = new StreamObserver<LostVictoryMessage>() {
             @Override
             public void onNext(LostVictoryMessage value) {
                 if(value.hasCharacterStatusResponse() && clientID.equals(uuid(value.getCharacterStatusResponse().getUnit().getId()))){
@@ -59,11 +57,9 @@ public class NetworkClient {
                     }else if(backoff!=0 && value.getCharacterStatusResponse().getBackoff()==0){
                         System.out.println("server clears backoff");
                     }
-
-
                     backoff = value.getCharacterStatusResponse().getBackoff();
                 }
-                responseFromServerMessageHandler.messageReceived(value);
+                characterUpdateMessageHandler.messageReceived(value);
             }
 
             @Override
@@ -72,11 +68,24 @@ public class NetworkClient {
             }
 
             @Override
-            public void onCompleted() {
-
-            }
+            public void onCompleted() {}
         };
-        updateCharactersRequestStreamObserver = lostVictoriesServerStub.updateLocalCharacters(lostVictoryMessageStreamObserver);
+        updateCharactersRequestStreamObserver = lostVictoriesServerStub.updateLocalCharacters(updateCharacterResponseStreamObserver);
+
+        StreamObserver<LostVictoryStatusMessage> gameStatusResponseObserver = new StreamObserver<LostVictoryStatusMessage>() {
+            @Override
+            public void onNext(LostVictoryStatusMessage lostVictoryStatusMessage) {
+                gameStatusMessageHandler.messageReceived(lostVictoryStatusMessage);
+            }
+
+            @Override
+            public void onError(Throwable throwable) { }
+
+            @Override
+            public void onCompleted() { }
+        };
+        StreamObserver<RegisterClientRequest> registerClientRequestStreamObserver = lostVictoriesServerStub.registerClient(gameStatusResponseObserver);
+        registerClientRequestStreamObserver.onNext(RegisterClientRequest.newBuilder().setClientID(bytes(clientID)).build());
 
         ignoreObserver = new StreamObserver<LostVictoryMessage>() {
             @Override
@@ -89,24 +98,18 @@ public class NetworkClient {
             }
 
             @Override
-            public void onCompleted() {
-
-            }
+            public void onCompleted() { }
         };
 
 
     }
-
-    public void shutDown() {
-        group.shutdownGracefully();
-    }
     
-    
-    public void checkoutSceen(UUID avatar) {
-        lostVictoriesServerStub.checkoutSceen(CheckoutScreenRequest.newBuilder()
+    public LostVictoryCheckout checkoutScene(UUID avatar) {
+        LostVictoriesServerGrpc.LostVictoriesServerBlockingStub checkoutRPC = LostVictoriesServerGrpc.newBlockingStub(grpcChannel);
+        return checkoutRPC.checkoutSceen(CheckoutScreenRequest.newBuilder()
                 .setClientID(bytes(clientID))
                 .setAvatar(bytes(avatar))
-                .build(), lostVictoryMessageStreamObserver);
+                .build());
     }
 
     public void updateLocalCharacter(com.jme3.lostVictories.network.messages.CharacterMessage toUpdate, UUID avatar, long clientStartTime) {
