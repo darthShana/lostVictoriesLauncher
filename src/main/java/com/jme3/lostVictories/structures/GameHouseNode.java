@@ -43,9 +43,10 @@ public class GameHouseNode extends GameStructureNode{
         this.flags = flags;
         this.neuralFlag = neuralFlag;
         this.structureStatus = StructureStatus.NEUTRAL;
-        attachFlagPost(neuralFlag);
         this.id = id;
         this.houseType = houseType;
+
+        attachFlagPost(neuralFlag);
     }
     
     public UUID getId() {
