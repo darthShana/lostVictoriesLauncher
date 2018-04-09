@@ -14,6 +14,7 @@ import com.jme3.lostVictories.StructureStatus;
 import com.jme3.lostVictories.WorldMap;
 import com.jme3.lostVictories.network.messages.CaptureStatus;
 import com.jme3.lostVictories.network.messages.HouseMessage;
+import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 
 import java.util.Map;
@@ -114,7 +115,10 @@ public class GameHouseNode extends GameStructureNode{
         }else if("Models/Structures/house2.j3o".equals(houseType)){
             flagPost.setLocalTranslation(getLocalTranslation().add(3, 0, 3));
         }else if("Models/Structures/house.j3o".equals(houseType)){
-            flagPost.setLocalTranslation(getLocalTranslation().add(3, 0, 3));
+            Vector3f flagPostOffsetLocal = new Vector3f(0.056f, 4.2f, 0.0f);
+            Vector3f flagPostOffset = new Vector3f();
+            getLocalTransform().transformVector(flagPostOffsetLocal, flagPostOffset);
+            flagPost.setLocalTranslation(flagPostOffset);
         }else{
             flagPost.setLocalTranslation(getLocalTranslation().add(5, 0, 5));
         }
