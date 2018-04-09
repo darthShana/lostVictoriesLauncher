@@ -12,6 +12,7 @@ import com.jme3.collision.CollisionResults;
 import com.jme3.lostVictories.characters.GameCharacterNode;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
+import com.jme3.math.Quaternion;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
@@ -33,13 +34,16 @@ public class GameStructureNode extends Node {
     protected final BoundingBox bounds;
 
     public GameStructureNode(Node house, BulletAppState bulletAppState, CollisionShapeFactoryProvider collisionShapeFactoryProvider) {
+        // Transfer the house's translation and rotation (but not scale) to this node.
         final Vector3f possition = new Vector3f(house.getLocalTranslation());
+        final Quaternion rotation = new Quaternion(house.getLocalRotation());
         bakeLOD(house);
-        
-        
+
         house.setLocalTranslation(Vector3f.ZERO);
+        house.setLocalRotation(Quaternion.IDENTITY);
         attachChild(house);
         setLocalTranslation(possition);
+        setLocalRotation(rotation);
         this.bounds = (BoundingBox)house.getWorldBound();
 
         RigidBodyControl r = collisionShapeFactoryProvider.createRigidBodyControl(house);
