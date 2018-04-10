@@ -35,7 +35,7 @@ public class ShootTargetAction implements AIAction<AICharacterNode> {
                 if(character.isReadyToShoot(other.getPositionToTarget(character).subtract(character.getShootingLocation()))){
                     character.shoot(positionToTarget);
                     return true;
-                } else{
+                } else if(!((GameVehicleNode)character).isManuallyControlledByAvatar()){
                     new StearAction(other.getPositionToTarget(character)).doAction((GameVehicleNode) character, rootNode, channel, tpf);
                 }
             }

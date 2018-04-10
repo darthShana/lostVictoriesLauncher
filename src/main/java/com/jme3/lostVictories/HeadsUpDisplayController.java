@@ -206,7 +206,7 @@ public class HeadsUpDisplayController implements ScreenController {
 
     private void addImageAndText(Commandable n, Nifty nifty, boolean expanded, Element cell, boolean selected) {
         ImageBuilder imageBuilder = new ImageBuilder();
-        imageBuilder.filename(UnitIconMap.getIcon(n, expanded, selected));
+        imageBuilder.filename(UnitIconMap.getIcon(n, selected));
         imageBuilder.visibleToMouse(true);
         imageBuilder.interactOnClick("selectCharacterInCommand("+n.getIdentity()+")");
         imageBuilder.build(nifty, nifty.getCurrentScreen(), cell);

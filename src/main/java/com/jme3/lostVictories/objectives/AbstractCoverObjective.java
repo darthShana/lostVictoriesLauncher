@@ -51,6 +51,7 @@ abstract class AbstractCoverObjective<T extends AICharacterNode> extends Objecti
             }
         }
         AIAction ret = null;
+
         if (status == Status.INITIAL) {
             status = Status.MOVING_IN_TO_POSSITION;
             ret = moveObjective.planObjective(character, worldMap);

@@ -10,10 +10,7 @@ import com.jme3.lostVictories.network.messages.actions.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 /**
  *
@@ -128,7 +125,7 @@ public class CharacterMessage implements Serializable{
     }
     
     public Map<String, String> getObjectives(){
-        return objectives;
+        return new HashMap<>(objectives);
     }
 
     public Move isMoving() {

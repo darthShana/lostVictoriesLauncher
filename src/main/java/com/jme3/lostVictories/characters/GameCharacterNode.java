@@ -85,6 +85,7 @@ public abstract class GameCharacterNode<T extends GameCharacterControl> extends 
     protected List<Ray> rays = new ArrayList<>();
     protected List<Vector3f> blasts = new ArrayList<>();
     protected String unitName;
+    private SquadType squadType;
 
     int kills;
     protected final UUID identity;
@@ -95,7 +96,7 @@ public abstract class GameCharacterNode<T extends GameCharacterControl> extends 
     private final Vector3f initialRotation;
     private long version;
 
-    GameCharacterNode(UUID id, Node model, Country country, CommandingOfficer commandingOfficer, Vector3f worldCoodinates, Vector3f rotation, Node rootNode, BulletAppState bulletAppState, CharcterParticleEmitter particleEmitter, ParticleManager particleManager, NavigationProvider pathFinder, AssetManager assetManager, BlenderModel m, ActorRef shootsFiredListener) {
+    GameCharacterNode(UUID id, Node model, Country country, CommandingOfficer commandingOfficer, Vector3f worldCoodinates, Vector3f rotation, SquadType squadType, Node rootNode, BulletAppState bulletAppState, CharcterParticleEmitter particleEmitter, ParticleManager particleManager, NavigationProvider pathFinder, AssetManager assetManager, BlenderModel m, ActorRef shootsFiredListener) {
         this.country = country;
         this.commandingOfficer = commandingOfficer;
         this.rootNode = rootNode;
@@ -112,6 +113,7 @@ public abstract class GameCharacterNode<T extends GameCharacterControl> extends 
         this.identity = id;
         playerControl=createCharacterControl(assetManager);
         this.shootsFiredListener = shootsFiredListener;
+        this.squadType = squadType;
 
         if(Vector3f.ZERO.equals(rotation) || rotation.length()==0){
             rotation = Vector3f.UNIT_Z;
@@ -553,25 +555,7 @@ public abstract class GameCharacterNode<T extends GameCharacterControl> extends 
     public abstract T getCharacterControl();
     protected abstract T createCharacterControl(AssetManager manager);
 
-    public SquadType getSquadType(SquadType squadType, boolean expanded) {
-        if(this instanceof AntiTankGunNode){
-            squadType = SquadType.ANTI_TANK_GUN;
-        }else if(this instanceof GameVehicleNode && squadType!=SquadType.ANTI_TANK_GUN){
-            squadType = SquadType.ARMORED_VEHICLE;
-        }else if(model.getWeapon()==Weapon.mortar() && squadType!=SquadType.ARMORED_VEHICLE && squadType!=SquadType.ANTI_TANK_GUN){
-            squadType = SquadType.MORTAR_TEAM;
-        }else if(model.getWeapon()==Weapon.mg42() && squadType!=SquadType.ARMORED_VEHICLE && squadType!=SquadType.ANTI_TANK_GUN){
-            squadType = SquadType.MG42_TEAM;
-        }
-        if(expanded){
-            return squadType;
-        }
-
-        if(this instanceof CommandingOfficer){
-            for(Commandable c:((CommandingOfficer)this).getCharactersUnderCommand()){
-                squadType = c.getSquadType(squadType, false);
-            }
-        }
+    public SquadType getSquadType() {
         return squadType;
     }
     
@@ -776,16 +760,13 @@ public abstract class GameCharacterNode<T extends GameCharacterControl> extends 
         return this;
     }
     
-    public Vector3f getBustTranslation() {
-        return model.getBustTranslation();
-    }
     public void setVersion(long version) {
         this.version = version;
     }
     
     public abstract boolean isControledLocaly();
 
-    public abstract void checkForNewObjectives(Map<String, String> objectives) throws IOException, ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException ;
+    public abstract void  checkForNewObjectives(Map<String, String> objectives) throws IOException, ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException ;
 
     public abstract boolean isControledRemotely() ;
 
@@ -794,16 +775,6 @@ public abstract class GameCharacterNode<T extends GameCharacterControl> extends 
     public abstract BehaviorControler getBehaviourControler();
 
     public abstract EnemyActivityReport getEnemyActivity();
-
-    public void makeAbstract(Spatial stickFigure) {
-        geometry.removeFromParent();
-        characterNode.attachChild(stickFigure);
-    }
-
-    public void makeUnAbstracted(Spatial stickFigure) {
-        stickFigure.removeFromParent();
-        characterNode.attachChild(geometry);
-    }
 
     public Vector3f getAimingDirection() {
         return getPlayerDirection();

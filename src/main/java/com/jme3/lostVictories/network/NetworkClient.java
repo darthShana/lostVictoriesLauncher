@@ -15,6 +15,8 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 
 import java.nio.ByteBuffer;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -187,11 +189,13 @@ public class NetworkClient {
 
     private UpdateCharactersRequest convertToCharacterMessage(com.jme3.lostVictories.network.messages.CharacterMessage cm, UUID avatar, long l) {
 
+        Set<String> completedObjectives = new HashSet<>(cm.getCompletedObjectives());
         CharacterMessage.Builder characterBuilder = CharacterMessage.newBuilder()
                 .setId(bytes(cm.getId()))
                 .setLocation(cm.getLocation().toMessage())
                 .setOrientation(cm.getOrientation().toMessage())
-                .putAllObjectives(cm.getObjectives()).addAllCompletedObjectives(cm.getCompletedObjectives().stream().map(oid-> bytes(UUID.fromString(oid))).collect(Collectors.toSet()))
+                .putAllObjectives(cm.getObjectives())
+                .addAllCompletedObjectives(completedObjectives.stream().map(oid-> bytes(UUID.fromString(oid))).collect(Collectors.toSet()))
                 .setDead(cm.isDead())
                 .setCreationTime(cm.getCreationTime())
                 .setEngineDamaged(cm.hasEngineDamage())

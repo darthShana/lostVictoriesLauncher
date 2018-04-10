@@ -13,6 +13,7 @@ import com.jme3.lostVictories.Country;
 import com.jme3.lostVictories.characters.blenderModels.BlenderModel;
 import com.jme3.lostVictories.characters.weapons.Weapon;
 import com.jme3.lostVictories.effects.ParticleManager;
+import com.jme3.lostVictories.network.messages.SquadType;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.Node;
@@ -30,8 +31,8 @@ public class HeerCaptain extends Soldier implements CommandingOfficer{
 
     List<Commandable> charactersToCommand = new ArrayList<>();
     
-    public HeerCaptain(UUID id, Node player, Country country, CommandingOfficer commandingOfficer, Vector3f position, Vector3f rotation, Node rootNode, BulletAppState bulletAppState, CharcterParticleEmitter characterParticleEmitters, ParticleManager particleManager, NavigationProvider navMeshPathfinder, AssetManager assetManager, BlenderModel m, BehaviorControler behaviorControler, ActorRef shootssFiredListener) {
-        super(id, player, country, commandingOfficer, position, rotation, rootNode, bulletAppState, characterParticleEmitters, particleManager, navMeshPathfinder, assetManager, m, behaviorControler, shootssFiredListener);
+    public HeerCaptain(UUID id, Node player, Country country, CommandingOfficer commandingOfficer, Vector3f position, Vector3f rotation, SquadType squadType, Node rootNode, BulletAppState bulletAppState, CharcterParticleEmitter characterParticleEmitters, ParticleManager particleManager, NavigationProvider navMeshPathfinder, AssetManager assetManager, BlenderModel m, BehaviorControler behaviorControler, ActorRef shootssFiredListener) {
+        super(id, player, country, commandingOfficer, position, rotation, squadType, rootNode, bulletAppState, characterParticleEmitters, particleManager, navMeshPathfinder, assetManager, m, behaviorControler, shootssFiredListener);
     }
 
     public List<Commandable> getCharactersUnderCommand() {

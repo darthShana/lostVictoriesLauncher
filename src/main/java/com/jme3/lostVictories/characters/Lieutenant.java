@@ -31,8 +31,8 @@ public class Lieutenant extends Soldier implements CommandingOfficer{
 
     List<Commandable> charactersToCommand = new ArrayList<>();
 
-    public Lieutenant(UUID id, Node model, Country country, CommandingOfficer commandingOfficer, Vector3f worldCoodinates, Vector3f rotation, Node rootNode, BulletAppState bulletAppState, CharcterParticleEmitter emitter, ParticleManager particleManager, NavigationProvider pathFinder, AssetManager assetManager, BlenderModel m, BehaviorControler behaviorControler, ActorRef shootssFiredListener) {
-        super(id, model, country, commandingOfficer, worldCoodinates, rotation, rootNode, bulletAppState, emitter, particleManager, pathFinder, assetManager, m, behaviorControler, shootssFiredListener);
+    public Lieutenant(UUID id, Node model, Country country, CommandingOfficer commandingOfficer, Vector3f worldCoodinates, Vector3f rotation, SquadType squadType, Node rootNode, BulletAppState bulletAppState, CharcterParticleEmitter emitter, ParticleManager particleManager, NavigationProvider pathFinder, AssetManager assetManager, BlenderModel m, BehaviorControler behaviorControler, ActorRef shootssFiredListener) {
+        super(id, model, country, commandingOfficer, worldCoodinates, rotation, squadType, rootNode, bulletAppState, emitter, particleManager, pathFinder, assetManager, m, behaviorControler, shootssFiredListener);
     }
     
     public List<Commandable> getCharactersUnderCommand() {
@@ -65,7 +65,7 @@ public class Lieutenant extends Soldier implements CommandingOfficer{
 
     public CadetCorporal findWithNoEquipment() {
         for(Commandable n: getCharactersUnderCommand()){
-            final SquadType squadType = n.getSquadType(SquadType.RIFLE_TEAM, false);
+            final SquadType squadType = n.getSquadType();
             if(n instanceof CadetCorporal && squadType!=SquadType.ANTI_TANK_GUN && squadType!=SquadType.ARMORED_VEHICLE){
                 return (CadetCorporal) n;
             }

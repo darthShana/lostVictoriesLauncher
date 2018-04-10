@@ -16,18 +16,17 @@ import java.util.Set;
  */
 public interface CommandingOfficer extends Commandable{
 
-    public List<Commandable> getCharactersUnderCommand();
+    List<Commandable> getCharactersUnderCommand();
 
-    public void addCharactersUnderCommand(Set<Commandable> cc);
-    public void addCharactersUnderCommand(Commandable c);
+    void addCharactersUnderCommand(Set<Commandable> cc);
+    void addCharactersUnderCommand(Commandable c);
     
-    public EnemyActivityReport getEnemyActivity();
 
-    public void removeCharacterUnderCommand(Commandable aThis);
+    void removeCharacterUnderCommand(Commandable aThis);
 
-    public void removeAllUnits();
+    void removeAllUnits();
 
-    public boolean isTeam(Weapon... weapons);
+    boolean isTeam(Weapon... weapons);
 
     
 }

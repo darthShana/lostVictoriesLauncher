@@ -84,9 +84,7 @@ import static com.jme3.lostVictories.characters.RemoteBehaviourControler.MAPPER;
             }else{
                 return null;
             }
-
         }
-
 
         if(lastKnownPossition !=null && WorldMap.isClose(character.getLocalTranslation(), lastKnownPossition, .2f)){
             lastKnownPossitionCount++;

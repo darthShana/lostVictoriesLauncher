@@ -21,13 +21,13 @@ import com.jme3.scene.Node;
 public class GameObjectNode extends Node{
 
     public GameObjectNode(Node n, BulletAppState bulletAppState, int mass, boolean movable, boolean fitToShape) {
-        final Vector3f possition = new Vector3f(n.getLocalTranslation());
+        final Vector3f position = new Vector3f(n.getLocalTranslation());
         
         n.setLocalTranslation(Vector3f.ZERO);
         attachChild(n);
-        setLocalTranslation(possition);
+        setLocalTranslation(position);
         
-        CollisionShape shape = null;
+        CollisionShape shape;
         if(fitToShape){
             shape = CollisionShapeFactory.createMeshShape(n);
         }else{

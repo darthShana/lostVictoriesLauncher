@@ -33,6 +33,7 @@ public class WorldMap {
     public static Rectangle mapBounds = new Rectangle(-512, -512, 1024, 1024);
     
     public static final int AUTO_ATTACK_RANGE = 15;
+    public static final int LINE_OF_SIGHT = 125;
     public static final float CHARACTER_SIZE = .5f;
     public static final int BLAST_RANGE = 2;
 
@@ -56,8 +57,8 @@ public class WorldMap {
     private volatile BiDirectionalMap<GameObjectNode> objects = new BiDirectionalMap<GameObjectNode>(mapBounds);
 
     private final Set<GameStructureNode> structures = new HashSet<>();
-    private final Map<UUID, GameHouseNode> houses = new HashMap<UUID, GameHouseNode>();
-    private final Map<UUID, UnclaimedEquipmentNode> unclaimedEquipment = new HashMap<UUID, UnclaimedEquipmentNode>();
+    private final Map<UUID, GameHouseNode> houses = new HashMap<>();
+    private final Map<UUID, UnclaimedEquipmentNode> unclaimedEquipment = new HashMap<>();
     Set<GameSector> gameSectors;
 
     private WorldMap(Node traversableSurfaces, ActorSystem actorSystem) {
@@ -81,8 +82,11 @@ public class WorldMap {
     }
 
     public List<GameCharacterNode> getCharactersInAutoAttackRange(GameCharacterNode character) {
-        final Vector3f t = character.getLocalTranslation();
-        return getCharactersInRange(t, AUTO_ATTACK_RANGE);
+        return getCharactersInRange(character.getLocalTranslation(), AUTO_ATTACK_RANGE);
+    }
+
+    public List<GameCharacterNode> getCharactersInLineOfSightRange(GameCharacterNode character){
+        return getCharactersInRange(character.getLocalTranslation(), LINE_OF_SIGHT);
     }
     
     public List<GameCharacterNode> getCharactersInBlastRange(Vector3f epicentre){
@@ -95,12 +99,8 @@ public class WorldMap {
     }
     
     public GameCharacterNode getCharacter(UUID id){
-        for(GameCharacterNode c:characters.allCharacters()){
-            if(c.getIdentity().equals(id)){
-                return c;
-            }
-        }
-        return null;
+        Optional<? extends GameCharacterNode> any = characters.allCharacters().stream().filter(c -> c.getIdentity().equals(id)).findAny();
+        return any.isPresent()?any.get():null;
     }
 
     public void removeCharacter(GameCharacterNode c) {
@@ -334,6 +334,7 @@ public class WorldMap {
             set.addAll(getAllHouses());
             set.addAll(getAllBunkers());
             gameSectors = calculateGameSector(set);
+            gameSectors.forEach(d-> System.out.println("defences:"+d.getDefences().size()));
         }
         return gameSectors;
     }
