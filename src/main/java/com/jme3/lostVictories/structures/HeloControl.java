@@ -24,9 +24,10 @@ import static com.jme3.lostVictories.minimap.MinimapNode.x_rot;
  * @author dharshanar
  */
 public class HeloControl extends AbstractControl {
+    private static final float MAX_SIZE = 1;
     private final AssetManager assetManager;
     Geometry helo;
-    float scale = 1;
+    float scale = HeloControl.MAX_SIZE;
     private long lastUpdate;
     private final LostVictory app;
 
@@ -47,12 +48,12 @@ public class HeloControl extends AbstractControl {
                 mark_mat.setColor("Color", ColorRGBA.White);
                 helo.setMaterial(mark_mat);
                 helo.setLocalRotation(x_rot);
-                helo.setLocalTranslation(0, 0, 1.4f);
+                helo.setLocalTranslation(0, 0, 0);
                 ((Node)spatial).attachChild(helo);
             }else{
-                scale = scale - .025f;
+                scale = scale - (HeloControl.MAX_SIZE * .025f);
                 if(scale<=0){
-                    scale = 1;
+                    scale = HeloControl.MAX_SIZE;
                 }
                 helo.setLocalScale(scale, scale, 1);
             }
