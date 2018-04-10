@@ -16,6 +16,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.terrain.geomipmap.TerrainQuad;
+import com.lostVictories.api.BunkerMessage;
 import com.lostVictories.api.LostVictoryCheckout;
 import jme3tools.optimize.GeometryBatchFactory;
 
@@ -63,7 +64,8 @@ public class StructureLoader {
         structureTypes.add("Models/Structures/house2.j3o");
         structureTypes.add("Models/Structures/house_1.j3o");
         structureTypes.add("Models/Structures/cottage.j3o");
-        
+        structureTypes.add("Models/Structures/Bunker.j3o");
+
         Set<String> otherStructures = new HashSet<>();
         otherStructures.add("church1");
         otherStructures.add("Models/Structures/fountain1.j3o");
@@ -85,9 +87,6 @@ public class StructureLoader {
         
         for(Spatial s: sceneGraph.getChildren()){
             if(structureTypes.contains(s.getName())){
-                Vector3f l = s.getLocalTranslation();
-                Quaternion q = s.getLocalRotation();
-//                System.out.println("houses.add(new HouseMessage(\""+s.getName()+"\", new Vector("+l.x+"f, "+l.y+"f, "+l.z+"f), Quaternion("+q.getX()+"f, "+q.getY()+"f, "+q.getZ()+"f, "+q.getW()+"f)));");
                 s.removeFromParent();
             }else if(otherStructures.contains(s.getName())){
                 s.removeFromParent();
@@ -98,6 +97,7 @@ public class StructureLoader {
         }
 
         checkout.getHousesList().stream().map(h->new HouseMessage(h)).forEach(h->addHouse(h, worldMap));
+        checkout.getBunkersList().forEach(b->addBunker(b, worldMap));
         
 
 
@@ -137,6 +137,19 @@ public class StructureLoader {
         h.updateOwership(house);
         return h;        
     }
+
+    public GameBunkerNode addBunker(BunkerMessage message, WorldMap worldMap){
+        Node node = (Node)assetManager.loadModel("Models/Structures/Bunker.j3o");
+        Vector3f l = new Vector3f(message.getLocation().getX(), message.getLocation().getY(), message.getLocation().getZ());
+        Quaternion r = new Quaternion(message.getRotation().getX(), message.getRotation().getY(), message.getRotation().getZ(), message.getRotation().getW());
+        node.setLocalTranslation(l);
+        node.setLocalRotation(r);
+
+        GameBunkerNode b = new GameBunkerNode(node, this.bulletAppState, new CollisionShapeFactoryProvider());
+        sceneGraph.attachChild(b);
+        worldMap.addStructure(b);
+        return b;
+    }
     
     private GameTargetNode addShootingTarget(Vector3f l, Node sceneGraph, WorldMap worldMap){
         final Node t = (Node)assetManager.loadModel("Models/Structures/target.j3o");
@@ -152,7 +165,7 @@ public class StructureLoader {
         GameStructureNode h = new GameStructureNode(structure, this.bulletAppState, new CollisionShapeFactoryProvider());
         worldMap.addStructure(h);
 
-        return h;        
+        return h;
     }
 
     private Map getFlagMap(LostVictory app) {

@@ -19,6 +19,7 @@ import com.jme3.lostVictories.characters.blenderModels.VehicleBlenderModel;
 import com.jme3.lostVictories.characters.physicsControl.BetterVehicleControl;
 import com.jme3.lostVictories.effects.ParticleManager;
 import com.jme3.lostVictories.network.messages.CharacterMessage;
+import com.jme3.lostVictories.network.messages.SquadType;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
@@ -45,8 +46,8 @@ public class HalfTrackNode extends GameVehicleNode{
     private MOVEMENT_MODE movement;
 
 
-    public HalfTrackNode(UUID id, Node model, Map<Country, Node> operator, Country country, CommandingOfficer commandingOfficer, Vector3f worldCoodinates, Vector3f rotation, Node rootNode, BulletAppState bulletAppState, CharcterParticleEmitter emitter, ParticleManager particleManager, NavigationProvider pathFinder, AssetManager assetManager, VehicleBlenderModel m, BehaviorControler behaviorControler, ActorRef shootsFiredListener) {
-        super(id, model, operator, country, commandingOfficer, worldCoodinates, rotation, rootNode, bulletAppState, emitter, particleManager, pathFinder, assetManager, m, behaviorControler, shootsFiredListener);
+    public HalfTrackNode(UUID id, Node model, Map<Country, Node> operator, Country country, CommandingOfficer commandingOfficer, Vector3f worldCoodinates, Vector3f rotation, SquadType squadType, Node rootNode, BulletAppState bulletAppState, CharcterParticleEmitter emitter, ParticleManager particleManager, NavigationProvider pathFinder, AssetManager assetManager, VehicleBlenderModel m, BehaviorControler behaviorControler, ActorRef shootsFiredListener) {
+        super(id, model, operator, country, commandingOfficer, worldCoodinates, rotation, squadType, rootNode, bulletAppState, emitter, particleManager, pathFinder, assetManager, m, behaviorControler, shootsFiredListener);
         this.smokeEmiter = emitter.getSmokeEmiter();
         Node n = new Node();
         n.attachChild(this.smokeEmiter);

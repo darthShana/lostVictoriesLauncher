@@ -121,17 +121,8 @@ public class VirtualGameCharacterNode implements Commandable, CommandingOfficer{
         return Weapon.get(msg.getWeapon());
     }
 
-    public SquadType getSquadType(SquadType current, boolean expanded) {
-        if(msg.getSquadType()==SquadType.ANTI_TANK_GUN){
-            current = SquadType.ANTI_TANK_GUN;
-        }else if(msg.getSquadType()==SquadType.ARMORED_VEHICLE && current!=SquadType.ANTI_TANK_GUN){
-            current = SquadType.ARMORED_VEHICLE;
-        }else if(msg.getSquadType()==SquadType.MORTAR_TEAM && current!=SquadType.ARMORED_VEHICLE && current!=SquadType.ANTI_TANK_GUN){
-            current = SquadType.MORTAR_TEAM;
-        }else if(msg.getSquadType()==SquadType.MG42_TEAM && current!=SquadType.ARMORED_VEHICLE && current!=SquadType.ANTI_TANK_GUN){
-            current = SquadType.MG42_TEAM;
-        }
-        return current;
+    public SquadType getSquadType() {
+        return msg.getSquadType();
     }
 
     public boolean isHuman() {
@@ -149,18 +140,10 @@ public class VirtualGameCharacterNode implements Commandable, CommandingOfficer{
     public boolean isAttacking() {
        return msg.isAttacking();
     }
-    
-    
 
     public Country getCountry() {
         return Country.valueOf(msg.getCountry().name());
     }
-    
-    
-
-    
-
-    
 
 
     public void updateMessage(CharacterMessage get) {

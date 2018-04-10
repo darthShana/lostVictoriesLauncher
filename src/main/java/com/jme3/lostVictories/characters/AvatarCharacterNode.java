@@ -21,6 +21,7 @@ import com.jme3.lostVictories.characters.weapons.Weapon;
 import com.jme3.lostVictories.effects.ParticleManager;
 import com.jme3.lostVictories.network.messages.CharacterMessage;
 import com.jme3.lostVictories.network.messages.CharacterType;
+import com.jme3.lostVictories.network.messages.SquadType;
 import com.jme3.lostVictories.network.messages.actions.Action;
 import com.jme3.lostVictories.objectives.CompleteBootCamp;
 import com.jme3.lostVictories.objectives.EnemyActivityReport;
@@ -53,8 +54,8 @@ public class AvatarCharacterNode extends GameCharacterNode<BetterSoldierControl>
     private ManualControlByAvatar boaredVehicleControl;
     protected Vector3f fpsPossition = new Vector3f(0, 3f, 0);
 
-    public AvatarCharacterNode(UUID id, Node model, Country country, CommandingOfficer commandingOfficer, Vector3f worldCoodinates, Vector3f rotation, Node rootNode, BulletAppState bulletAppState, CharcterParticleEmitter particleEmitter, ParticleManager particleManager, NavigationProvider pathFinder, AssetManager assetManager, BlenderModel m, Rank rank, HeadsUpDisplayAppState hud, ActorRef shootssFiredListener) {
-        super(id, model, country, commandingOfficer, worldCoodinates, rotation, rootNode, bulletAppState, particleEmitter, particleManager, pathFinder, assetManager, m, shootssFiredListener);
+    public AvatarCharacterNode(UUID id, Node model, Country country, CommandingOfficer commandingOfficer, Vector3f worldCoodinates, Vector3f rotation, SquadType squadType, Node rootNode, BulletAppState bulletAppState, CharcterParticleEmitter particleEmitter, ParticleManager particleManager, NavigationProvider pathFinder, AssetManager assetManager, BlenderModel m, Rank rank, HeadsUpDisplayAppState hud, ActorRef shootssFiredListener) {
+        super(id, model, country, commandingOfficer, worldCoodinates, rotation, squadType, rootNode, bulletAppState, particleEmitter, particleManager, pathFinder, assetManager, m, shootssFiredListener);
         this.rank = rank;
         this.hud = hud;
     }

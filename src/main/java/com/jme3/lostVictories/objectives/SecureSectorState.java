@@ -35,7 +35,7 @@ enum SecureSectorState {
 
         SecureSectorState transition(Lieutenant c, WorldMap worldMap, SecureSector objective){
             if(objective.boundary.contains(new Point2D.Float(c.getLocation().x, c.getLocation().z))){
-                return DEFEND_SECTOR;
+                return CAPTURE_HOUSES;
             }
             if(!c.getEnemyActivity().activity().isEmpty()){
                 return ATTACK_TARGET;
@@ -196,7 +196,7 @@ enum SecureSectorState {
             for(Commandable unit:c.getCharactersUnderCommand()){
                 if(unit.getRank()==Rank.CADET_CORPORAL && !objective.issuedOrders.containsKey(unit.getIdentity())){
                     Objective ab;
-                    if(unit.getSquadType(SquadType.RIFLE_TEAM, true)==SquadType.MORTAR_TEAM){
+                    if(unit.getSquadType()==SquadType.MORTAR_TEAM){
                         ab = new BombardTargets(enemyActivity.activity(), rootNode);
                     }else{
                         ab = new AttackBoggies(enemyActivity.activity(), rootNode);

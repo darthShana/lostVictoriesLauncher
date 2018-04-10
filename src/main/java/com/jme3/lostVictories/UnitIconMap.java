@@ -13,19 +13,23 @@ import com.jme3.lostVictories.network.messages.SquadType;
  */
 class UnitIconMap {
 
-    static String getIcon(Commandable n, boolean expanded, boolean selected) {
+    static String getIcon(Commandable n, boolean selected) {
         StringBuilder s = new StringBuilder("Interface/Icons_lighter_64/");
-        SquadType squadType = n.getSquadType(SquadType.RIFLE_TEAM, expanded);
+        SquadType squadType = n.getSquadType();
         
         
         if(squadType == SquadType.ANTI_TANK_GUN){
             s.append("at_gun_icon_");
-        } else if(squadType == SquadType.ARMORED_VEHICLE){
+        } else if(squadType == SquadType.TANK_SQUAD){
+            s.append("tank_");
+        }else if(squadType == SquadType.ARMORED_VEHICLE){
             s.append("amored_car_icon_");
         } else if(squadType == SquadType.MORTAR_TEAM){
             s.append("mortar_icon_");
         }else if(squadType == SquadType.MG42_TEAM){
             s.append("mg42_icon_");
+        }else if(squadType == SquadType.BAZOOKA_TEAM){
+            s.append("bazooka_");
         }else{
             s.append("rifle_icon_");
         }

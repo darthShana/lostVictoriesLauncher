@@ -42,52 +42,46 @@ class TerrainLoader {
     public Node loadTerrain(AssetManager assetManager, BulletAppState bulletAppState, Camera camera, String scene, Node traversableSurfaces, WorldMap worldMap) {
         final Node loadModel = (Node) assetManager.loadModel(scene);
 
-        
-        Set<GameObjectNode> movableObjects = new HashSet<>();
-        Set<GameObjectNode> unMovable = new HashSet<>();
+        Node obstacles = new Node();
+
         for(Spatial obj:loadModel.getChildren()){
             if("Models/Objects/bench.j3o".equals(obj.getName())){
                 GameObjectNode g = new GameObjectNode((Node) obj, bulletAppState, 0, false, false);
-                unMovable.add(g);
+                worldMap.addObject(g);
                 obj.removeFromParent();
+                obstacles.attachChild(obj);
             }
             if("Models/Objects/OldLampPost.j3o".equals(obj.getName())){
                 GameObjectNode g = new GameObjectNode((Node) obj, bulletAppState, 0, false, true);
-                unMovable.add(g);
+                worldMap.addObject(g);
                 obj.removeFromParent();
+                obstacles.attachChild(obj);
             }
             if("Models/Structures/Well.j3o".equals(obj.getName())){
                 GameObjectNode g = new GameObjectNode((Node) obj, bulletAppState, 0, false, false);
-                unMovable.add(g);
+                worldMap.addObject(g);
                 obj.removeFromParent();
-            }
-            if("Models/Structures/Dugout_.plain.j3o".equals(obj.getName())){
-
-//                Vector3f t = obj.getLocalTranslation();
-//                Quaternion r = obj.getLocalRotation();
-//                System.out.println("houses.add(new BunkerMessage(UUID.randomUUID(), new Vector("+ t.x+"f, "+t.y+"f, "+t.z+"f), new Quaternion("+ r.getX()+"f, "+r.getY()+"f, "+r.getZ()+"f, "+r.getW() +"f)));");
-
-                GameBunkerNode g = new GameBunkerNode((Node) obj, bulletAppState, new CollisionShapeFactoryProvider());
-                worldMap.addStructure(g);
-                traversableSurfaces.attachChild(g);
+                obstacles.attachChild(obj);
             }
             if("Models/Objects/wagon.j3o".equals(obj.getName())){
                 GameObjectNode g = new GameObjectNode((Node) obj, bulletAppState, 0, false, false);
-                movableObjects.add(g);
+                worldMap.addObject(g);
                 obj.removeFromParent();
+                obstacles.attachChild(obj);
             }
             if("Models/Objects/containers_1.j3o".equals(obj.getName())){
                 GameObjectNode g = new GameObjectNode((Node) obj, bulletAppState, 0, false, false);
-                movableObjects.add(g);
+                worldMap.addObject(g);
                 obj.removeFromParent();
+                obstacles.attachChild(obj);
             }
             if("Models/Structures/ponte bridge.j3o".equals(obj.getName()) || "Models/Structures/bridge_short.j3o".equals(obj.getName())){
                 new GameObjectNode((Node)obj, bulletAppState, 0, false, true);
                 obj.removeFromParent();
                 traversableSurfaces.attachChild(obj);
             }
-            
-            
+
+
         }
         
         final Spatial navMash = loadModel.getChild("NavMesh");
@@ -107,15 +101,7 @@ class TerrainLoader {
         terrain.addControl(landscape);
         loadModel.attachChild(traversableSurfaces);
         loadModel.attachChild(navMash);
-        
-        for(GameObjectNode n: movableObjects){
-            loadModel.attachChild(n);
-            worldMap.addObject(n);
-        }
-        for(GameObjectNode n: unMovable){
-            loadModel.attachChild(n);
-            worldMap.addObject(n);
-        }
+        loadModel.attachChild(obstacles);
         
         bulletAppState.getPhysicsSpace().add(landscape);
         return loadModel;

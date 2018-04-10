@@ -54,7 +54,7 @@ public class Cover extends AbstractCoverObjective<AICharacterNode> implements Pa
     }
 
     public boolean clashesWith(Objective objective) {
-        return objective instanceof AttackAndTakeCoverObjective || objective instanceof TravelObjective;
+        return !(objective instanceof PassiveObjective);
     }
     
     @Override

@@ -107,10 +107,6 @@ public class CharacterUpdateMessageHandler {
             }
         }
 
-
-
-
-
     }
 
     long messagesReceivedCounter;
@@ -126,7 +122,7 @@ public class CharacterUpdateMessageHandler {
     }
 
     private boolean hasSameUnits(CommandingOfficer c, Set<UUID> unitsUnderCommand, WorldMap worldMap, Map<UUID, CharacterMessage> relatedCharacters) {
-        Set<UUID> localSquad = new HashSet<UUID>();
+        Set<UUID> localSquad = new HashSet<>();
         for(Commandable u:c.getCharactersUnderCommand()){
             localSquad.add(u.getIdentity());
             if(!unitsUnderCommand.contains(u.getIdentity())){
@@ -169,6 +165,7 @@ public class CharacterUpdateMessageHandler {
 
         if(n instanceof CommandingOfficer && !hasSameUnits((CommandingOfficer) n, cMessage.getUnitsUnderCommand(), worldMap, relatedCharacters)){
             ((CommandingOfficer)n).removeAllUnits();
+
             for(UUID u:cMessage.getUnitsUnderCommand()){
                 GameCharacterNode unit = worldMap.getCharacter(u);
                 if(unit!=null){

@@ -61,7 +61,7 @@ public interface Commandable {
 
     public Rank getRank();
 
-    public SquadType getSquadType(SquadType squadType, boolean expanded);
+    public SquadType getSquadType();
 
     public Country getCountry();
 

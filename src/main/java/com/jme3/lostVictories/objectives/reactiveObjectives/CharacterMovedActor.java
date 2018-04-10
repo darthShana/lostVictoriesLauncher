@@ -31,11 +31,26 @@ public class CharacterMovedActor extends AbstractActor {
         return receiveBuilder().match(LocateCharacterRequest.class, lcr -> {
             GameCharacterNode character = lcr.getCharacter();
             map.updateCharacterLocation(character);
+
+            if(character instanceof AICharacterNode) {
+                List<GameCharacterNode> enemyCharactersInDirection = map.getEnemyCharactersInDirection(character, character.getAimingDirection(), character.getMaxRange());
+                if(!enemyCharactersInDirection.isEmpty()){
+                    proximityAttackRouter.tell(new CharacterMovedAction((AICharacterNode) character, enemyCharactersInDirection.get(0)), ActorRef.noSender());
+                }
+            }
+
             List<GameCharacterNode> attackRange = map.getCharactersInAutoAttackRange(character);
-            attackRange.addAll(map.getEnemyCharactersInDirection(character, character.getAimingDirection(), character.getWeapon().getMaxRange()));
             attackRange.stream()
                     .filter(c->!c.isAlliedWith(character))
                     .filter(c->!c.isFirering())
+                    .filter(c->c instanceof AICharacterNode)
+                    .map(c->(AICharacterNode)c)
+                    .forEach(c->proximityAttackRouter.tell(new CharacterMovedAction(c, character), ActorRef.noSender()));
+
+            map.getCharactersInLineOfSightRange(character).stream()
+                    .filter(c->!c.isAlliedWith(character))
+                    .filter(c->!c.isFirering())
+                    .filter(c->!attackRange.contains(c))
                     .filter(c->c instanceof AICharacterNode)
                     .map(c->(AICharacterNode)c)
                     .forEach(c->proximityAttackRouter.tell(new CharacterMovedAction(c, character), ActorRef.noSender()));

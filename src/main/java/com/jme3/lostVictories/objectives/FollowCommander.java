@@ -40,6 +40,7 @@ public class FollowCommander extends Objective<AICharacterNode> {
     }
 
     public AIAction planObjective(AICharacterNode character, WorldMap worldMap) {
+
         if(character.getCommandingOfficer()==null){
             isComplete = true;
             return new StopAction();

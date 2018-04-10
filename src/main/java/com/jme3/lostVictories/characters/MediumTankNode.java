@@ -18,6 +18,7 @@ import com.jme3.lostVictories.characters.blenderModels.VehicleBlenderModel;
 import com.jme3.lostVictories.characters.physicsControl.BetterTankControl;
 import com.jme3.lostVictories.characters.physicsControl.BetterVehicleControl;
 import com.jme3.lostVictories.effects.ParticleManager;
+import com.jme3.lostVictories.network.messages.SquadType;
 import com.jme3.lostVictories.objectives.RotateTurretAndShoot;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
@@ -35,8 +36,8 @@ public class MediumTankNode extends GameVehicleNode{
     private final Node turretModel;
     private GameAnimChannel turretChannel;
 
-    public MediumTankNode(UUID id, Node chassisModel, Node turretModel, Map<Country, Node> operator, Country country, CommandingOfficer commandingOfficer, Vector3f worldCoodinates, Vector3f rotation, Node rootNode, BulletAppState bulletAppState, CharcterParticleEmitter emitter, ParticleManager particleManager, NavigationProvider pathFinder, AssetManager assetManager, VehicleBlenderModel m, BehaviorControler behaviorControler, ActorRef shootsFiredListener) {
-        super(id, chassisModel, operator, country, commandingOfficer, worldCoodinates, rotation, rootNode, bulletAppState, emitter, particleManager, pathFinder, assetManager, m, behaviorControler, shootsFiredListener);
+    public MediumTankNode(UUID id, Node chassisModel, Node turretModel, Map<Country, Node> operator, Country country, CommandingOfficer commandingOfficer, Vector3f worldCoodinates, Vector3f rotation, SquadType squadType, Node rootNode, BulletAppState bulletAppState, CharcterParticleEmitter emitter, ParticleManager particleManager, NavigationProvider pathFinder, AssetManager assetManager, VehicleBlenderModel m, BehaviorControler behaviorControler, ActorRef shootsFiredListener) {
+        super(id, chassisModel, operator, country, commandingOfficer, worldCoodinates, rotation, squadType, rootNode, bulletAppState, emitter, particleManager, pathFinder, assetManager, m, behaviorControler, shootsFiredListener);
         this.turretModel = turretModel;
         final AnimControl control1 = turretModel.getControl(AnimControl.class);
         if(control1!=null){

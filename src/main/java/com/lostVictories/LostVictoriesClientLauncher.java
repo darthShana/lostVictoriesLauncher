@@ -43,8 +43,8 @@ public class LostVictoriesClientLauncher {
             playerID = env.get("player_id");
             serverIP = env.get("server_ip");
             if(playerID==null){
-//                playerID = "2fbe421f-f701-49c9-a0d4-abb0fa904204"; //german
-                   playerID = "d993932f-a185-4a6f-8d86-4ef6e2c5ff95"; //american 1
+                playerID = "2fbe421f-f701-49c9-a0d4-abb0fa904204"; //german
+//                   playerID = "d993932f-a185-4a6f-8d86-4ef6e2c5ff95"; //american 1
                 //playerID = "844fd93d-e65a-438a-82c5-dab9ad58e854"; //american 2
             }
             if(serverIP == null){

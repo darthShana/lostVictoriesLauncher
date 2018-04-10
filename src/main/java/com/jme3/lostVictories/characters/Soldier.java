@@ -15,6 +15,7 @@ import com.jme3.lostVictories.WorldMap;
 import com.jme3.lostVictories.characters.blenderModels.BlenderModel;
 import com.jme3.lostVictories.characters.physicsControl.BetterSoldierControl;
 import com.jme3.lostVictories.effects.ParticleManager;
+import com.jme3.lostVictories.network.messages.SquadType;
 import com.jme3.lostVictories.objectives.*;
 import com.jme3.lostVictories.structures.Pickable;
 import com.jme3.math.Vector3f;
@@ -35,8 +36,8 @@ public abstract class Soldier extends AICharacterNode<BetterSoldierControl>{
     private MoveMode currentMoveMode;
     private Long moveModeToggleTime;
     
-    public Soldier(UUID id, Node model, Country country, CommandingOfficer commandingOfficer, Vector3f worldCoodinates, Vector3f rotation, Node rootNode, BulletAppState bulletAppState, CharcterParticleEmitter emitter, ParticleManager particleManager, NavigationProvider pathFinder, AssetManager assetManager, BlenderModel m, BehaviorControler behaviorControler, ActorRef shootssFiredListener) {
-        super(id, model, country, commandingOfficer, worldCoodinates, rotation, rootNode, bulletAppState, emitter, particleManager, pathFinder, assetManager, m, behaviorControler, shootssFiredListener);
+    public Soldier(UUID id, Node model, Country country, CommandingOfficer commandingOfficer, Vector3f worldCoodinates, Vector3f rotation, SquadType squadType, Node rootNode, BulletAppState bulletAppState, CharcterParticleEmitter emitter, ParticleManager particleManager, NavigationProvider pathFinder, AssetManager assetManager, BlenderModel m, BehaviorControler behaviorControler, ActorRef shootssFiredListener) {
+        super(id, model, country, commandingOfficer, worldCoodinates, rotation, squadType, rootNode, bulletAppState, emitter, particleManager, pathFinder, assetManager, m, behaviorControler, shootssFiredListener);
         
     }
     
