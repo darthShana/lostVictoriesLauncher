@@ -111,7 +111,10 @@ public class GameHouseNode extends GameStructureNode{
         if("Models/Structures/casaMedieval.j3o".equals(houseType)){
             flagPost.setLocalTranslation(getLocalTranslation().add(0, 0, 0));
         }else if("Models/Structures/house_1.j3o".equals(houseType)){
-            flagPost.setLocalTranslation(getLocalTranslation().add(3, 0, 3));
+            Vector3f flagPostOffsetLocal = new Vector3f(0.0f, 2.51686f, 2.69391f);
+            Vector3f flagPostOffset = new Vector3f();
+            getLocalTransform().transformVector(flagPostOffsetLocal, flagPostOffset);
+            flagPost.setLocalTranslation(flagPostOffset);
         }else if("Models/Structures/house2.j3o".equals(houseType)){
             flagPost.setLocalTranslation(getLocalTranslation().add(3, 0, 3));
         }else if("Models/Structures/house.j3o".equals(houseType)){
