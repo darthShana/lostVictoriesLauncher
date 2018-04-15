@@ -131,10 +131,10 @@ public class StructureLoader {
         n.setLocalRotation(house.getLocalRotation());
         Node neutralFlag = (Node)assetManager.loadModel("Models/Structures/neutralFlag.j3o");
         neutralFlag.setLocalScale(.35f);
-        neutralFlag.addControl(new HeloControl(assetManager, app));
 
         GameHouseNode h = new GameHouseNode(house.getId(), house.getType(), n, flags, neutralFlag, this.bulletAppState, new CollisionShapeFactoryProvider(), rootNode);
         h.updateOwership(house);
+        h.addControl(new HeloControl(assetManager, app));
         return h;        
     }
 

@@ -24,7 +24,7 @@ import static com.jme3.lostVictories.minimap.MinimapNode.x_rot;
  * @author dharshanar
  */
 public class HeloControl extends AbstractControl {
-    private static final float MAX_SIZE = 1;
+    private static final float MAX_SIZE = 2;
     private final AssetManager assetManager;
     Geometry helo;
     float scale = HeloControl.MAX_SIZE;
