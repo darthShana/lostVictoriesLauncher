@@ -12,6 +12,7 @@ import com.jme3.collision.CollisionResults;
 import com.jme3.lostVictories.characters.GameCharacterNode;
 import com.jme3.lostVictories.network.messages.UnClaimedEquipmentMessage;
 import com.jme3.lostVictories.network.messages.Vector;
+import com.jme3.lostVictories.objectives.GameSector;
 import com.jme3.lostVictories.objectives.reactiveObjectives.CharacterMovedActor;
 import com.jme3.lostVictories.structures.*;
 import com.jme3.math.Ray;

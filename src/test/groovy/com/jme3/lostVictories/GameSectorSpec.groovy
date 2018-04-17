@@ -1,5 +1,6 @@
 package com.jme3.lostVictories
 
+import com.jme3.lostVictories.objectives.GameSector
 import com.jme3.lostVictories.structures.GameBunkerNode
 import com.jme3.lostVictories.structures.GameHouseNode
 import spock.lang.Specification

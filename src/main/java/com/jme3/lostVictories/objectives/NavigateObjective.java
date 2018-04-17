@@ -54,7 +54,7 @@ public class NavigateObjective extends Objective<GameVehicleNode> implements Obj
     public AIAction<GameVehicleNode> planObjective(GameVehicleNode character, WorldMap worldMap) {
         if(computePath==null){
             if(path==null) {
-                path = character.getPathFinder().computePathFuture(2.5f, character.getLocalTranslation(), destination);
+                path = character.getPathFinder().computePathFuture(5f, character.getLocalTranslation(), destination);
             }
             if(path.isDone()) {
                 try {

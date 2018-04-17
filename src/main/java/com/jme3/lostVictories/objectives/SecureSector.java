@@ -9,7 +9,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.jme3.ai.navmesh.NavigationProvider;
 import com.jme3.asset.AssetManager;
-import com.jme3.lostVictories.GameSector;
 import com.jme3.lostVictories.WorldMap;
 import com.jme3.lostVictories.actions.AIAction;
 import com.jme3.lostVictories.characters.AICharacterNode;
@@ -90,6 +89,7 @@ public class SecureSector extends Objective<Lieutenant> implements MinimapPresen
     public AIAction<AICharacterNode> planObjective(final Lieutenant c, WorldMap worldMap) {
 //        MoveToSector -> CaptureHouses-> DefendSector -> AttackThreat->Retreat
         Set<UUID> units = c.getCharactersUnderCommand().stream().map(cc -> cc.getIdentity()).collect(Collectors.toSet());
+        units.add(c.getIdentity());
         issuedOrders = issuedOrders.entrySet().stream().filter(e -> units.contains(e.getKey())).collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()));
 
         AIAction<AICharacterNode> action = state.planObjective(c, worldMap, rootNode, this);
@@ -97,6 +97,7 @@ public class SecureSector extends Objective<Lieutenant> implements MinimapPresen
         if(newState!=state){
             System.out.println(c.getCountry()+" "+c.getRank()+":"+c.getIdentity()+" new state:"+newState+" houses:"+houses.size()+" loc:"+c.getLocation()+" centre:"+centre);
             attemptedHouses.clear();
+            issuedOrders.clear();
             lastState = state;
             state = newState;
         }

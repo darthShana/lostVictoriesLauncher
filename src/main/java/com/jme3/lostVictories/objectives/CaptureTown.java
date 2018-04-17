@@ -7,7 +7,6 @@ package com.jme3.lostVictories.objectives;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.jme3.ai.navmesh.NavigationProvider;
-import com.jme3.lostVictories.GameSector;
 import com.jme3.lostVictories.WorldMap;
 import com.jme3.lostVictories.actions.AIAction;
 import com.jme3.lostVictories.characters.*;
@@ -26,7 +25,7 @@ import static com.jme3.lostVictories.characters.RemoteBehaviourControler.MAPPER;
 public class CaptureTown extends Objective<Soldier>{
     private HeerCaptain character;
     private Node rootNode;
-    Map<GameSector, UUID> sectorAssignments = new HashMap<GameSector, UUID>();
+    Map<GameSector, UUID> sectorAssignments = new HashMap<>();
 
     private CaptureTown(){}
     
@@ -52,6 +51,7 @@ public class CaptureTown extends Objective<Soldier>{
             return null;
         }
 
+        sectorAssignments.entrySet().removeIf(gameSectorUUIDEntry -> !stillAround.contains(gameSectorUUIDEntry.getValue()));
         GameSector toSecure = findClosestUnsecuredGameSector(character, gameSectors, sectorAssignments);
         if(toSecure==null){
             return null;
@@ -59,11 +59,7 @@ public class CaptureTown extends Objective<Soldier>{
 
         Commandable toUse = findClossestToSector(toSecure, available);
 
-        for(Iterator<Entry<GameSector, UUID>> it = sectorAssignments.entrySet().iterator();it.hasNext();){
-            if(!stillAround.contains(it.next().getValue())){
-                it.remove();
-            }
-        }
+
 
         if(toUse!=null){
             final SecureSector secureSector = new SecureSector(toSecure.getHouses(), toSecure.getDefences(), rootNode, 10, 5, character.getLocalTranslation());

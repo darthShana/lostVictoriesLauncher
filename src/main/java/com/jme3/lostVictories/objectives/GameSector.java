@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.jme3.lostVictories;
+package com.jme3.lostVictories.objectives;
 
+import com.jme3.lostVictories.Country;
 import com.jme3.lostVictories.structures.GameBunkerNode;
 import com.jme3.lostVictories.structures.GameHouseNode;
 import com.jme3.lostVictories.structures.GameStructureNode;
@@ -42,7 +43,7 @@ public class GameSector {
         rects.addAll(neighbour.rects);
     }
 
-    boolean containsStructure(GameStructureNode house) {
+    public boolean containsStructure(GameStructureNode house) {
         for(Rectangle r:rects){
             if(r.contains(house.getLocalTranslation().x, house.getLocalTranslation().z)){
                 return true;

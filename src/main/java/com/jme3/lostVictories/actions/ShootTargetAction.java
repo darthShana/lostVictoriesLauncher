@@ -17,7 +17,7 @@ public class ShootTargetAction implements AIAction<AICharacterNode> {
 
     public ShootTargetAction(GameCharacterNode other) {
         this.other = other;
-    }  
+    }
 
     public boolean doAction(AICharacterNode character, Node rootNode, GameAnimChannel channel, float tpf) {
         if(!other.isDead()){
