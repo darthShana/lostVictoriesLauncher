@@ -109,16 +109,27 @@ public class GameHouseNode extends GameStructureNode{
     
     private void attachFlagPost(Node flagPost){
         if("Models/Structures/casaMedieval.j3o".equals(houseType)){
-            flagPost.setLocalTranslation(getLocalTranslation().add(0, 0, 0));
+            Vector3f flagPostOffsetLocal = new Vector3f(4.80618f, 4.63278f, 0.08204f);
+            Vector3f flagPostOffset = new Vector3f();
+            getLocalTransform().transformVector(flagPostOffsetLocal, flagPostOffset);
+            flagPost.setLocalTranslation(flagPostOffset);
         }else if("Models/Structures/house_1.j3o".equals(houseType)){
             Vector3f flagPostOffsetLocal = new Vector3f(0.0f, 2.51686f, 2.69391f);
             Vector3f flagPostOffset = new Vector3f();
             getLocalTransform().transformVector(flagPostOffsetLocal, flagPostOffset);
             flagPost.setLocalTranslation(flagPostOffset);
         }else if("Models/Structures/house2.j3o".equals(houseType)){
-            flagPost.setLocalTranslation(getLocalTranslation().add(3, 0, 3));
+            Vector3f flagPostOffsetLocal = new Vector3f(2.41521f, 2.8893f, 0.03065f);
+            Vector3f flagPostOffset = new Vector3f();
+            getLocalTransform().transformVector(flagPostOffsetLocal, flagPostOffset);
+            flagPost.setLocalTranslation(flagPostOffset);
         }else if("Models/Structures/house.j3o".equals(houseType)){
             Vector3f flagPostOffsetLocal = new Vector3f(0.0645f, 4.25f, 2.0f);
+            Vector3f flagPostOffset = new Vector3f();
+            getLocalTransform().transformVector(flagPostOffsetLocal, flagPostOffset);
+            flagPost.setLocalTranslation(flagPostOffset);
+        }else if("Models/Structures/cottage.j3o".equals(houseType)){
+            Vector3f flagPostOffsetLocal = new Vector3f(2.9984f, 4.44248f, 3.64112f);
             Vector3f flagPostOffset = new Vector3f();
             getLocalTransform().transformVector(flagPostOffsetLocal, flagPostOffset);
             flagPost.setLocalTranslation(flagPostOffset);
