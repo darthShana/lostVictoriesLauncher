@@ -26,6 +26,7 @@ public class CaptureTown extends Objective<Soldier>{
     private HeerCaptain character;
     private Node rootNode;
     Map<GameSector, UUID> sectorAssignments = new HashMap<>();
+    Set<GameSector> attempted = new HashSet<>();
 
     private CaptureTown(){}
     
@@ -42,7 +43,7 @@ public class CaptureTown extends Objective<Soldier>{
         Set<UUID> stillAround = new HashSet<>();
 
         for(Commandable c: this.character.getCharactersUnderCommand()){
-            if(!c.isBusy()){
+            if(!c.isBusy() && character.getCurrentStrength()>=12){
                 available.add(c);
             }
             stillAround.add(c.getIdentity());
@@ -52,7 +53,13 @@ public class CaptureTown extends Objective<Soldier>{
         }
 
         sectorAssignments.entrySet().removeIf(gameSectorUUIDEntry -> !stillAround.contains(gameSectorUUIDEntry.getValue()));
-        GameSector toSecure = findClosestUnsecuredGameSector(character, gameSectors, sectorAssignments);
+
+        GameSector toSecure = findClosestUnsecuredGameSector(character, gameSectors, attempted);
+        if(toSecure==null) {
+            toSecure = findClosestUnsecuredGameSector(character, gameSectors, sectorAssignments.keySet());
+        }
+
+
         if(toSecure==null){
             return null;
         }
@@ -62,9 +69,10 @@ public class CaptureTown extends Objective<Soldier>{
 
 
         if(toUse!=null){
-            final SecureSector secureSector = new SecureSector(toSecure.getHouses(), toSecure.getDefences(), rootNode, 10, 5, character.getLocalTranslation());
+            final SecureSector secureSector = new SecureSector(toSecure.getHouses(), toSecure.getDefences(), rootNode, 12, 5, character.getLocalTranslation());
             toUse.addObjective(secureSector);
             sectorAssignments.put(toSecure, toUse.getIdentity());
+            attempted.add(toSecure);
         }
         
         return null;
@@ -85,10 +93,10 @@ public class CaptureTown extends Objective<Soldier>{
     
 
 
-    private GameSector findClosestUnsecuredGameSector(GameCharacterNode character, Set<GameSector> gameSectors, Map<GameSector, UUID> exclude) {
+    private GameSector findClosestUnsecuredGameSector(GameCharacterNode character, Set<GameSector> gameSectors, Set<GameSector> exclude) {
         GameSector closest = null;
         for(GameSector gameSector:gameSectors){
-            if(!gameSector.isSecured(character.getCountry()) && !exclude.containsKey(gameSector)){
+            if(!gameSector.isSecured(character.getCountry()) && !exclude.contains(gameSector)){
                 if(closest==null || weightedDistance(character, closest) > weightedDistance(character, gameSector)){
                     closest = gameSector;
                 }

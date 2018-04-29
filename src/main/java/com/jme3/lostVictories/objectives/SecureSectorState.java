@@ -7,10 +7,7 @@ package com.jme3.lostVictories.objectives;
 import com.jme3.lostVictories.WorldMap;
 import com.jme3.lostVictories.actions.AIAction;
 import com.jme3.lostVictories.actions.StopAction;
-import com.jme3.lostVictories.characters.AICharacterNode;
-import com.jme3.lostVictories.characters.Commandable;
-import com.jme3.lostVictories.characters.Lieutenant;
-import com.jme3.lostVictories.characters.Rank;
+import com.jme3.lostVictories.characters.*;
 import com.jme3.lostVictories.network.messages.SquadType;
 import com.jme3.lostVictories.structures.GameBunkerNode;
 import com.jme3.lostVictories.structures.GameHouseNode;
@@ -20,6 +17,7 @@ import com.jme3.scene.Node;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -112,18 +110,14 @@ enum SecureSectorState {
         @Override
         AIAction<AICharacterNode> planObjective(Lieutenant c, WorldMap worldMap, Node rootNode, final SecureSector objective) {
             List<GameHouseNode> sortedHouses = new ArrayList<>(objective.houses);
-            Collections.sort(sortedHouses, (o1, o2) -> {
-                if(o1.getLocalTranslation().distance(objective.centre)>o2.getLocalTranslation().distance(objective.centre)){
+            sortedHouses.sort((o1, o2) -> {
+                if (o1.getLocalTranslation().distance(objective.centre) > o2.getLocalTranslation().distance(objective.centre)) {
                     return 1;
-                }else{
+                } else {
                     return -1;
                 }
             });
-            for(Iterator<Map.Entry<UUID, Objective>> it = objective.issuedOrders.entrySet().iterator();it.hasNext();){
-                if(it.next().getValue().isComplete){
-                    it.remove();
-                }
-            }
+            objective.issuedOrders.entrySet().removeIf(uuidObjectiveEntry -> uuidObjectiveEntry.getValue().isComplete);
 
             for(GameHouseNode house: sortedHouses){
                 if(!house.isOwnedBy(c.getCountry()) && !objective.attemptedHouses.contains(house.getId())){
@@ -185,26 +179,25 @@ enum SecureSectorState {
         @Override
         AIAction<AICharacterNode> planObjective(Lieutenant c, WorldMap worldMap, Node rootNode, SecureSector objective) {
             final EnemyActivityReport enemyActivity = c.getEnemyActivity();
-            for(Iterator<Map.Entry<UUID, Objective>> it = objective.issuedOrders.entrySet().iterator();it.hasNext();){
-                if(it.next().getValue().isComplete){
-                    it.remove();
+            Set<UUID> stillArround = c.getCharactersUnderCommand().stream().map(unit -> unit.getIdentity()).collect(Collectors.toSet());
+            objective.issuedOrders.entrySet().removeIf(uuidObjectiveEntry ->
+                            uuidObjectiveEntry.getValue().isComplete ||
+                            stillArround.contains(uuidObjectiveEntry.getKey()));
+
+            Set<Vector3f> activities = enemyActivity.activity();
+            System.out.println("enemy activity:"+activities);
+            activities.forEach(activity->{
+                Optional<Commandable> commandable = c.getCharactersUnderCommand().stream()
+                        .filter(unit -> unit.getRank() == Rank.CADET_CORPORAL)
+                        .filter(unit -> !objective.issuedOrders.containsKey(unit.getIdentity())).findAny();
+                if(commandable.isPresent()){
+                    AttackTargetsInDirection ab = new AttackTargetsInDirection(activity, rootNode);
+                    objective.issuedOrders.put(commandable.get().getIdentity(), ab);
+                    commandable.get().addObjective(ab);
                 }
-            }
-            if(enemyActivity.activity().isEmpty()){
-                return null;
-            }
-            for(Commandable unit:c.getCharactersUnderCommand()){
-                if(unit.getRank()==Rank.CADET_CORPORAL && !objective.issuedOrders.containsKey(unit.getIdentity())){
-                    Objective ab;
-                    if(unit.getSquadType()==SquadType.MORTAR_TEAM){
-                        ab = new BombardTargets(enemyActivity.activity(), rootNode);
-                    }else{
-                        ab = new AttackBoggies(enemyActivity.activity(), rootNode);
-                    }
-                    objective.issuedOrders.put(unit.getIdentity(), ab);
-                    unit.addObjective(ab);
-                }
-            }
+
+            });
+
 
             return new StopAction();
         }
@@ -215,7 +208,7 @@ enum SecureSectorState {
                 return RETREAT;
             }
             if(c.getEnemyActivity().activity().isEmpty()) {
-                System.out.println("clear of enemy acitivty so going back to:"+objective.lastState);
+                System.out.println("clear of enemy activity so going back to:"+objective.lastState);
                 return objective.lastState;
             }
             return  ATTACK_TARGET;

@@ -178,7 +178,7 @@ public class MinimapNode extends Node{
             }
             enemyMap = updateGeometry(enemyMap, tmpMap);
             
-            tmpMap = new HashSet<Vector3f>();
+            tmpMap = new HashSet<>();
             for(Commandable c:WorldMap.get().getAllCharacters()){
                 if(c.getCountry().isAlliedWith(app.avatar)){
                     updateCharacterOnMap(c, tmpMap);

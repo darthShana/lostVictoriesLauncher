@@ -19,13 +19,11 @@ import com.jme3.lostVictories.characters.blenderModels.BlenderModel;
 import com.jme3.lostVictories.characters.physicsControl.GameCharacterControl;
 import com.jme3.lostVictories.effects.ParticleManager;
 import com.jme3.lostVictories.network.messages.SquadType;
-import com.jme3.lostVictories.objectives.EnemyActivityReport;
 import com.jme3.lostVictories.objectives.Objective;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
-import com.jme3.renderer.Camera;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
@@ -40,11 +38,13 @@ import java.util.*;
  */
 public abstract class AICharacterNode<T extends GameCharacterControl> extends GameCharacterNode<T> {
 
-    EnemyActivityReport enemyActivityReport;
     List<Geometry> boxes = new ArrayList<Geometry>();
     protected BehaviorControler behaviorControler;
     private List<Vector3f> path;
     private boolean pathPlotted;
+    private EnemyActivityReport enemyActivity = new EnemyActivityReport();
+
+    AICharacterNode(){}
 
     public AICharacterNode(UUID id, Node model, Country country, CommandingOfficer commandingOfficer, Vector3f worldCoodinates, Vector3f rotation, SquadType squadType, Node rootNode, BulletAppState bulletAppState, CharcterParticleEmitter emitter, ParticleManager particleManager, NavigationProvider pathFinder, AssetManager assetManager, BlenderModel m, BehaviorControler behaviorControler, ActorRef shootssFiredListener) {
         super(id, model, country, commandingOfficer, worldCoodinates, rotation, squadType, rootNode, bulletAppState, emitter, particleManager, pathFinder, assetManager, m, shootssFiredListener);
@@ -131,28 +131,6 @@ public abstract class AICharacterNode<T extends GameCharacterControl> extends Ga
         }
         return completedObjectives;
     }
-    
-
-    public void reportEnemyActivity(Set<Vector3f> targets, Set<Vector3f> vehicles) {
-        enemyActivityReport = new EnemyActivityReport(targets, vehicles);
-    }
-    
-    public void clearEnemyActivity() {
-        enemyActivityReport = null;
-    }
-    
-    public EnemyActivityReport getEnemyActivity() {
-        EnemyActivityReport e = new EnemyActivityReport(enemyActivityReport);
-        if(this instanceof CommandingOfficer){
-            for(Commandable c: ((CommandingOfficer)this).getCharactersUnderCommand()){
-                if(c instanceof GameCharacterNode){
-                    e.accumulate(((GameCharacterNode)c).getEnemyActivity());
-                }
-            }
-        }
-        
-        return e;
-    }
 
     @Override
     public boolean isBusy() {
@@ -213,7 +191,22 @@ public abstract class AICharacterNode<T extends GameCharacterControl> extends Ga
         behaviorControler.addObjective(objectve);
     }
 
-    
+    @Override
+    public void addEnemyActivity(Vector3f localTranslation, long l) {
+        enemyActivity.put(localTranslation, l);
+    }
+
+    @Override
+    public EnemyActivityReport getEnemyActivity() {
+        EnemyActivityReport e = new EnemyActivityReport();
+        e.merge(enemyActivity);
+        if(this instanceof CommandingOfficer){
+            ((CommandingOfficer)this).getCharactersUnderCommand().forEach(unit->{
+                e.merge(unit.getEnemyActivity());
+            });
+        }
+        return e;
+    }
 
     boolean hasSetupWeapon() {
         return model.hasPlayedSetupAction(channel.getAnimationName());

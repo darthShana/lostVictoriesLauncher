@@ -2,6 +2,7 @@ package com.jme3.lostVictories.objectives
 
 import com.jme3.lostVictories.WorldMap
 import com.jme3.lostVictories.characters.CadetCorporal
+import com.jme3.lostVictories.characters.EnemyActivityReport
 import com.jme3.lostVictories.characters.Lieutenant
 import com.jme3.lostVictories.structures.GameBunkerNode
 import com.jme3.lostVictories.structures.GameHouseNode
@@ -56,7 +57,7 @@ class SecureSectorSpec extends Specification {
         when:
         character.getCharactersUnderCommand() >> [corp1, corp2]
         character.getCurrentStrength() >> 20
-        character.getEnemyActivity() >> new EnemyActivityReport(null)
+        character.getEnemyActivity() >> new EnemyActivityReport()
         secureSector.state = SecureSectorState.CAPTURE_HOUSES
         secureSector.planObjective(character, Mock(WorldMap.class))
         secureSector.issuedOrders.values().each{ o -> o.isComplete = true }

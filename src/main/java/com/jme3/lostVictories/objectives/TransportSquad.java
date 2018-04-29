@@ -55,7 +55,7 @@ class TransportSquad extends Objective<Soldier> {
         return objective instanceof CaptureStructure || 
                 objective instanceof Cover || 
                 objective instanceof BombardTargets || 
-                objective instanceof AttackBoggies;
+                objective instanceof AttackTargetsInDirection;
     }
 
     @Override

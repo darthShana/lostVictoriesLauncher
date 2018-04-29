@@ -17,6 +17,7 @@ public class CharacterTurnToFaceAttackActor extends AbstractActor{
         return receiveBuilder().match(CharacterMovedAction.class, cma -> {
             AICharacterNode character = cma.getCharacter();
             GameCharacterNode intruder = cma.getIntruder();
+            character.addEnemyActivity(intruder.getLocalTranslation(), System.currentTimeMillis());
             if(character.canShootWhileMoving() &&
                     character.getLocalTranslation().distance(intruder.getLocalTranslation())< character.getMaxRange() &&
                     character.hasClearLOSTo(intruder)){

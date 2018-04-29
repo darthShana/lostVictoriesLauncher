@@ -5,7 +5,6 @@
 package com.jme3.lostVictories.characters;
 
 import com.jme3.lostVictories.characters.weapons.Weapon;
-import com.jme3.lostVictories.objectives.EnemyActivityReport;
 
 import java.util.List;
 import java.util.Set;

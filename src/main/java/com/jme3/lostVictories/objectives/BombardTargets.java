@@ -67,7 +67,7 @@ class BombardTargets extends Objective {
         return objective instanceof CaptureStructure || 
                 objective instanceof Cover || 
                 objective instanceof TransportSquad || 
-                objective instanceof AttackBoggies;
+                objective instanceof AttackTargetsInDirection;
     }
 
     public ObjectNode toJson() {

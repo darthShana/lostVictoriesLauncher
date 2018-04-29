@@ -109,7 +109,7 @@ public class Objectives<T extends GameCharacterNode> {
     public boolean isAttacking() {
         synchronized(objectives){
             for(Objective o : objectives){
-                if(o instanceof AttackAndTakeCoverObjective || o instanceof AttackBoggies || o instanceof AttackObjective){
+                if(o instanceof AttackAndTakeCoverObjective || o instanceof AttackTargetsInDirection || o instanceof AttackObjective){
                     return true;
                 }
             }

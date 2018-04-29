@@ -58,7 +58,7 @@ class ProvideFireSupportFromCover extends Objective<CadetCorporal> implements Mi
     }
 
     public boolean clashesWith(Objective objective) {
-        return objective instanceof AttackBoggies || objective instanceof CoverFront;
+        return objective instanceof AttackTargetsInDirection || objective instanceof CoverFront;
     }
 
     public static Vector3f findAttackPassition(Vector3f enemyPosition, GameCharacterNode character, Node rootNode, Set<GameStructureNode> structuresInRange) {

@@ -30,6 +30,7 @@ public class VirtualGameCharacterNode implements Commandable, CommandingOfficer{
     private CharacterMessage msg;
     private boolean selected;
     private Geometry geometry;
+    private EnemyActivityReport enemyActivityReport = new EnemyActivityReport();
 
     public VirtualGameCharacterNode(CharacterMessage msg, boolean selected) {
         this.msg = msg;
@@ -196,7 +197,7 @@ public class VirtualGameCharacterNode implements Commandable, CommandingOfficer{
     public void addCharactersUnderCommand(Commandable c) {}
 
     public EnemyActivityReport getEnemyActivity() {
-        return new EnemyActivityReport(new HashSet<Vector3f>(), new HashSet<Vector3f>());
+        return enemyActivityReport;
     }
 
     public void removeCharacterUnderCommand(Commandable aThis) {}

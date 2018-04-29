@@ -46,7 +46,7 @@ public class CollectUnusedEquipment {
 
         for(GameVehicleNode vehicle: character.getVehicles()){
             if(vehicle.isAbbandoned() && !orders.containsKey(vehicle)){
-                Commandable s = ((CadetCorporal)character).findSoldierWithWeapon(Weapon.rifle());
+                Commandable s = character.findSoldierWithWeapon(Weapon.rifle());
                 if(s!=null){
                     s.addObjective(new BoardVehicle(s, vehicle));
                     orders.put(vehicle, s);

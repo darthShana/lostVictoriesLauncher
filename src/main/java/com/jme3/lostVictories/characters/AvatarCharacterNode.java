@@ -24,14 +24,12 @@ import com.jme3.lostVictories.network.messages.CharacterType;
 import com.jme3.lostVictories.network.messages.SquadType;
 import com.jme3.lostVictories.network.messages.actions.Action;
 import com.jme3.lostVictories.objectives.CompleteBootCamp;
-import com.jme3.lostVictories.objectives.EnemyActivityReport;
 import com.jme3.lostVictories.objectives.ManualControlByAvatar;
 import com.jme3.lostVictories.objectives.Objective;
 import com.jme3.lostVictories.structures.Pickable;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
-import com.jme3.renderer.Camera;
 import com.jme3.scene.Node;
 
 import java.util.*;
@@ -53,6 +51,7 @@ public class AvatarCharacterNode extends GameCharacterNode<BetterSoldierControl>
     private boolean hasChrouched = false;
     private ManualControlByAvatar boaredVehicleControl;
     protected Vector3f fpsPossition = new Vector3f(0, 3f, 0);
+    private EnemyActivityReport activityReport = new EnemyActivityReport();;
 
     public AvatarCharacterNode(UUID id, Node model, Country country, CommandingOfficer commandingOfficer, Vector3f worldCoodinates, Vector3f rotation, SquadType squadType, Node rootNode, BulletAppState bulletAppState, CharcterParticleEmitter particleEmitter, ParticleManager particleManager, NavigationProvider pathFinder, AssetManager assetManager, BlenderModel m, Rank rank, HeadsUpDisplayAppState hud, ActorRef shootssFiredListener) {
         super(id, model, country, commandingOfficer, worldCoodinates, rotation, squadType, rootNode, bulletAppState, particleEmitter, particleManager, pathFinder, assetManager, m, shootssFiredListener);
@@ -147,8 +146,8 @@ public class AvatarCharacterNode extends GameCharacterNode<BetterSoldierControl>
         if(getLocalTranslation().distance(contactPoint)>50){
             hud.addMessage("hmm.. thats a really long walk");
             hud.addMessage("see if you can use a vehicle");
-            hud.addMessage("you can use a vehicle in your unit or commendeer one by");
-            hud.addMessage("moving very close to the vehicle and righ clicking on it");
+            hud.addMessage("you can use a vehicle in your unit or commandeer one by");
+            hud.addMessage("moving very close to the vehicle and right clicking on it");
             hud.addMessage("you can ask your units to get in as well, just select them and right click on the vehicle you control");
         }
 
@@ -191,7 +190,7 @@ public class AvatarCharacterNode extends GameCharacterNode<BetterSoldierControl>
         super.boardVehicleAction(vehicle);
         hud.addMessage("Great! you can use this vehicle to travel faster!");
         hud.addMessage("you can right click on the terrain and the driver will drive to the destination");
-        hud.addMessage("or you can drive your self use w=forward, a=left, d=right, s=revese");
+        hud.addMessage("or you can drive your self use w=forward, a=left, d=right, s=reverse");
         hud.addMessage("press e to get out");
     }
     
@@ -325,6 +324,14 @@ public class AvatarCharacterNode extends GameCharacterNode<BetterSoldierControl>
     }
 
     @Override
+    public void addEnemyActivity(Vector3f localTranslation, long l) { }
+
+    @Override
+    public EnemyActivityReport getEnemyActivity() {
+        return activityReport;
+    }
+
+    @Override
     public boolean isBusy() {
         return objective!=null && !objective.isComplete();
     }
@@ -437,22 +444,6 @@ public class AvatarCharacterNode extends GameCharacterNode<BetterSoldierControl>
             }
         }
         return false;
-    }
-
-    public EnemyActivityReport getEnemyActivity() {
-        Set<Vector3f> enemy = new HashSet<Vector3f>();
-        for(GameCharacterNode other:WorldMap.get().getEnemyCharactersInDirection(this, getPlayerDirection(), getWeapon().getMaxRange(), false)){
-            if(!getCountry().isAlliedWith(other)){
-                enemy.add(other.getLocalTranslation());
-            }
-        }
-        EnemyActivityReport e = new EnemyActivityReport(enemy, new HashSet<Vector3f>());
-        for(Commandable c: getCharactersUnderCommand()){
-            if(c instanceof AICharacterNode){
-                e.accumulate(((AICharacterNode)c).getEnemyActivity());
-            }
-        }
-        return e;
     }
 
     public boolean isTravesingPath() {

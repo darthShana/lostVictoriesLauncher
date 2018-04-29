@@ -14,7 +14,7 @@ import com.jme3.lostVictories.characters.blenderModels.BlenderModel;
 import com.jme3.lostVictories.characters.weapons.Weapon;
 import com.jme3.lostVictories.effects.ParticleManager;
 import com.jme3.lostVictories.network.messages.SquadType;
-import com.jme3.lostVictories.objectives.AttackBoggies;
+import com.jme3.lostVictories.objectives.AttackTargetsInDirection;
 import com.jme3.lostVictories.objectives.CoverFront;
 import com.jme3.lostVictories.objectives.FollowCommander;
 import com.jme3.lostVictories.structures.Pickable;
@@ -40,7 +40,8 @@ import java.util.*;
 public class CadetCorporal extends Soldier implements CommandingOfficer{
 
     List<Commandable> charactersToCommand = new ArrayList<Commandable>();
-    
+
+    CadetCorporal(){}
     
     public CadetCorporal(UUID id, Node player, Country country, CommandingOfficer commandingOfficer, Vector3f position, Vector3f rotation, SquadType squadType, Node rootNode, BulletAppState bulletAppState, CharcterParticleEmitter characterParticleEmitters, ParticleManager particleManager, NavigationProvider navMeshPathfinder, AssetManager assetManager, BlenderModel model, BehaviorControler behaviorControler, ActorRef shootssFiredListener) {
         super(id, player, country, commandingOfficer, position, rotation, squadType, rootNode, bulletAppState, characterParticleEmitters, particleManager, navMeshPathfinder, assetManager, model, behaviorControler, shootssFiredListener);
@@ -77,9 +78,7 @@ public class CadetCorporal extends Soldier implements CommandingOfficer{
         if(!isUnderChainOfCommandOf(issuingCharacter, 5)){
             return;
         }
-        Set<Vector3f> targets = new HashSet<Vector3f>();
-        targets.add(target);
-        behaviorControler.addObjective(new AttackBoggies(targets, rootNode));
+        behaviorControler.addObjective(new AttackTargetsInDirection(target, rootNode));
     }
 
     @Override

@@ -31,18 +31,14 @@ import com.jme3.lostVictories.network.messages.actions.Action;
 import com.jme3.lostVictories.network.messages.actions.Crouch;
 import com.jme3.lostVictories.network.messages.actions.SetupWeapon;
 import com.jme3.lostVictories.network.messages.actions.Shoot;
-import com.jme3.lostVictories.objectives.EnemyActivityReport;
 import com.jme3.lostVictories.objectives.Objective;
-import com.jme3.lostVictories.objectives.reactiveObjectives.ShootsFiredActor;
 import com.jme3.lostVictories.objectives.reactiveObjectives.messages.ShootsFired;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState.BlendMode;
 import com.jme3.math.*;
-import com.jme3.renderer.Camera;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
-import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Cylinder;
 
 import java.io.IOException;
@@ -67,12 +63,12 @@ public abstract class GameCharacterNode<T extends GameCharacterControl> extends 
     protected Node geometry;
 
     protected ParticleEmitter muzzelFlash;
-    protected final ParticleEmitter smokeTrail;
-    protected final ParticleEmitter bloodDebris;
-    protected final ParticleEmitter bulletFragments;
-    protected final ParticleEmitter blastFragments;
-    protected final ParticleManager particleManager;
-    protected final NavigationProvider pathFinder;
+    protected ParticleEmitter smokeTrail;
+    protected ParticleEmitter bloodDebris;
+    protected ParticleEmitter bulletFragments;
+    protected ParticleEmitter blastFragments;
+    protected ParticleManager particleManager;
+    protected NavigationProvider pathFinder;
 
     protected Country country;
     protected Geometry selectionMarker;
@@ -80,8 +76,8 @@ public abstract class GameCharacterNode<T extends GameCharacterControl> extends 
     protected GameAnimChannel channel;
     protected boolean isDead;
 
-    protected final BulletAppState bulletAppState;
-    protected final AssetManager assetManager;
+    protected BulletAppState bulletAppState;
+    protected AssetManager assetManager;
     protected List<Ray> rays = new ArrayList<>();
     protected List<Vector3f> blasts = new ArrayList<>();
     protected String unitName;
@@ -89,12 +85,16 @@ public abstract class GameCharacterNode<T extends GameCharacterControl> extends 
 
     int kills;
     protected final UUID identity;
-    protected final Geometry shell;
+    protected Geometry shell;
     protected long shootStartTime;
     private Vector3f[] currentTargets;
     GameVehicleNode boaredVehicle;
-    private final Vector3f initialRotation;
+    private Vector3f initialRotation;
     private long version;
+
+    GameCharacterNode(){
+        this.identity = UUID.randomUUID();
+    }
 
     GameCharacterNode(UUID id, Node model, Country country, CommandingOfficer commandingOfficer, Vector3f worldCoodinates, Vector3f rotation, SquadType squadType, Node rootNode, BulletAppState bulletAppState, CharcterParticleEmitter particleEmitter, ParticleManager particleManager, NavigationProvider pathFinder, AssetManager assetManager, BlenderModel m, ActorRef shootsFiredListener) {
         this.country = country;
@@ -774,8 +774,6 @@ public abstract class GameCharacterNode<T extends GameCharacterControl> extends 
 
     public abstract BehaviorControler getBehaviourControler();
 
-    public abstract EnemyActivityReport getEnemyActivity();
-
     public Vector3f getAimingDirection() {
         return getPlayerDirection();
     }
@@ -783,4 +781,8 @@ public abstract class GameCharacterNode<T extends GameCharacterControl> extends 
     protected GameAnimChannel getShootingChannel() {
         return channel;
     }
+
+    public abstract void addEnemyActivity(Vector3f localTranslation, long l);
+
+    public abstract EnemyActivityReport getEnemyActivity();
 }

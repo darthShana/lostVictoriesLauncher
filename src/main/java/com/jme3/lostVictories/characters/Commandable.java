@@ -21,57 +21,59 @@ import java.util.UUID;
  */
 public interface Commandable {
     
-    public UUID getIdentity();
-    
+    UUID getIdentity();
+
     Map<UUID, Objective> getAllObjectives();
-    
-    public void addObjective(Objective objective);
-    
-    public Vector3f getLocalTranslation();
 
-    public void cover(Vector3f mousePress, Vector3f mouseRelease, GameCharacterNode issuingCharacter);
-    
-    public void travel(Vector3f contactPoint, GameCharacterNode issuingCharacter);
-    
-    public void follow(GameCharacterNode toFollow, GameCharacterNode issuingCharacter);
-    
-    public void attack(Vector3f target, GameCharacterNode issuingCharacter);
-    
-    public void collect(Pickable pickable, GameCharacterNode issuingCharacter);
-    
-    public void requestBoarding(GameVehicleNode key, GameCharacterNode issuingCharacter);
-    
-    public int getKillCount();
-        
-    public String getUnitName();
-    
-    public void setUnitName(String unitName);
-    
-    public Weapon getWeapon();
-    
-    public boolean isSelected();
+    void addObjective(Objective objective);
 
-    public boolean isBusy();
+    Vector3f getLocalTranslation();
 
-    public Geometry unSelect();
+    void cover(Vector3f mousePress, Vector3f mouseRelease, GameCharacterNode issuingCharacter);
 
-    public Commandable select(Commandable selectedCharacter);
+    void travel(Vector3f contactPoint, GameCharacterNode issuingCharacter);
 
-    public boolean isUnderChainOfCommandOf(GameCharacterNode avatar, int i);
+    void follow(GameCharacterNode toFollow, GameCharacterNode issuingCharacter);
 
-    public Rank getRank();
+    void attack(Vector3f target, GameCharacterNode issuingCharacter);
 
-    public SquadType getSquadType();
+    void collect(Pickable pickable, GameCharacterNode issuingCharacter);
 
-    public Country getCountry();
+    void requestBoarding(GameVehicleNode key, GameCharacterNode issuingCharacter);
 
-    public boolean isAttacking();
+    int getKillCount();
 
-    public boolean isDead();
+    String getUnitName();
 
-    public int getCurrentStrength();
+    void setUnitName(String unitName);
 
-    public boolean hasBoardedVehicle();
+    Weapon getWeapon();
 
-    public boolean isHuman();
+    boolean isSelected();
+
+    boolean isBusy();
+
+    Geometry unSelect();
+
+    Commandable select(Commandable selectedCharacter);
+
+    boolean isUnderChainOfCommandOf(GameCharacterNode avatar, int i);
+
+    Rank getRank();
+
+    SquadType getSquadType();
+
+    Country getCountry();
+
+    boolean isAttacking();
+
+    boolean isDead();
+
+    int getCurrentStrength();
+
+    boolean hasBoardedVehicle();
+
+    boolean isHuman();
+
+    EnemyActivityReport getEnemyActivity();
 }
