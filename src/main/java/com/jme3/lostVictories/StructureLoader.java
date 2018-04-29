@@ -173,8 +173,8 @@ public class StructureLoader {
         final Node german = (Node)assetManager.loadModel("Models/Structures/germanFlag.j3o");
         american.addControl(new HeloControl(assetManager, app));
         german.addControl(new HeloControl(assetManager, app));
-        american.setLocalScale(.5f);
-        german.setLocalScale(.5f);
+        american.setLocalScale(1.0f);
+        german.setLocalScale(1.0f);
         
         Map countries = new EnumMap<Country, Node>(Country.class);
         countries.put(Country.AMERICAN, american);
