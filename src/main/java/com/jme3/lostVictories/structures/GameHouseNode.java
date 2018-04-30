@@ -114,7 +114,7 @@ public class GameHouseNode extends GameStructureNode{
             getLocalTransform().transformVector(flagPostOffsetLocal, flagPostOffset);
             flagPost.setLocalTranslation(flagPostOffset);
         }else if("Models/Structures/house_1.j3o".equals(houseType)){
-            Vector3f flagPostOffsetLocal = new Vector3f(0.0f, 2.51686f, 2.69391f);
+            Vector3f flagPostOffsetLocal = new Vector3f(2.96442f, 2.54677f, -0.01992f);
             Vector3f flagPostOffset = new Vector3f();
             getLocalTransform().transformVector(flagPostOffsetLocal, flagPostOffset);
             flagPost.setLocalTranslation(flagPostOffset);
@@ -124,7 +124,7 @@ public class GameHouseNode extends GameStructureNode{
             getLocalTransform().transformVector(flagPostOffsetLocal, flagPostOffset);
             flagPost.setLocalTranslation(flagPostOffset);
         }else if("Models/Structures/house.j3o".equals(houseType)){
-            Vector3f flagPostOffsetLocal = new Vector3f(0.0645f, 4.25f, 2.0f);
+            Vector3f flagPostOffsetLocal = new Vector3f(0.07761f, 4.2686f, 2.04438f);
             Vector3f flagPostOffset = new Vector3f();
             getLocalTransform().transformVector(flagPostOffsetLocal, flagPostOffset);
             flagPost.setLocalTranslation(flagPostOffset);
