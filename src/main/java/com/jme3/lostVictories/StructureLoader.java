@@ -77,7 +77,7 @@ public class StructureLoader {
         otherStructures.add("Models/Structures/watchtower.j3o");
         otherStructures.add("Models/Structures/house_1.j3o");
         otherStructures.add("Models/Structures/WaterPoweredSawmill.j3o");
-        otherStructures.add("Models/Structures/ponte bridge.j3o");
+        otherStructures.add("Models/Structures/ponteBridge.j3o");
         otherStructures.add("Models/Structures/bridge_short.j3o");
         otherStructures.add("Models/Structures/Chapel.j3o");
         otherStructures.add("Models/Structures/tavern.j3o");
