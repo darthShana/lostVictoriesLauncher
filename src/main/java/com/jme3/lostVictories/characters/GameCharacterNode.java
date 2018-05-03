@@ -190,6 +190,9 @@ public abstract class GameCharacterNode<T extends GameCharacterControl> extends 
     public void die(GameCharacterNode killer) {
         doDeathEffects();
         NetworkClientAppState.get().notifyDeath(killer.getIdentity(), this.getIdentity());
+        if(!isAlliedWith(killer)){
+            getCommandingOfficer().addEnemyActivity(killer.getLocalTranslation(), System.currentTimeMillis());
+        }
     }
     
     public void decomposed() {

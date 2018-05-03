@@ -78,7 +78,9 @@ public class CadetCorporal extends Soldier implements CommandingOfficer{
         if(!isUnderChainOfCommandOf(issuingCharacter, 5)){
             return;
         }
-        behaviorControler.addObjective(new AttackTargetsInDirection(target, rootNode));
+        Set<Vector3f> targets = new HashSet<>();
+        targets.add(target);
+        behaviorControler.addObjective(new AttackTargetsInDirection(targets, rootNode));
     }
 
     @Override

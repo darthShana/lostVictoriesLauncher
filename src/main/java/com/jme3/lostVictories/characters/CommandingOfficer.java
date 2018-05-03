@@ -5,6 +5,7 @@
 package com.jme3.lostVictories.characters;
 
 import com.jme3.lostVictories.characters.weapons.Weapon;
+import com.jme3.math.Vector3f;
 
 import java.util.List;
 import java.util.Set;
@@ -27,5 +28,6 @@ public interface CommandingOfficer extends Commandable{
 
     boolean isTeam(Weapon... weapons);
 
-    
+
+    void addEnemyActivity(Vector3f localTranslation, long l);
 }

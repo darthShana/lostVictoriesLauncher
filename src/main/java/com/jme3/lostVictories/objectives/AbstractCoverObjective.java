@@ -10,6 +10,7 @@ import com.jme3.lostVictories.actions.AIAction;
 import com.jme3.lostVictories.characters.AICharacterNode;
 import com.jme3.lostVictories.characters.GameCharacterNode;
 import com.jme3.lostVictories.characters.Soldier;
+import com.jme3.lostVictories.characters.weapons.Weapon;
 import com.jme3.lostVictories.network.messages.Vector;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
@@ -22,7 +23,7 @@ import static com.jme3.lostVictories.characters.RemoteBehaviourControler.MAPPER;
  */
 abstract class AbstractCoverObjective<T extends AICharacterNode> extends Objective<T>{
     
-    Status status = Status.INITIAL;
+    Status status = Status.MOVING_IN_TO_POSITION;
     Integer countDown;
     Node rootNode;
     private Objective crouchAndShootObjective;
@@ -52,17 +53,14 @@ abstract class AbstractCoverObjective<T extends AICharacterNode> extends Objecti
         }
         AIAction ret = null;
 
-        if (status == Status.INITIAL) {
-            status = Status.MOVING_IN_TO_POSSITION;
-            ret = moveObjective.planObjective(character, worldMap);
-        }else if (status == Status.MOVING_IN_TO_POSSITION) {
+        if (status == Status.MOVING_IN_TO_POSITION) {
             if (moveObjective.isComplete()) {
                 character.setupWeapon(target);
-                status = Status.IN_POSSITION;
+                status = Status.IN_POSITION;
             } else {
                 ret = moveObjective.planObjective(character, worldMap);
             }
-        } else if (status == Status.IN_POSSITION) {            
+        } else if (status == Status.IN_POSITION) {
             status = Status.READY_TO_SHOOT;
             if(character instanceof Soldier && character.canShootWhileMoving()){
                 if(!worldMap.getCoverInRange(character.getLocalTranslation(), 3).isEmpty()){
@@ -121,8 +119,8 @@ abstract class AbstractCoverObjective<T extends AICharacterNode> extends Objecti
         return node;
     }
     
-    static enum Status {
-        INITIAL, MOVING_IN_TO_POSSITION, IN_POSSITION, READY_TO_SHOOT        
+    enum Status {
+        MOVING_IN_TO_POSITION, IN_POSITION, READY_TO_SHOOT
     }
     
 }

@@ -307,24 +307,31 @@ public class WorldMap {
         for(Vector3f t: ts){
             Vector3f direction = t.subtract(c.getShootingLocation()).normalizeLocal();
             final Vector3f rayStart = c.getShootingLocation(direction);
-            Ray ray = new Ray(rayStart, direction);
-            ray.setLimit(c.getMaxRange());
-            try{
-                CollisionResults results = new CollisionResults();
-                root.collideWith(ray, results);
-                for(CollisionResult r:results){
-                    if(r.getGeometry()!=null && c.hasChild(r.getGeometry())){
-                        continue;
-                    }
-                    if(Math.abs(r.getDistance() - rayStart.distance(t))<1){
-                        return true;
-                    }
-                }
-                
-            }catch(Throwable e){
-                System.out.println("error calculating ray cast");
+            if(hasLOS(c, rayStart, direction, t, root)){
+                return true;
             }
 
+        }
+        return false;
+    }
+
+    public boolean hasLOS(GameCharacterNode character, Vector3f origin, Vector3f direction, Vector3f target, Node root) {
+        Ray ray = new Ray(origin, direction);
+        ray.setLimit(character.getMaxRange());
+        try{
+            CollisionResults results = new CollisionResults();
+            root.collideWith(ray, results);
+            for(CollisionResult r:results){
+                if(r.getGeometry()!=null && character.hasChild(r.getGeometry())){
+                    continue;
+                }
+                if(Math.abs(r.getDistance() - origin.distance(target))<1){
+                    return true;
+                }
+            }
+
+        }catch(Throwable e){
+            System.out.println("error calculating ray cast");
         }
         return false;
     }

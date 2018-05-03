@@ -196,6 +196,9 @@ public class VirtualGameCharacterNode implements Commandable, CommandingOfficer{
 
     public void addCharactersUnderCommand(Commandable c) {}
 
+    @Override
+    public void addEnemyActivity(Vector3f localTranslation, long l) { }
+
     public EnemyActivityReport getEnemyActivity() {
         return enemyActivityReport;
     }

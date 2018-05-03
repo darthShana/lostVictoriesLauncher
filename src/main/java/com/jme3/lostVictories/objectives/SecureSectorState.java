@@ -185,18 +185,20 @@ enum SecureSectorState {
                             stillArround.contains(uuidObjectiveEntry.getKey()));
 
             Set<Vector3f> activities = enemyActivity.activity();
-            System.out.println("enemy activity:"+activities);
-            activities.forEach(activity->{
-                Optional<Commandable> commandable = c.getCharactersUnderCommand().stream()
+            if(!  activities.isEmpty()) {
+                System.out.println(c.getCountry()+" detected enemy activity:"+activities);
+                c.getCharactersUnderCommand().stream()
                         .filter(unit -> unit.getRank() == Rank.CADET_CORPORAL)
-                        .filter(unit -> !objective.issuedOrders.containsKey(unit.getIdentity())).findAny();
-                if(commandable.isPresent()){
-                    AttackTargetsInDirection ab = new AttackTargetsInDirection(activity, rootNode);
-                    objective.issuedOrders.put(commandable.get().getIdentity(), ab);
-                    commandable.get().addObjective(ab);
-                }
+                        .filter(unit -> !objective.issuedOrders.containsKey(unit.getIdentity())).forEach(commandable -> {
 
-            });
+                    AttackTargetsInDirection ab = new AttackTargetsInDirection(activities, rootNode);
+                    objective.issuedOrders.put(commandable.getIdentity(), ab);
+                    commandable.addObjective(ab);
+
+                });
+            }
+
+
 
 
             return new StopAction();
@@ -207,10 +209,10 @@ enum SecureSectorState {
             if(c.getCurrentStrength()<=objective.minimumFightingStrength){
                 return RETREAT;
             }
-            if(c.getEnemyActivity().activity().isEmpty()) {
-                System.out.println("clear of enemy activity so going back to:"+objective.lastState);
-                return objective.lastState;
-            }
+//            if(c.getEnemyActivity().activity().isEmpty()) {
+//                System.out.println("clear of enemy activity so going back to:"+objective.lastState);
+//                return objective.lastState;
+//            }
             return  ATTACK_TARGET;
         }
 

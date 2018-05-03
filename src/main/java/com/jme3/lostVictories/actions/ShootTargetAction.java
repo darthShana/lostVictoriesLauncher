@@ -5,6 +5,7 @@
 package com.jme3.lostVictories.actions;
 
 import com.jme3.lostVictories.characters.*;
+import com.jme3.lostVictories.characters.weapons.Weapon;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 
@@ -23,13 +24,16 @@ public class ShootTargetAction implements AIAction<AICharacterNode> {
         if(!other.isDead()){
             final Vector3f positionToTarget = other.getPositionToTarget(character);
 
-            if(!character.canShootWhileMoving()){
-                character.getCharacterControl().deadStop();
-            }
+
             if(character instanceof Soldier){
                 ((Soldier)character).getCharacterControl().setViewDirection(positionToTarget.subtract(character.getLocalTranslation()).normalize());
             }
             if(character instanceof Soldier || character instanceof MediumTankNode) {
+                if(character.isReadyToShoot(other.getPositionToTarget(character))){
+                    if(!character.canShootWhileMoving()){
+                        character.getCharacterControl().deadStop();
+                    }
+                }
                 character.shoot(positionToTarget);
             }else if(character instanceof GameVehicleNode){
                 if(character.isReadyToShoot(other.getPositionToTarget(character).subtract(character.getShootingLocation()))){

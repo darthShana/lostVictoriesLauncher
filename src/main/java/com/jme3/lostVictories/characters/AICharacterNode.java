@@ -246,7 +246,6 @@ public abstract class AICharacterNode<T extends GameCharacterControl> extends Ga
         float i =.5f;
         for(Vector3f p:waypoints){
             rootNode.attachChild(getBox(i, p.x, p.y, p.z));
-//            i = i+.5f;
         }
     }
 

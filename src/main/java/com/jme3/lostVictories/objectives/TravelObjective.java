@@ -86,7 +86,7 @@ import static com.jme3.lostVictories.characters.RemoteBehaviourControler.MAPPER;
             }
         }
 
-        if(lastKnownPossition !=null && WorldMap.isClose(character.getLocalTranslation(), lastKnownPossition, .2f)){
+        if(lastKnownPossition !=null && WorldMap.isClose(character.getLocalTranslation(), lastKnownPossition, 1f)){
             lastKnownPossitionCount++;
         }else{
             lastKnownPossition = new Vector3f(character.getLocalTranslation());
@@ -97,7 +97,7 @@ import static com.jme3.lostVictories.characters.RemoteBehaviourControler.MAPPER;
             return new StopAction(facePoint);
         }
         
-        if(lastKnownPossitionCount>2 ){
+        if(lastKnownPossitionCount>3 ){
             isComplete = true;
             return new StopAction(facePoint);
             
