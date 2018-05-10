@@ -231,5 +231,5 @@ public class CadetCorporal extends Soldier implements CommandingOfficer{
             }
         }
     }
-  
+
 }

@@ -25,7 +25,6 @@ import com.jme3.lostVictories.structures.Pickable;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
-import com.jme3.renderer.Camera;
 import com.jme3.scene.Node;
 
 import java.util.*;
@@ -278,7 +277,7 @@ public abstract class GameVehicleNode extends AICharacterNode<BetterVehicleContr
 
     public void boardPassenger(GameCharacterNode n) {
         passengers.add(n);
-        n.boaredVehicle = this;
+        n.boardedVehicle = this;
         if(getChild("operator")==null){
             addOperator(n.getCountry());
         }

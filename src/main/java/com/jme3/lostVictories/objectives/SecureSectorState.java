@@ -209,10 +209,10 @@ enum SecureSectorState {
             if(c.getCurrentStrength()<=objective.minimumFightingStrength){
                 return RETREAT;
             }
-//            if(c.getEnemyActivity().activity().isEmpty()) {
-//                System.out.println("clear of enemy activity so going back to:"+objective.lastState);
-//                return objective.lastState;
-//            }
+            if(objective.issuedOrders.isEmpty()) {
+                System.out.println(c.getCountry()+" clear of enemy activity so going back to:"+objective.lastState);
+                return objective.lastState;
+            }
             return  ATTACK_TARGET;
         }
 

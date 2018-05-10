@@ -550,10 +550,10 @@ public class AvatarCharacterNode extends GameCharacterNode<BetterSoldierControl>
     public void setBehaviourControler(BehaviorControler remoteBehaviourControler) {}
 
     ManualControlByAvatar getControlOfBoardedVehicle() {
-        if(boaredVehicle!=null){
+        if(boardedVehicle !=null){
             if(boaredVehicleControl==null){
                  boaredVehicleControl = new ManualControlByAvatar();
-                 boaredVehicle.addObjective(boaredVehicleControl);
+                 boardedVehicle.addObjective(boaredVehicleControl);
                  return boaredVehicleControl;
             }
             return boaredVehicleControl;

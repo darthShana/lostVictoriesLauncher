@@ -76,4 +76,5 @@ public interface Commandable {
     boolean isHuman();
 
     EnemyActivityReport getEnemyActivity();
+
 }

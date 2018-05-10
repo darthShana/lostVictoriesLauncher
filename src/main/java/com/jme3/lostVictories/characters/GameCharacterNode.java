@@ -88,7 +88,7 @@ public abstract class GameCharacterNode<T extends GameCharacterControl> extends 
     protected Geometry shell;
     protected long shootStartTime;
     private Vector3f[] currentTargets;
-    GameVehicleNode boaredVehicle;
+    GameVehicleNode boardedVehicle;
     private Vector3f initialRotation;
     private long version;
 
@@ -181,8 +181,8 @@ public abstract class GameCharacterNode<T extends GameCharacterControl> extends 
 
     @Override
     public Vector3f getLocalTranslation() {
-        if(boaredVehicle!=null){
-            return boaredVehicle.getLocalTranslation();
+        if(boardedVehicle !=null){
+            return boardedVehicle.getLocalTranslation();
         }
         return super.getLocalTranslation();
     }
@@ -705,16 +705,16 @@ public abstract class GameCharacterNode<T extends GameCharacterControl> extends 
     }
 
     public GameVehicleNode getBoardedVehicle() {
-        return boaredVehicle;
+        return boardedVehicle;
     }
     
     public boolean hasBoardedVehicle(){
-        return boaredVehicle !=null;
+        return boardedVehicle !=null;
     }
 
     public void disembarkVehicle() {
-        if(boaredVehicle!=null){
-            boaredVehicle.disembarkPassenger(this);
+        if(boardedVehicle !=null){
+            boardedVehicle.disembarkPassenger(this);
             rootNode.attachChild(this);
             rootNode.attachChild(bloodDebris);
             rootNode.attachChild(bulletFragments);
@@ -722,12 +722,12 @@ public abstract class GameCharacterNode<T extends GameCharacterControl> extends 
             rootNode.attachChild(smokeTrail);
 
             addControl(playerControl);
-            playerControl.warp(boaredVehicle.getEmbarkationPoint());
+            playerControl.warp(boardedVehicle.getEmbarkationPoint());
             bulletAppState.getPhysicsSpace().add(playerControl);
-            final Vector3f n = boaredVehicle.getLocalTranslation().subtract(boaredVehicle.getEmbarkationPoint());
+            final Vector3f n = boardedVehicle.getLocalTranslation().subtract(boardedVehicle.getEmbarkationPoint());
             playerControl.setViewDirection(new Vector3f(n.x, 0, n.z).normalizeLocal());
             
-            boaredVehicle=null;
+            boardedVehicle =null;
             if(channel!=null){
                 channel.setAnimForce("disembark_vehicle", LoopMode.DontLoop);
             }
@@ -762,7 +762,7 @@ public abstract class GameCharacterNode<T extends GameCharacterControl> extends 
         }
         return this;
     }
-    
+
     public void setVersion(long version) {
         this.version = version;
     }

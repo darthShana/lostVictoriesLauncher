@@ -19,6 +19,7 @@ import com.jme3.scene.Node;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.jme3.lostVictories.characters.RemoteBehaviourControler.MAPPER;
 
@@ -42,8 +43,10 @@ public class AttackTargetsInDirection extends Objective<CadetCorporal> implement
     public AIAction planObjective(CadetCorporal character, WorldMap worldMap) {
         AIAction action = state.planObjective(character, issuesObjectives, worldMap, lastKnownLocations, rootNode);
 
-        state = state.transition(character, worldMap);
-
+        state = state.transition(character, worldMap, issuesObjectives);
+        if(state == AttackState.COMPLETE){
+            isComplete = true;
+        }
 
 
         return action;
@@ -158,7 +161,7 @@ public class AttackTargetsInDirection extends Objective<CadetCorporal> implement
             }
 
             @Override
-            AttackState transition(CadetCorporal character, WorldMap worldMap) {
+            AttackState transition(CadetCorporal character, WorldMap worldMap, Map<UUID, Objective> issuesObjectives) {
                 return ATTACK_TARGET;
             }
         }, ATTACK_TARGET {
@@ -168,13 +171,25 @@ public class AttackTargetsInDirection extends Objective<CadetCorporal> implement
             }
 
             @Override
-            AttackState transition(CadetCorporal character, WorldMap worldMap) {
-                return ATTACK_TARGET;
+            AttackState transition(CadetCorporal character, WorldMap worldMap, Map<UUID, Objective> issuesObjectives) {
+                Set<UUID> units = character.getCharactersUnderCommand().stream().map(unit -> unit.getIdentity()).collect(Collectors.toSet());
+                issuesObjectives.entrySet().removeIf(e->!units.contains(e.getKey()) || e.getValue().isComplete);
+                return issuesObjectives.isEmpty()?COMPLETE:ATTACK_TARGET;
+            }
+        }, COMPLETE {
+            @Override
+            AIAction planObjective(CadetCorporal character, Map<UUID, Objective> issuesObjectives, WorldMap worldMap, Set<Vector3f> lastKnownLocations, Node rootNode) {
+                return null;
+            }
+
+            @Override
+            AttackState transition(CadetCorporal character, WorldMap worldMap, Map<UUID, Objective> issuesObjectives) {
+                return COMPLETE;
             }
         };
 
         abstract AIAction planObjective(CadetCorporal character, Map<UUID, Objective> issuesObjectives, WorldMap worldMap, Set<Vector3f> lastKnownLocations, Node rootNode);
 
-        abstract AttackState transition(CadetCorporal character, WorldMap worldMap);
+        abstract AttackState transition(CadetCorporal character, WorldMap worldMap, Map<UUID, Objective> issuesObjectives);
     }
 }
