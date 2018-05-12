@@ -77,7 +77,7 @@ public class StructureLoader {
         otherStructures.add("Models/Structures/watchtower.j3o");
         otherStructures.add("Models/Structures/house_1.j3o");
         otherStructures.add("Models/Structures/WaterPoweredSawmill.j3o");
-        otherStructures.add("Models/Structures/ponte bridge.j3o");
+        otherStructures.add("Models/Structures/ponteBridge.j3o");
         otherStructures.add("Models/Structures/bridge_short.j3o");
         otherStructures.add("Models/Structures/Chapel.j3o");
         otherStructures.add("Models/Structures/tavern.j3o");
@@ -130,11 +130,11 @@ public class StructureLoader {
 
         n.setLocalRotation(house.getLocalRotation());
         Node neutralFlag = (Node)assetManager.loadModel("Models/Structures/neutralFlag.j3o");
-        neutralFlag.setLocalScale(.5f);
-        neutralFlag.addControl(new HeloControl(assetManager, app));
-        
+        neutralFlag.setLocalScale(.35f);
+
         GameHouseNode h = new GameHouseNode(house.getId(), house.getType(), n, flags, neutralFlag, this.bulletAppState, new CollisionShapeFactoryProvider(), rootNode);
         h.updateOwership(house);
+        h.addControl(new HeloControl(assetManager, app));
         return h;        
     }
 
@@ -173,8 +173,8 @@ public class StructureLoader {
         final Node german = (Node)assetManager.loadModel("Models/Structures/germanFlag.j3o");
         american.addControl(new HeloControl(assetManager, app));
         german.addControl(new HeloControl(assetManager, app));
-        american.setLocalScale(.5f);
-        german.setLocalScale(.5f);
+        american.setLocalScale(1.0f);
+        german.setLocalScale(1.0f);
         
         Map countries = new EnumMap<Country, Node>(Country.class);
         countries.put(Country.AMERICAN, american);
