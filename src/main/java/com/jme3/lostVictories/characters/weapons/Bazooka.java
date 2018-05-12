@@ -6,13 +6,11 @@ import com.jme3.lostVictories.CanInteractWith;
 import com.jme3.lostVictories.characters.GameAnimChannel;
 import com.jme3.lostVictories.characters.GameCharacterNode;
 import com.jme3.lostVictories.effects.ParticleManager;
-import com.jme3.math.FastMath;
-import com.jme3.math.Quaternion;
-import com.jme3.math.Vector2f;
-import com.jme3.math.Vector3f;
+import com.jme3.math.*;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 
+import java.util.List;
 import java.util.Optional;
 
 public class Bazooka extends Weapon {
@@ -98,6 +96,14 @@ public class Bazooka extends Weapon {
         Vector2f v1 = new Vector2f(playerDirection.x, playerDirection.z).normalizeLocal();
         Vector2f v2 = new Vector2f(aimingDirection.x, aimingDirection.z).normalizeLocal();
         return v1.smallestAngleBetween(v2) < (FastMath.QUARTER_PI / 2);
+    }
+
+    @Override
+    public void transitionFiringSequence(GameAnimChannel channel, String completedAnimation, ParticleEmitter muzzelFlash, ParticleManager particleManager, GameCharacterNode player, List<Ray> rays) {
+        super.transitionFiringSequence(channel, completedAnimation, muzzelFlash, particleManager, player, rays);
+        if("bazooka_shootAction".equals(channel.getAnimationName())) {
+            particleManager.playTracerCannonEffect(player.getShootingLocation(), rays.get(0), 1);
+        }
     }
 
     @Override

@@ -83,7 +83,7 @@ public class StructureLoader {
         otherStructures.add("Models/Structures/Windmill.j3o");
 
         //Node otherStructureNode = new Node();
-        
+
         for(Spatial s: sceneGraph.getChildren()){
             if(structureTypes.contains(s.getName())){
                 Vector3f l = s.getLocalTranslation();
@@ -95,12 +95,12 @@ public class StructureLoader {
                 GameStructureNode gameStructureNode = addStructure((Node) s, worldMap);
                 sceneGraph.attachChild(gameStructureNode);
             }
-            
+
         }
 
         checkout.getHousesList().stream().map(h->new HouseMessage(h)).forEach(h->addHouse(h, worldMap));
         checkout.getBunkersList().forEach(b->addBunker(b, worldMap));
-        
+
 
 
         final Set<GameSector> calculateGameSector = WorldMap.calculateGameSector(worldMap.getAllHouses());
@@ -112,10 +112,10 @@ public class StructureLoader {
             Spatial a = GeometryBatchFactory.optimize(sec);
             sceneGraph.attachChild(a);
         }
-        
+
         addShootingTarget(new Vector3f(268.71814f, 96.11746f, 17.211853f), sceneGraph, worldMap);
         addShootingTarget(new Vector3f(-66.78554f, 96.32174f, -254.6674f), sceneGraph, worldMap);
-        
+
     }
 
     public GameHouseNode addHouse(HouseMessage houseMessage, WorldMap worldMap){
@@ -124,7 +124,7 @@ public class StructureLoader {
         worldMap.addHouse(addHouse);
         return addHouse;
     }
-    
+
     private GameHouseNode addHouse(Map flags, LostVictory app, HouseMessage house, TerrainQuad terrain, Node rootNode) {
         Node n = (Node) assetManager.loadModel(house.getType());
         final Vector3f l = house.getLocalTranslation();
@@ -132,12 +132,12 @@ public class StructureLoader {
 
         n.setLocalRotation(house.getLocalRotation());
         Node neutralFlag = (Node)assetManager.loadModel("Models/Structures/neutralFlag.j3o");
-        neutralFlag.setLocalScale(.5f);
-        neutralFlag.addControl(new HeloControl(assetManager, app));
-        
+        neutralFlag.setLocalScale(.35f);
+
         GameHouseNode h = new GameHouseNode(house.getId(), house.getType(), n, flags, neutralFlag, this.bulletAppState, new CollisionShapeFactoryProvider(), rootNode);
         h.updateOwership(house);
-        return h;        
+        h.addControl(new HeloControl(assetManager, app));
+        return h;
     }
 
     public GameBunkerNode addBunker(BunkerMessage message, WorldMap worldMap){
@@ -152,7 +152,7 @@ public class StructureLoader {
         worldMap.addStructure(b);
         return b;
     }
-    
+
     private GameTargetNode addShootingTarget(Vector3f l, Node sceneGraph, WorldMap worldMap){
         final Node t = (Node)assetManager.loadModel("Models/Structures/target.j3o");
         t.setLocalTranslation(l);
@@ -162,7 +162,7 @@ public class StructureLoader {
         sceneGraph.attachChild(gameTargetNode);
         return gameTargetNode;
     }
-    
+
     private GameStructureNode addStructure(Node structure, WorldMap worldMap) {
         GameStructureNode h = new GameStructureNode(structure, this.bulletAppState, new CollisionShapeFactoryProvider());
         worldMap.addStructure(h);
@@ -175,15 +175,15 @@ public class StructureLoader {
         final Node german = (Node)assetManager.loadModel("Models/Structures/germanFlag.j3o");
         american.addControl(new HeloControl(assetManager, app));
         german.addControl(new HeloControl(assetManager, app));
-        american.setLocalScale(.5f);
-        german.setLocalScale(.5f);
-        
+        american.setLocalScale(1.0f);
+        german.setLocalScale(1.0f);
+
         Map countries = new EnumMap<Country, Node>(Country.class);
         countries.put(Country.AMERICAN, american);
         countries.put(Country.GERMAN, german);
-        
+
         return countries;
     }
 
-    
+
 }

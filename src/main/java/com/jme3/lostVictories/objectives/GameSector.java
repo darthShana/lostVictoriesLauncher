@@ -68,9 +68,6 @@ public class GameSector {
     }
 
     public void add(GameStructureNode structure) {
-        if(structure instanceof GameBunkerNode){
-            System.out.println("adding bunker to sector:"+structure.getLocalTranslation());
-        }
         structures.add(structure);
     }
 

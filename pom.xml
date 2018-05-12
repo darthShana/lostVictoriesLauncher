@@ -16,7 +16,7 @@
     </repositories>
 
     <properties>
-        <jmeVersion>3.1.0-stable</jmeVersion>
+        <jmeVersion>3.2.0-stable</jmeVersion>
     </properties>
 
     <dependencies>

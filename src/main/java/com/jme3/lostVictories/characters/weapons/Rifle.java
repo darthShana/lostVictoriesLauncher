@@ -11,10 +11,12 @@ import com.jme3.lostVictories.characters.GameAnimChannel;
 import com.jme3.lostVictories.characters.GameCharacterNode;
 import com.jme3.lostVictories.effects.ParticleManager;
 import com.jme3.math.Quaternion;
+import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -103,6 +105,16 @@ public class Rifle extends Weapon{
     @Override
     public String getName() {
         return "rifle";
+    }
+
+    @Override
+    public void transitionFiringSequence(GameAnimChannel channel, String completedAnimation, ParticleEmitter muzzelFlash, ParticleManager particleManager, GameCharacterNode gameCharacterNode, List<Ray> rays) {
+        if(hasFiredProjectile(channel.getAnimationName())){
+            muzzelFlash.emitAllParticles();
+        }else{
+            muzzelFlash.killAllParticles();
+        }
+        super.transitionFiringSequence(channel, completedAnimation, muzzelFlash, particleManager, gameCharacterNode, rays);
     }
 
     @Override

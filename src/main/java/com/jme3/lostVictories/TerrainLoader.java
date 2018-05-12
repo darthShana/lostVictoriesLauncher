@@ -75,7 +75,7 @@ class TerrainLoader {
                 obj.removeFromParent();
                 obstacles.attachChild(obj);
             }
-            if("Models/Structures/ponte bridge.j3o".equals(obj.getName()) || "Models/Structures/bridge_short.j3o".equals(obj.getName())){
+            if("Models/Structures/ponteBridge.j3o".equals(obj.getName()) || "Models/Structures/bridge_short.j3o".equals(obj.getName())){
                 new GameObjectNode((Node)obj, bulletAppState, 0, false, true);
                 obj.removeFromParent();
                 traversableSurfaces.attachChild(obj);

@@ -12,11 +12,13 @@ import com.jme3.lostVictories.characters.GameAnimChannel;
 import com.jme3.lostVictories.characters.GameCharacterNode;
 import com.jme3.lostVictories.effects.ParticleManager;
 import com.jme3.math.Quaternion;
+import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -94,16 +96,7 @@ public abstract class Weapon {
         return firingSequence;
     }
 
-    public void transitionFiringSequence(GameAnimChannel channel, String completedAnimation, ParticleEmitter muzzelFlash) {
-        if(hasFiredProjectile(channel.getAnimationName())){
-            muzzelFlash.setEnabled(true);
-            muzzelFlash.setParticlesPerSec(getPartiplesPerSecond());
-            muzzelFlash.emitAllParticles();
-        }else{
-            muzzelFlash.setEnabled(false);
-            muzzelFlash.killAllParticles();
-        }
-        
+    public void transitionFiringSequence(GameAnimChannel channel, String completedAnimation, ParticleEmitter muzzelFlash, ParticleManager particleManager, GameCharacterNode gameCharacterNode, List<Ray> rays) {
         int i = getFiringSequence().indexOf(completedAnimation);
         if(i!=-1 && i<getFiringSequence().size()-1){
             channel.setAnim(getFiringSequence().get(i+1), LoopMode.DontLoop);

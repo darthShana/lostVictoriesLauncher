@@ -307,7 +307,7 @@ public abstract class GameCharacterNode<T extends GameCharacterControl> extends 
 
         }
 
-        model.transitionFireingSequence(getShootingChannel(), animName, muzzelFlash);
+        model.transitionFireingSequence(getShootingChannel(), animName, muzzelFlash, particleManager, this, rays);
 
 
 

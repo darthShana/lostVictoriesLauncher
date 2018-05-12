@@ -10,12 +10,10 @@ import com.jme3.lostVictories.CanInteractWith;
 import com.jme3.lostVictories.characters.GameAnimChannel;
 import com.jme3.lostVictories.characters.GameCharacterNode;
 import com.jme3.lostVictories.effects.ParticleManager;
-import com.jme3.math.FastMath;
-import com.jme3.math.Quaternion;
-import com.jme3.math.Vector2f;
-import com.jme3.math.Vector3f;
+import com.jme3.math.*;
 import com.jme3.scene.Node;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -99,7 +97,15 @@ public class Cannon extends Weapon{
     public boolean canShootMultipleTargets() {
         return false;
     }
-    
+
+    @Override
+    public void transitionFiringSequence(GameAnimChannel channel, String completedAnimation, ParticleEmitter muzzelFlash, ParticleManager particleManager, GameCharacterNode player, List<Ray> rays) {
+        if("cannon_loadAction".equals(completedAnimation)) {
+            particleManager.playTracerCannonEffect(player.getShootingLocation(), rays.get(0), 1);
+        }
+        super.transitionFiringSequence(channel, completedAnimation, muzzelFlash, particleManager, player, rays);
+    }
+
     @Override
     public boolean isWithinFieldOfVision(Vector3f playerDirection, Vector3f aimingDirection) {
         Vector2f v1 = new Vector2f(playerDirection.x, playerDirection.z).normalizeLocal();

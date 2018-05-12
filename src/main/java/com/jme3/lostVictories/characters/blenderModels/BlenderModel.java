@@ -61,23 +61,14 @@ public abstract class BlenderModel {
         channel.setAnim(weapon.getFiringSequence().getFirst(), LoopMode.DontLoop, weapon.getDefaultFiringSpeend());
     }
 
-
-    public void doShootAction(AnimChannel channel) {
-        channel.setAnim(weapon.getName()+"_shootAction");
-        channel.setLoopMode(LoopMode.DontLoop);
-        channel.setSpeed(1.5f);        
-    }
     
     public void doFireEffect(ParticleEmitter smokeTrail, ParticleManager particleManager, GameCharacterNode player, Vector3f firingDirection, List<Ray> rays, List<Float> fs) {
         Quaternion q = new Quaternion();
         q.lookAt(firingDirection, Vector3f.UNIT_Y);
         if(Weapon.mg42() == weapon){
             particleManager.playTracerBulletEffect(player, q.mult(getMuzzelLocation()), rays, fs);        
-        }else if(Weapon.cannon()== weapon){
-            particleManager.playTracerCannonEffect(player.getLocalTranslation().add(q.mult(getMuzzelLocation())), rays.get(0), 1);
-        }else if(Weapon.bazooka()== weapon){
-            particleManager.playTracerCannonEffect(player.getLocalTranslation().add(q.mult(getMuzzelLocation())), rays.get(0), 1);
-        }else{
+        }
+        if(Weapon.rifle() == weapon){
             smokeTrail.setLocalTranslation(player.getLocalTranslation().add(q.mult(getMuzzelLocation())));
             smokeTrail.getParticleInfluencer().setInitialVelocity(rays.get(0).getDirection().normalize().mult(300));
             smokeTrail.emitAllParticles();
@@ -85,8 +76,8 @@ public abstract class BlenderModel {
         }
     }
 
-    public void transitionFireingSequence(GameAnimChannel channel, String completedAnjmation, ParticleEmitter emitter) {
-        weapon.transitionFiringSequence(channel, completedAnjmation, emitter);
+    public void transitionFireingSequence(GameAnimChannel channel, String completedAnjmation, ParticleEmitter emitter, ParticleManager particleManager, GameCharacterNode gameCharacterNode, List<Ray> rays) {
+        weapon.transitionFiringSequence(channel, completedAnjmation, emitter, particleManager, gameCharacterNode, rays);
     }
 
     public boolean hasFinishedFiring(String animName) {

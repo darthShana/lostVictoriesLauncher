@@ -14,6 +14,7 @@ import com.jme3.lostVictories.StructureStatus;
 import com.jme3.lostVictories.WorldMap;
 import com.jme3.lostVictories.network.messages.CaptureStatus;
 import com.jme3.lostVictories.network.messages.HouseMessage;
+import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 
 import java.util.Map;
@@ -43,9 +44,10 @@ public class GameHouseNode extends GameStructureNode{
         this.flags = flags;
         this.neuralFlag = neuralFlag;
         this.structureStatus = StructureStatus.NEUTRAL;
-        attachFlagPost(neuralFlag);
         this.id = id;
         this.houseType = houseType;
+
+        attachFlagPost(neuralFlag);
     }
     
     public UUID getId() {
@@ -107,13 +109,30 @@ public class GameHouseNode extends GameStructureNode{
     
     private void attachFlagPost(Node flagPost){
         if("Models/Structures/casaMedieval.j3o".equals(houseType)){
-            flagPost.setLocalTranslation(getLocalTranslation().add(0, 0, 0));
+            Vector3f flagPostOffsetLocal = new Vector3f(4.80618f, 4.63278f, 0.08204f);
+            Vector3f flagPostOffset = new Vector3f();
+            getLocalTransform().transformVector(flagPostOffsetLocal, flagPostOffset);
+            flagPost.setLocalTranslation(flagPostOffset);
         }else if("Models/Structures/house_1.j3o".equals(houseType)){
-            flagPost.setLocalTranslation(getLocalTranslation().add(3, 0, 3));
+            Vector3f flagPostOffsetLocal = new Vector3f(2.96442f, 2.54677f, -0.01992f);
+            Vector3f flagPostOffset = new Vector3f();
+            getLocalTransform().transformVector(flagPostOffsetLocal, flagPostOffset);
+            flagPost.setLocalTranslation(flagPostOffset);
         }else if("Models/Structures/house2.j3o".equals(houseType)){
-            flagPost.setLocalTranslation(getLocalTranslation().add(3, 0, 3));
+            Vector3f flagPostOffsetLocal = new Vector3f(2.41521f, 2.8893f, 0.03065f);
+            Vector3f flagPostOffset = new Vector3f();
+            getLocalTransform().transformVector(flagPostOffsetLocal, flagPostOffset);
+            flagPost.setLocalTranslation(flagPostOffset);
         }else if("Models/Structures/house.j3o".equals(houseType)){
-            flagPost.setLocalTranslation(getLocalTranslation().add(3, 0, 3));
+            Vector3f flagPostOffsetLocal = new Vector3f(0.07761f, 4.2686f, 2.04438f);
+            Vector3f flagPostOffset = new Vector3f();
+            getLocalTransform().transformVector(flagPostOffsetLocal, flagPostOffset);
+            flagPost.setLocalTranslation(flagPostOffset);
+        }else if("Models/Structures/cottage.j3o".equals(houseType)){
+            Vector3f flagPostOffsetLocal = new Vector3f(2.9984f, 4.44248f, 3.64112f);
+            Vector3f flagPostOffset = new Vector3f();
+            getLocalTransform().transformVector(flagPostOffsetLocal, flagPostOffset);
+            flagPost.setLocalTranslation(flagPostOffset);
         }else{
             flagPost.setLocalTranslation(getLocalTranslation().add(5, 0, 5));
         }

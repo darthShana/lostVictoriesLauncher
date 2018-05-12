@@ -22,7 +22,6 @@ import com.jme3.lostVictories.characters.weapons.Weapon;
 import com.jme3.lostVictories.effects.ParticleManager;
 import com.jme3.lostVictories.network.messages.SquadType;
 import com.jme3.math.Vector3f;
-import com.jme3.renderer.Camera;
 import com.jme3.scene.Node;
 
 import java.util.Map;
@@ -150,7 +149,7 @@ public class AntiTankGunNode extends GameVehicleNode{
 
     @Override
     public void onAnimCycleDone(AnimControl control, AnimChannel channel, String animName) {
-        gunnerModel.transitionFireingSequence(operatorChannel.get(country), animName, muzzelFlash);
+        gunnerModel.transitionFireingSequence(operatorChannel.get(country), animName, muzzelFlash, particleManager, this, rays);
         super.onAnimCycleDone(control, channel, animName);
     }
 
