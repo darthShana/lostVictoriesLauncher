@@ -164,7 +164,7 @@ public class GameHouseNode extends GameStructureNode{
         
         public void doFlagAction(GameHouseNode structure, Map<Country, Node> flags) {
             structure.setFlag(flags.get(c));
-            AnimControl control = currentFlag.getControl(AnimControl.class);
+            AnimControl control = currentFlag.getChild("flag").getControl(AnimControl.class);
             AnimChannel channel;
             if(control.getNumChannels()==0){
                 channel = control.createChannel();

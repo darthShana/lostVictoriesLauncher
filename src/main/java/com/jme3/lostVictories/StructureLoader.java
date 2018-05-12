@@ -76,17 +76,19 @@ public class StructureLoader {
         otherStructures.add("Models/Structures/shed.j3o");
         otherStructures.add("Models/Structures/watchtower.j3o");
         otherStructures.add("Models/Structures/house_1.j3o");
-        otherStructures.add("Models/Structures/WaterPoweredSawmill.j3o");
         otherStructures.add("Models/Structures/ponte bridge.j3o");
         otherStructures.add("Models/Structures/bridge_short.j3o");
         otherStructures.add("Models/Structures/Chapel.j3o");
         otherStructures.add("Models/Structures/tavern.j3o");
         otherStructures.add("Models/Structures/Windmill.j3o");
-        
+
         //Node otherStructureNode = new Node();
         
         for(Spatial s: sceneGraph.getChildren()){
             if(structureTypes.contains(s.getName())){
+                Vector3f l = s.getLocalTranslation();
+                Quaternion r = s.getLocalRotation();
+//                System.out.println("houses.add(new HouseMessage(\""+s.getName()+"\", new Vector("+l.x+"f, "+l.y+"f, "+l.z+"f), new Quaternion("+r.getX()+"f, "+r.getY()+"f, "+r.getZ()+"f, "+r.getW()+"f)));");
                 s.removeFromParent();
             }else if(otherStructures.contains(s.getName())){
                 s.removeFromParent();
