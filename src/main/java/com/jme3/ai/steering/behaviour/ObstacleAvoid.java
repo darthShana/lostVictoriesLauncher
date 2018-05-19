@@ -4,12 +4,11 @@
  */
 package com.jme3.ai.steering.behaviour;
 
-import com.jme3.ai.steering.Obstacle;
 import com.jme3.math.Plane;
 import com.jme3.math.Plane.Side;
 import com.jme3.math.Vector3f;
-
 import java.util.List;
+import com.jme3.ai.steering.Obstacle;
 
 /**
  * Obstacle avoidance behavior gives a character the ability to maneuver 

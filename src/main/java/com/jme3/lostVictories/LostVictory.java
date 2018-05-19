@@ -22,11 +22,9 @@ import com.jme3.lostVictories.minimap.MinimapNode;
 import com.jme3.lostVictories.network.GameStatusMessageHandler;
 import com.jme3.lostVictories.network.NetworkClient;
 import com.jme3.lostVictories.network.CharacterUpdateMessageHandler;
-import com.jme3.lostVictories.network.CharacterUpdate;
 import com.jme3.lostVictories.structures.GameHouseNode;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
-import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.system.AppSettings;
 import com.jme3.terrain.geomipmap.TerrainQuad;
@@ -155,7 +153,7 @@ public class LostVictory extends SimpleApplication implements ActionListener {
         al.setColor(ColorRGBA.White.mult(.6f));
         rootNode.addLight(al);
 
-        navMesh = CustomNavMeshBuilder.buildMesh((Geometry)sceneGraph.getChild("NavMesh"));
+        navMesh = CustomNavMeshBuilder.getMesh(assetManager);
         StructureLoader structureLoader = StructureLoader.instance(rootNode, assetManager, bulletAppState, this, terrain, sceneGraph);
 
         MinimapNode minimapNode = new MinimapNode("minimap", this);

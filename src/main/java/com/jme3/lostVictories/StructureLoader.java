@@ -86,9 +86,10 @@ public class StructureLoader {
 
         for(Spatial s: sceneGraph.getChildren()){
             if(structureTypes.contains(s.getName())){
-                Vector3f l = s.getLocalTranslation();
-                Quaternion r = s.getLocalRotation();
-//                System.out.println("houses.add(new HouseMessage(\""+s.getName()+"\", new Vector("+l.x+"f, "+l.y+"f, "+l.z+"f), new Quaternion("+r.getX()+"f, "+r.getY()+"f, "+r.getZ()+"f, "+r.getW()+"f)));");
+//                Vector3f l = s.getLocalTranslation();
+//                Quaternion r = s.getLocalRotation();
+//                Vector3f c = s.getLocalScale();
+//                System.out.println("houses.add(new HouseMessage(\""+s.getName()+"\", new Vector("+l.x+"f, "+l.y+"f, "+l.z+"f), new Quaternion("+r.getX()+"f, "+r.getY()+"f, "+r.getZ()+"f, "+r.getW()+"f), new Vector("+c.x+"f, "+c.y+"f, "+c.z+"f)));");
                 s.removeFromParent();
             }else if(otherStructures.contains(s.getName())){
                 s.removeFromParent();
@@ -131,6 +132,7 @@ public class StructureLoader {
         n.setLocalTranslation(l.x, terrain.getHeight(new Vector2f(l.x, l.z)), l.z);
 
         n.setLocalRotation(house.getLocalRotation());
+        n.setLocalScale(house.getLocalScale());
         Node neutralFlag = (Node)assetManager.loadModel("Models/Structures/neutralFlag.j3o");
         neutralFlag.setLocalScale(.35f);
 

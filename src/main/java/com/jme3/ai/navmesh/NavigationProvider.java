@@ -5,7 +5,7 @@
  */
 package com.jme3.ai.navmesh;
 
-import com.jme3.lostVictories.WorldMap;
+import com.jme3.app.Application;
 import com.jme3.math.Vector3f;
 
 import java.util.ArrayList;
@@ -19,38 +19,29 @@ import java.util.concurrent.Future;
  *
  * @author dharshanar
  */
-public class NavigationProvider {
+public class NavigationProvider extends NavMeshPathfinder{
 
-    private final NavMeshPathfinder navMeshPathFinder;
-    private ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
-    public NavigationProvider(NavMeshPathfinder customNavMeshPathfinder) {
-        this.navMeshPathFinder = customNavMeshPathfinder;
-    }
-
-    public void warpInside(Vector3f location) {
-        navMeshPathFinder.warpInside(location);
-    }
-
-    public Vector3f warp(Vector3f loc){
-        return navMeshPathFinder.warp(loc);
+    public NavigationProvider(NavMesh navMesh) {
+        super(navMesh);
     }
 
     private Optional<List<Vector3f>> computePath(float entityRadius, Vector3f start, Vector3f destination) {
-        navMeshPathFinder.clearPath();
-        navMeshPathFinder.setEntityRadius(entityRadius);
-        navMeshPathFinder.setPosition(start);
+        clearPath();
+        setEntityRadius(entityRadius);
+        setPosition(start);
         Vector3f dest = new Vector3f(destination);
-        navMeshPathFinder.warpInside(dest);
+        warpInside(dest);
         final DebugInfo debugInfo = new DebugInfo();
 
-        if(navMeshPathFinder.computePath(dest, debugInfo)){
-            if(navMeshPathFinder.getPath().getEnd().getPosition().distance(destination)>10){
-                return Optional.empty();
-            }
+        if(computePath(dest, debugInfo)){
+//            if(getPath().getEnd().getPosition().distance(destination)>10){
+//                return Optional.empty();
+//            }
 
             List<Vector3f> path = new ArrayList<>();
-            for(Path.Waypoint w: navMeshPathFinder.getPath().getWaypoints()){
+            for(Path.Waypoint w: getPath().getWaypoints()){
 //                Float terrainHeight = worldMap.getTerrainHeight(new Vector3f(w.getPosition().x, 200, w.getPosition().z));
 //                path.add(new Vector3f(w.getPosition().x, terrainHeight!=null?terrainHeight:w.getPosition().y, w.getPosition().z));
                 path.add(new Vector3f(w.getPosition().x, w.getPosition().y, w.getPosition().z));

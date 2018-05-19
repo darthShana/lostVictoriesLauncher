@@ -4,9 +4,8 @@
  */
 package com.jme3.ai.navmesh;
 
-import com.jme3.ai.navmesh.Path.Waypoint;
 import com.jme3.math.Vector3f;
-
+import com.jme3.ai.navmesh.Path.Waypoint;
 import java.util.ArrayList;
 import java.util.List;
 

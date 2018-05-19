@@ -4,8 +4,6 @@
  */
 package com.jme3.ai.steering;
 
-import com.jme3.ai.steering.behaviour.*;
-import com.jme3.ai.steering.utilities.SimpleObstacle;
 import com.jme3.app.SimpleApplication;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
@@ -21,9 +19,15 @@ import com.jme3.scene.control.AbstractControl;
 import com.jme3.scene.control.Control;
 import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Line;
-
 import java.util.ArrayList;
 import java.util.List;
+import com.jme3.ai.steering.behaviour.Evade;
+import com.jme3.ai.steering.behaviour.Flee;
+import com.jme3.ai.steering.behaviour.ObstacleAvoid;
+import com.jme3.ai.steering.behaviour.Persuit;
+import com.jme3.ai.steering.behaviour.Seek;
+import com.jme3.ai.steering.behaviour.Separation;
+import com.jme3.ai.steering.utilities.SimpleObstacle;
 
 /**
  *

@@ -7,6 +7,8 @@ package com.jme3.ai.steering;
 import com.jme3.math.Vector3f;
 
 
+
+
 /**
  * Used in Obstacle avoidance. Contains basic location information.
  * 

@@ -1,7 +1,7 @@
 package com.jme3.ai.navmesh;
 
-import com.jme3.ai.navmesh.util.MinHeap;
 import com.jme3.math.Vector3f;
+import com.jme3.ai.navmesh.util.MinHeap;
 
 /**
  * A NavigationHeap is a priority-ordered list facilitated by the STL heap

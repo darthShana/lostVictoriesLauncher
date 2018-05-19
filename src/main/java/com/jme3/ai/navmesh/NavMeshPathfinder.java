@@ -1,12 +1,11 @@
 package com.jme3.ai.navmesh;
 
-import com.jme3.ai.navmesh.Cell.ClassifyResult;
-import com.jme3.ai.navmesh.Cell.PathResult;
-import com.jme3.ai.navmesh.Line2D.LineIntersect;
 import com.jme3.ai.navmesh.Path.Waypoint;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
-
+import com.jme3.ai.navmesh.Cell.ClassifyResult;
+import com.jme3.ai.navmesh.Cell.PathResult;
+import com.jme3.ai.navmesh.Line2D.LineIntersect;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,7 +59,7 @@ public class NavMeshPathfinder {
      * @return the new position in the nearest cell
      */
     public Vector3f warp(Vector3f newPos) {
-        Vector3f newPos2d = new Vector3f(newPos.x, 0, newPos.z);
+        Vector3f newPos2d = new Vector3f(newPos.x, newPos.y, newPos.z);
         currentCell = navMesh.findClosestCell(newPos2d);
         currentPos3d.set(navMesh.snapPointToCell(currentCell, newPos2d));
         currentPos3d.setY(newPos.getY());
@@ -76,7 +75,7 @@ public class NavMeshPathfinder {
      * @return the position in the cell
      */
     public Vector3f warpInside(Vector3f position) {
-        Vector3f newPos2d = new Vector3f(position.x, 0, position.z);
+        Vector3f newPos2d = new Vector3f(position.x, position.y, position.z);
         Cell cell = navMesh.findClosestCell(newPos2d);
         position.set(navMesh.snapPointToCell(cell, newPos2d));
         return position;
@@ -341,7 +340,7 @@ public class NavMeshPathfinder {
         List<Waypoint> newPath = new ArrayList<Waypoint>();
         Waypoint curWayPoint = navPath.getFirst();
         newPath.add(curWayPoint);
-        while (curWayPoint != navPath.getLast() && newPath.size()<256) {
+        while (curWayPoint != navPath.getLast()) {
             curWayPoint = navPath.getFurthestVisibleWayPoint(curWayPoint);
             newPath.add(curWayPoint);
         }
@@ -415,7 +414,7 @@ public class NavMeshPathfinder {
                     motionLine.setPointB(motionLine.getPointA().add(
                             Direction));
                 }
-            } else if (result.result == PathResult.NoRelationship) {
+            } else if (result.result == Cell.PathResult.NoRelationship) {
                 // Although theoretically we should never encounter this case,
                 // we do sometimes find ourselves standing directly on a vertex
                 // of the cell.
@@ -433,7 +432,7 @@ public class NavMeshPathfinder {
         // Keep testing until we find our ending cell or stop moving due to
         // friction
         //
-        while ((result.result != PathResult.EndingCell)
+        while ((result.result != Cell.PathResult.EndingCell)
                 && (motionLine.getPointA().x != motionLine.getPointB().x && motionLine.getPointA().y != motionLine.getPointB().y) && i < 5000);
         //
         if (i >= 5000) {

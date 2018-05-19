@@ -47,7 +47,7 @@ public class GameHouseNode extends GameStructureNode{
         this.id = id;
         this.houseType = houseType;
 
-        attachFlagPost(neuralFlag);
+        attachFlagPost(neuralFlag, house);
     }
     
     public UUID getId() {
@@ -107,35 +107,30 @@ public class GameHouseNode extends GameStructureNode{
         return contestingOwner;
     }
     
-    private void attachFlagPost(Node flagPost){
+    private void attachFlagPost(Node flagPost, Node house){
+        Vector3f flagPostOffsetLocal;
         if("Models/Structures/casaMedieval.j3o".equals(houseType)){
-            Vector3f flagPostOffsetLocal = new Vector3f(4.80618f, 4.63278f, 0.08204f);
-            Vector3f flagPostOffset = new Vector3f();
-            getLocalTransform().transformVector(flagPostOffsetLocal, flagPostOffset);
-            flagPost.setLocalTranslation(flagPostOffset);
+            flagPostOffsetLocal = new Vector3f(4.80618f, 4.63278f, 0.08204f);
+
         }else if("Models/Structures/house_1.j3o".equals(houseType)){
-            Vector3f flagPostOffsetLocal = new Vector3f(2.96442f, 2.54677f, -0.01992f);
-            Vector3f flagPostOffset = new Vector3f();
-            getLocalTransform().transformVector(flagPostOffsetLocal, flagPostOffset);
-            flagPost.setLocalTranslation(flagPostOffset);
+            flagPostOffsetLocal = new Vector3f(2.96442f, 2.54677f, -0.01992f);
+
         }else if("Models/Structures/house2.j3o".equals(houseType)){
-            Vector3f flagPostOffsetLocal = new Vector3f(2.41521f, 2.8893f, 0.03065f);
-            Vector3f flagPostOffset = new Vector3f();
-            getLocalTransform().transformVector(flagPostOffsetLocal, flagPostOffset);
-            flagPost.setLocalTranslation(flagPostOffset);
+            flagPostOffsetLocal = new Vector3f(2.41521f, 2.8893f, 0.03065f);
+
         }else if("Models/Structures/house.j3o".equals(houseType)){
-            Vector3f flagPostOffsetLocal = new Vector3f(0.07761f, 4.2686f, 2.04438f);
-            Vector3f flagPostOffset = new Vector3f();
-            getLocalTransform().transformVector(flagPostOffsetLocal, flagPostOffset);
-            flagPost.setLocalTranslation(flagPostOffset);
+            flagPostOffsetLocal = new Vector3f(0.07761f, 4.2686f, 2.04438f);
+
         }else if("Models/Structures/cottage.j3o".equals(houseType)){
-            Vector3f flagPostOffsetLocal = new Vector3f(2.9984f, 4.44248f, 3.64112f);
-            Vector3f flagPostOffset = new Vector3f();
-            getLocalTransform().transformVector(flagPostOffsetLocal, flagPostOffset);
-            flagPost.setLocalTranslation(flagPostOffset);
+            flagPostOffsetLocal = new Vector3f(2.9984f, 4.44248f, 3.64112f);
+
         }else{
-            flagPost.setLocalTranslation(getLocalTranslation().add(5, 0, 5));
+            flagPostOffsetLocal = new Vector3f(5, 0, 5);
         }
+        flagPostOffsetLocal.multLocal(house.getLocalScale());
+        Vector3f flagPostOffset = new Vector3f();
+        getLocalTransform().transformVector(flagPostOffsetLocal, flagPostOffset);
+        flagPost.setLocalTranslation(flagPostOffset);
         this.flagPost = flagPost;
         rootNode.attachChild(flagPost);
     }
@@ -222,7 +217,7 @@ public class GameHouseNode extends GameStructureNode{
         }
 
         public void doFlagAction(GameHouseNode structure, Map<Country, Node> flags) {
-            AnimControl control = currentFlag.getControl(AnimControl.class);
+            AnimControl control = currentFlag.getChild("flag").getControl(AnimControl.class);
             AnimChannel channel;
             if(control.getNumChannels()==0){
                 channel = control.createChannel();

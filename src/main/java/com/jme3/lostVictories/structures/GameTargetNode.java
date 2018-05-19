@@ -31,14 +31,11 @@ public class GameTargetNode extends GameStructureNode implements CanInteractWith
     public GameTargetNode(Node t, BulletAppState bulletAppState, CollisionShapeFactoryProvider collisionShapeFactoryProvider) {
         super(t, bulletAppState, collisionShapeFactoryProvider);
         setUserData("GameCharacterControl", "blank");
-        
-        if(t.getChild("Box01")!=null){
-            final Spatial child = t.getChild("Box01");
-            
-            AnimControl control = child.getControl(AnimControl.class);
-            control.addListener(this);
-            channel = control.createChannel();
-        }
+
+        AnimControl control = t.getControl(AnimControl.class);
+        control.addListener(this);
+        channel = control.createChannel();
+
         
     }
 
@@ -63,7 +60,7 @@ public class GameTargetNode extends GameStructureNode implements CanInteractWith
         }
         
         if(!isHit){
-            channel.setAnim("hitAction");
+            channel.setAnim("ArmatureAction");
             channel.setSpeed(12);
             channel.setLoopMode(LoopMode.DontLoop);
             isHit = true;
@@ -73,7 +70,7 @@ public class GameTargetNode extends GameStructureNode implements CanInteractWith
 
     @Override
     public boolean takeMissile(CollisionResult result, GameCharacterNode shooter) {
-        channel.setAnim("hitAction");
+        channel.setAnim("ArmatureAction");
         channel.setSpeed(12);
         channel.setLoopMode(LoopMode.DontLoop);
         return true;
@@ -81,7 +78,7 @@ public class GameTargetNode extends GameStructureNode implements CanInteractWith
 
     public void onAnimCycleDone(AnimControl control, AnimChannel channel, String animName) {
         if(isHit){
-            channel.setAnim("hitAction");
+            channel.setAnim("ArmatureAction");
             channel.setSpeed(-8);
             channel.setLoopMode(LoopMode.DontLoop);
             isHit = false;

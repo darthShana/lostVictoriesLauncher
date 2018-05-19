@@ -1,9 +1,13 @@
 package com.jme3.ai.navmesh;
 
-import com.jme3.export.*;
-import com.jme3.math.Vector2f;
-
+import com.jme3.export.InputCapsule;
+import com.jme3.export.JmeExporter;
+import com.jme3.export.JmeImporter;
+import com.jme3.export.OutputCapsule;
+import com.jme3.export.Savable;
 import java.io.IOException;
+
+import com.jme3.math.Vector2f;
 
 /**
  * 
@@ -325,7 +329,7 @@ public class Line2D implements Savable {
     public static void selfTest() {
         Line2D a = new Line2D(new Vector2f(-2, 0), new Vector2f(2, 0));
         Line2D b = new Line2D(new Vector2f(-2, 1), new Vector2f(2, -1));
-        LineIntersect res = a.intersect(b, null);
+        Line2D.LineIntersect res = a.intersect(b, null);
         if (res == LineIntersect.CoLinear || res == LineIntersect.Parallel) {
             System.out.println("Failed intersection verrification");
         }

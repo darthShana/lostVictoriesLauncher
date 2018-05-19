@@ -64,7 +64,7 @@ public class CharacterLoader {
         this.assetManager = assetManager;
         this.bulletAppState = bulletAppState;
         this.navMesh = navMesh;
-        this.pathFinder = new NavigationProvider(new NavMeshPathfinder(navMesh));
+        this.pathFinder = new NavigationProvider(navMesh);
         this.pf = pf;
         this.hud = hud;
         this.particleManager = particleManager;

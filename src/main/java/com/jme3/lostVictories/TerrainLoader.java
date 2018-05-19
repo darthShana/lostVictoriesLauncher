@@ -4,6 +4,7 @@
  */
 package com.jme3.lostVictories;
 
+import com.jme3.ai.navmesh.NavMesh;
 import com.jme3.asset.AssetManager;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.collision.shapes.CollisionShape;
@@ -12,9 +13,11 @@ import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.lostVictories.structures.CollisionShapeFactoryProvider;
 import com.jme3.lostVictories.structures.GameBunkerNode;
 import com.jme3.lostVictories.structures.GameObjectNode;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
+import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.terrain.geomipmap.TerrainLodControl;
@@ -84,8 +87,8 @@ class TerrainLoader {
 
         }
         
-        final Spatial navMash = loadModel.getChild("NavMesh");
-        navMash.removeFromParent();
+//        final Spatial navMash = loadModel.getChild("NavMesh");
+//        navMash.removeFromParent();
         final TerrainQuad terrain = (TerrainQuad) loadModel.getChild("terrain-testScene4");
         terrain.removeFromParent();
         TerrainLodControl control = new TerrainLodControl(terrain, camera);
@@ -100,13 +103,15 @@ class TerrainLoader {
         landscape.setLinearDamping(1);
         terrain.addControl(landscape);
         loadModel.attachChild(traversableSurfaces);
-        loadModel.attachChild(navMash);
+//        loadModel.attachChild(navMash);
         loadModel.attachChild(obstacles);
         
         bulletAppState.getPhysicsSpace().add(landscape);
         return loadModel;
 
     }
+
+
 
     
 
