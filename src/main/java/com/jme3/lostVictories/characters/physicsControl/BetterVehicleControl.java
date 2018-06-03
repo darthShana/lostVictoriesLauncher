@@ -142,16 +142,16 @@ public class BetterVehicleControl extends VehicleControl implements GameCharacte
     public void stearRight() {
         if(steeringValue>-vehicleNode.getMaxStearingAngle()){
             steeringValue += -.05f;
-            steer(steeringValue); 
         }
+        steer(steeringValue);
 
     }
 
     public void stearLeft() {
         if(steeringValue<vehicleNode.getMaxStearingAngle()){
             steeringValue += .05f;
-            steer(steeringValue); 
         }
+        steer(steeringValue);
 
     }
 

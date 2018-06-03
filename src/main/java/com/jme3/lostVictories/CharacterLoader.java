@@ -41,9 +41,9 @@ public class CharacterLoader {
     private final WorldMap worldMap;
     private final ActorRef shootsFiredListener;
 
-    static CharacterLoader instance(Node rootNode, AssetManager assetManager, BulletAppState bulletAppState, NavMesh navMesh, ParticleEmitterFactory pf, HeadsUpDisplayAppState hud, ParticleManager particleManager, LostVictory app, WorldMap worldMap, ActorSystem actorSystem) {
+    static CharacterLoader instance(Node rootNode, AssetManager assetManager, BulletAppState bulletAppState, ParticleEmitterFactory pf, HeadsUpDisplayAppState hud, ParticleManager particleManager, LostVictory app, WorldMap worldMap, ActorSystem actorSystem) {
         if(instance == null){
-            instance = new CharacterLoader(rootNode, assetManager, bulletAppState, navMesh, pf, hud, particleManager, app, worldMap, actorSystem);
+            instance = new CharacterLoader(rootNode, assetManager, bulletAppState, pf, hud, particleManager, app, worldMap, actorSystem);
         }
         return instance;
     }
@@ -51,7 +51,6 @@ public class CharacterLoader {
     private final Node rootNode;
     private final AssetManager assetManager;
     private final BulletAppState bulletAppState;
-    private final NavMesh navMesh;
     private final NavigationProvider pathFinder;
     private final ParticleEmitterFactory pf;
     private final HeadsUpDisplayAppState hud;
@@ -59,12 +58,11 @@ public class CharacterLoader {
     private final LostVictory app;
     
 
-    private CharacterLoader(Node rootNode, AssetManager assetManager, BulletAppState bulletAppState, NavMesh navMesh, ParticleEmitterFactory pf, HeadsUpDisplayAppState hud, ParticleManager particleManager, LostVictory app, WorldMap worldMap, ActorSystem actorSystem) {
+    private CharacterLoader(Node rootNode, AssetManager assetManager, BulletAppState bulletAppState, ParticleEmitterFactory pf, HeadsUpDisplayAppState hud, ParticleManager particleManager, LostVictory app, WorldMap worldMap, ActorSystem actorSystem) {
         this.rootNode = rootNode;
         this.assetManager = assetManager;
         this.bulletAppState = bulletAppState;
-        this.navMesh = navMesh;
-        this.pathFinder = new NavigationProvider(navMesh);
+        this.pathFinder = new NavigationProvider(assetManager);
         this.pf = pf;
         this.hud = hud;
         this.particleManager = particleManager;
@@ -231,7 +229,7 @@ public class CharacterLoader {
         Vector3f rotation = c.getOrientation().toVector();
         SquadType squadType = c.getSquadType();
         adjustLocationToNavMap(location);
-        
+
         if(CharacterType.ANTI_TANK_GUN == c.getType()){
             loadedCharacter = loadAntiTankGun(c.getId(), location, rotation, squadType, country, null, b);
         }else if(CharacterType.ARMORED_CAR == c.getType()){
@@ -275,7 +273,7 @@ public class CharacterLoader {
     public void laodUnclaimedEquipment(UnClaimedEquipmentMessage eq) {
         final Node model = load(Country.AMERICAN.getModel(Weapon.rifle(), Rank.PRIVATE));
         final Vector3f location = eq.getLocation().toVector();
-        pathFinder.warpInside(location);
+        pathFinder.warpInside(null, location);
         UnclaimedEquipmentNode n = new UnclaimedEquipmentNode(eq.getId(), location, eq.getRotation().toVector(), Weapon.get(eq.getWeapon()), model, rootNode, assetManager);
         worldMap.addUnclaimedEquipment(n);
     }
@@ -285,7 +283,7 @@ public class CharacterLoader {
         if(f!=null){
             location.y = f;
         }else{
-            pathFinder.warpInside(location);
+            pathFinder.warpInside(null, location);
             location.y = location.y +1;
         }
     }

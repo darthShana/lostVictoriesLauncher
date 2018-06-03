@@ -7,8 +7,10 @@ package com.jme3.lostVictories.characters;
 
 import akka.actor.ActorRef;
 import com.jme3.ai.navmesh.NavigationProvider;
+import com.jme3.ai.navmesh.Path;
 import com.jme3.asset.AssetManager;
 import com.jme3.bullet.BulletAppState;
+import com.jme3.cinematic.MotionPath;
 import com.jme3.collision.CollisionResult;
 import com.jme3.collision.CollisionResults;
 import com.jme3.lostVictories.CharcterParticleEmitter;
@@ -23,6 +25,7 @@ import com.jme3.lostVictories.objectives.Objective;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Ray;
+import com.jme3.math.Spline;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
@@ -38,7 +41,7 @@ import java.util.*;
  */
 public abstract class AICharacterNode<T extends GameCharacterControl> extends GameCharacterNode<T> {
 
-    List<Geometry> boxes = new ArrayList<Geometry>();
+    private MotionPath motionPath;
     protected BehaviorControler behaviorControler;
     private List<Vector3f> path;
     private boolean pathPlotted;
@@ -49,7 +52,6 @@ public abstract class AICharacterNode<T extends GameCharacterControl> extends Ga
     public AICharacterNode(UUID id, Node model, Country country, CommandingOfficer commandingOfficer, Vector3f worldCoodinates, Vector3f rotation, SquadType squadType, Node rootNode, BulletAppState bulletAppState, CharcterParticleEmitter emitter, ParticleManager particleManager, NavigationProvider pathFinder, AssetManager assetManager, BlenderModel m, BehaviorControler behaviorControler, ActorRef shootssFiredListener) {
         super(id, model, country, commandingOfficer, worldCoodinates, rotation, squadType, rootNode, bulletAppState, emitter, particleManager, pathFinder, assetManager, m, shootssFiredListener);
         this.behaviorControler = behaviorControler;
-
     }
     
     public void simpleUpate(float tpf, WorldMap map, Node rootNode) {
@@ -153,17 +155,6 @@ public abstract class AICharacterNode<T extends GameCharacterControl> extends Ga
         
         return ret;
     }
-       
-    public Geometry getBox(float size, float x, float y, float z) {
-        Box b= new Box(size, 1, size);
-        Geometry mark = new Geometry("selected", b);
-        Material mark_mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        mark_mat.setColor("Color", ColorRGBA.White);
-        mark.setMaterial(mark_mat);
-        mark.setLocalTranslation(new Vector3f(x, y, z));
-        boxes.add(mark);
-        return mark;
-    }
 
     public boolean isReadyToShoot(Vector3f targetDirection) {
         return model.isReadyToShoot(channel, getAimingDirection(), targetDirection);
@@ -239,17 +230,24 @@ public abstract class AICharacterNode<T extends GameCharacterControl> extends Ga
 
 
     private void plotPath(List<Vector3f> waypoints){
-        for(Geometry g: boxes){
-            rootNode.detachChild(g);
+        if(motionPath==null) {
+            motionPath = new MotionPath();
+            motionPath.setPathSplineType(Spline.SplineType.Linear);
         }
-        boxes.clear();
-        float i =.5f;
-        for(Vector3f p:waypoints){
-            rootNode.attachChild(getBox(i, p.x, p.y, p.z));
+        if (motionPath.getNbWayPoints() > 0) {
+            motionPath.clearWayPoints();
+            motionPath.disableDebugShape();
         }
+
+        for (Vector3f wp : waypoints) {
+            motionPath.addWayPoint(wp);
+        }
+        motionPath.enableDebugShape(assetManager, rootNode);
+
     }
 
     public void showPath(List<Vector3f> path) {
+        pathPlotted = false;
         this.path = path;
     }
 

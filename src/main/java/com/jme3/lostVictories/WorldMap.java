@@ -100,7 +100,8 @@ public class WorldMap {
     }
     
     public GameCharacterNode getCharacter(UUID id){
-        Optional<? extends GameCharacterNode> any = characters.allCharacters().stream().filter(c -> c.getIdentity().equals(id)).findAny();
+        Collection<? extends GameCharacterNode> gameCharacterNodes = new ArrayList<>(characters.allCharacters());
+        Optional<? extends GameCharacterNode> any = gameCharacterNodes.stream().filter(c -> c.getIdentity().equals(id)).findAny();
         return any.isPresent()?any.get():null;
     }
 
@@ -342,7 +343,7 @@ public class WorldMap {
             set.addAll(getAllHouses());
             set.addAll(getAllBunkers());
             gameSectors = calculateGameSector(set);
-            gameSectors.forEach(d-> System.out.println("defences:"+d.getDefences().size()));
+            gameSectors.forEach(d-> System.out.println("houses:"+d.getHouses().size()+" defences:"+d.getDefences().size()));
         }
         return gameSectors;
     }
@@ -350,9 +351,9 @@ public class WorldMap {
     public static <T extends GameStructureNode> Set<GameSector> calculateGameSector(Set<T> allStructures) {
         Set<GameSector> ret = new HashSet<>();
 
-        for(int y = WorldMap.mapBounds.y;y<=WorldMap.mapBounds.getMaxY();y=y+50){
-            for(int x = WorldMap.mapBounds.x;x<=WorldMap.mapBounds.getMaxX();x=x+50){
-                ret.add(new GameSector(new Rectangle(x, y, 50, 50)));
+        for(int y = WorldMap.mapBounds.y;y<=WorldMap.mapBounds.getMaxY();y=y+33){
+            for(int x = WorldMap.mapBounds.x;x<=WorldMap.mapBounds.getMaxX();x=x+33){
+                ret.add(new GameSector(new Rectangle(x, y, 33, 33)));
             }
         }
         

@@ -172,7 +172,6 @@ public class NavMesh implements Savable {
         int i = 0;
         while (result.result == Cell.PathResult.ExitingCell) {
             if(i>100){
-                System.out.println("possible infinite loop so exiting");
                 return false;
             }
             if (result.cell == null)// hit a wall, so the point is not visible

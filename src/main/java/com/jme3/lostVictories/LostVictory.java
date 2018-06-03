@@ -101,7 +101,6 @@ public class LostVictory extends SimpleApplication implements ActionListener {
         app.start();
     }
 
-    private NavMesh navMesh;
     private WorldMap worldMap;
     private WorldRunner worldRunner;
     private boolean gameOver;
@@ -153,7 +152,6 @@ public class LostVictory extends SimpleApplication implements ActionListener {
         al.setColor(ColorRGBA.White.mult(.6f));
         rootNode.addLight(al);
 
-        navMesh = CustomNavMeshBuilder.getMesh(assetManager);
         StructureLoader structureLoader = StructureLoader.instance(rootNode, assetManager, bulletAppState, this, terrain, sceneGraph);
 
         MinimapNode minimapNode = new MinimapNode("minimap", this);
@@ -163,7 +161,7 @@ public class LostVictory extends SimpleApplication implements ActionListener {
 
         ParticleEmitterFactory pf = ParticleEmitterFactory.instance(assetManager);
         ParticleManager particleManager = new ParticleManager(sceneGraph, assetManager, renderManager);
-        characterLoader = CharacterLoader.instance(sceneGraph, assetManager, bulletAppState, navMesh, pf, headsUpDisplayAppState, particleManager, this, worldMap, actorSystem);
+        characterLoader = CharacterLoader.instance(sceneGraph, assetManager, bulletAppState, pf, headsUpDisplayAppState, particleManager, this, worldMap, actorSystem);
         CharacterUpdateMessageHandler characterSync = new CharacterUpdateMessageHandler(this, characterLoader, structureLoader, avatarUUID, particleManager);
         GameStatusMessageHandler gameStatusSync = new GameStatusMessageHandler(worldMap, characterLoader, headsUpDisplayAppState);
         networkClientAppState = NetworkClientAppState.init(this, new NetworkClient(ipAddress, port, avatarUUID, characterSync, gameStatusSync), characterSync, gameStatusSync);

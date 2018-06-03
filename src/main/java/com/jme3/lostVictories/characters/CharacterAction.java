@@ -148,14 +148,14 @@ public class CharacterAction {
         }
     }
 
-    void calculatePath(Vector3f location, Vector3f contactPoint, NavigationProvider pathFinder) {
+    void calculatePath(GameCharacterNode character, Vector3f location, Vector3f contactPoint, NavigationProvider pathFinder) {
         if(computePath!=null){
             computePath.cancel(true);
             computePath = null;
         }
 
         try{
-            computePath = pathFinder.computePathFuture(.8f, location, contactPoint);
+            computePath = pathFinder.computePathFuture(character, .8f, location, contactPoint);
         }catch(Throwable e){
             e.printStackTrace();
         }

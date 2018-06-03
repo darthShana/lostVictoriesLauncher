@@ -227,7 +227,7 @@ public class HalfTrackNode extends GameVehicleNode{
 
     @Override
     public float getMaxStearingAngle() {
-        return .5f;
+        return FastMath.QUARTER_PI;
     }
 
     private enum MOVEMENT_MODE {

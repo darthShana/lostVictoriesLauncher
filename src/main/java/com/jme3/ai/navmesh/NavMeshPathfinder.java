@@ -201,6 +201,7 @@ public class NavMeshPathfinder {
     /**
      * Build a navigation path using the provided points and the A* method
      */
+    @SuppressWarnings("Duplicates")
     private boolean buildNavigationPath(Path navPath,
             Cell startCell, Vector3f startPos,
             Cell endCell, Vector3f endPos,
@@ -253,7 +254,7 @@ public class NavMeshPathfinder {
         // Step through each cell linked by our A* algorithm
         // from StartCell to EndCell
         Cell currentCell = startCell;
-        while (currentCell != null && currentCell != endCell && navPath.getWaypoints().size()<256) {
+        while (currentCell != null && currentCell != endCell && navPath.getWaypoints().size()<512) {
 
             if (debugInfo != null) {
                 debugInfo.addPlannedCell(currentCell);

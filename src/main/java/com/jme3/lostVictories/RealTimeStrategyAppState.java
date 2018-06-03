@@ -347,7 +347,7 @@ public class RealTimeStrategyAppState extends AbstractAppState implements Action
 
                     if(!app.getTerrain().hasChild(closestCollision.getGeometry())){
                         if(selectedCharacter!=null && selectedCharacter instanceof GameCharacterNode){
-                            ((GameCharacterNode)selectedCharacter).getPathFinder().warpInside(contactPoint);
+                            ((GameCharacterNode)selectedCharacter).getPathFinder().warpInside((GameCharacterNode) selectedCharacter, contactPoint);
                         }
                     }
 

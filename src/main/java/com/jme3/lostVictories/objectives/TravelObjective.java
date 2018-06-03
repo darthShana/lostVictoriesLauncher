@@ -67,7 +67,7 @@ import static com.jme3.lostVictories.characters.RemoteBehaviourControler.MAPPER;
         if(computePath==null){
 
             if(path==null) {
-                path = character.getPathFinder().computePathFuture(.8f, character.getLocalTranslation(), destination);
+                path = character.getPathFinder().computePathFuture(character, .8f, character.getLocalTranslation(), destination);
             }
             if(path.isDone()) {
                 try{

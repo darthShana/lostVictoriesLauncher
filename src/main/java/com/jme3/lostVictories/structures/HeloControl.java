@@ -39,23 +39,30 @@ public class HeloControl extends AbstractControl {
 
     @Override
     protected void controlUpdate(float tpf) {
-        if(System.currentTimeMillis()-lastUpdate>100 && spatial.getLocalTranslation().distance(app.avatar.getLocalTranslation())<50){
-            lastUpdate = System.currentTimeMillis();
-            if(helo==null){
-                Cylinder b = new Cylinder(12, 12, 2.5f, .125f, false, false);
-                helo = new Geometry("selected", b);
-                Material mark_mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-                mark_mat.setColor("Color", ColorRGBA.White);
-                helo.setMaterial(mark_mat);
-                helo.setLocalRotation(x_rot);
-                helo.setLocalTranslation(0, 0, 0);
-                ((Node)spatial).attachChild(helo);
-            }else{
-                scale = scale - (HeloControl.MAX_SIZE * .025f);
-                if(scale<=0){
-                    scale = HeloControl.MAX_SIZE;
+        if(spatial.getLocalTranslation().distance(app.avatar.getLocalTranslation())<100 && !((GameHouseNode)spatial).isOwnedBy(app.avatar.getCountry())){
+            if(System.currentTimeMillis()-lastUpdate>100) {
+                lastUpdate = System.currentTimeMillis();
+                if (helo == null) {
+                    Cylinder b = new Cylinder(12, 12, 2.5f, .125f, false, false);
+                    helo = new Geometry("selected", b);
+                    Material mark_mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+                    mark_mat.setColor("Color", ColorRGBA.White);
+                    helo.setMaterial(mark_mat);
+                    helo.setLocalRotation(x_rot);
+                    helo.setLocalTranslation(0, 0, 0);
+                    ((Node) spatial).attachChild(helo);
+                } else {
+                    scale = scale - (HeloControl.MAX_SIZE * .025f);
+                    if (scale <= 0) {
+                        scale = HeloControl.MAX_SIZE;
+                    }
+                    helo.setLocalScale(scale, scale, 1);
                 }
-                helo.setLocalScale(scale, scale, 1);
+            }
+        }else{
+            if(helo!=null){
+                helo.removeFromParent();
+                helo = null;
             }
         }
     }

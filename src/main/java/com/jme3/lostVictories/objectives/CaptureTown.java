@@ -43,7 +43,7 @@ public class CaptureTown extends Objective<Soldier>{
         Set<UUID> stillAround = new HashSet<>();
 
         for(Commandable c: this.character.getCharactersUnderCommand()){
-            if(!c.isBusy() && character.getCurrentStrength()>=12){
+            if(!c.isBusy() && character.getCurrentStrength()>=15){
                 available.add(c);
             }
             stillAround.add(c.getIdentity());
@@ -69,7 +69,7 @@ public class CaptureTown extends Objective<Soldier>{
 
 
         if(toUse!=null){
-            final SecureSector secureSector = new SecureSector(toSecure.getHouses(), toSecure.getDefences(), rootNode, 12, 5, character.getLocalTranslation());
+            final SecureSector secureSector = new SecureSector(toSecure.getHouses(), toSecure.getDefences(), rootNode, 15, 5, character.getLocalTranslation());
             toUse.addObjective(secureSector);
             sectorAssignments.put(toSecure, toUse.getIdentity());
             attempted.add(toSecure);

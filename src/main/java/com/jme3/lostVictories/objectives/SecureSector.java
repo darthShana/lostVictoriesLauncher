@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.jme3.ai.navmesh.NavigationProvider;
 import com.jme3.asset.AssetManager;
+import com.jme3.lostVictories.Country;
 import com.jme3.lostVictories.WorldMap;
 import com.jme3.lostVictories.actions.AIAction;
 import com.jme3.lostVictories.characters.AICharacterNode;
@@ -91,6 +92,10 @@ public class SecureSector extends Objective<Lieutenant> implements MinimapPresen
         Set<UUID> units = c.getCharactersUnderCommand().stream().map(cc -> cc.getIdentity()).collect(Collectors.toSet());
         units.add(c.getIdentity());
         issuedOrders = issuedOrders.entrySet().stream().filter(e -> units.contains(e.getKey())).collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()));
+
+//        if(Country.AMERICAN == c.getCountry()){
+//            System.out.println(c.getCountry()+" lieu:"+c.getIdentity()+" at:"+c.getLocalTranslation()+" strength:"+c.getCurrentStrength()+" state:"+state);
+//        }
 
         AIAction<AICharacterNode> action = state.planObjective(c, worldMap, rootNode, this);
         SecureSectorState newState = state.transition(c, worldMap, this);

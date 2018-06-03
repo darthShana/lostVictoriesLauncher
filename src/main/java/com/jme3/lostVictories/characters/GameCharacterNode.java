@@ -188,10 +188,13 @@ public abstract class GameCharacterNode<T extends GameCharacterControl> extends 
     }
     
     public void die(GameCharacterNode killer) {
+        if(Country.AMERICAN == country && Rank.LIEUTENANT == getRank()){
+            System.out.println("LIEUTENANT death");
+        }
         doDeathEffects();
         NetworkClientAppState.get().notifyDeath(killer.getIdentity(), this.getIdentity());
-        if(!isAlliedWith(killer)){
-            getCommandingOfficer().addEnemyActivity(killer.getLocalTranslation(), System.currentTimeMillis());
+        if(!isAlliedWith(killer) && commandingOfficer!=null){
+            commandingOfficer.addEnemyActivity(killer.getLocalTranslation(), System.currentTimeMillis());
         }
     }
     

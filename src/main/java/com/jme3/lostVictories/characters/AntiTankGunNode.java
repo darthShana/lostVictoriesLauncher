@@ -21,6 +21,7 @@ import com.jme3.lostVictories.characters.physicsControl.BetterVehicleControl;
 import com.jme3.lostVictories.characters.weapons.Weapon;
 import com.jme3.lostVictories.effects.ParticleManager;
 import com.jme3.lostVictories.network.messages.SquadType;
+import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 
@@ -181,7 +182,7 @@ public class AntiTankGunNode extends GameVehicleNode{
 
     @Override
     public float getMaxStearingAngle() {
-        return .9f;
+        return FastMath.HALF_PI;
     }
 
     @Override

@@ -25,7 +25,7 @@ public enum Rank {
         
         @Override
         public int getFullStrengthPopulation() {
-            return 4;
+            return 5;
         }
         
     }, 

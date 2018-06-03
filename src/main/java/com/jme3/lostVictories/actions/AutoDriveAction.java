@@ -4,6 +4,7 @@
  */
 package com.jme3.lostVictories.actions;
 
+import com.jme3.lostVictories.Country;
 import com.jme3.lostVictories.WorldMap;
 import com.jme3.lostVictories.characters.GameAnimChannel;
 import com.jme3.lostVictories.characters.GameVehicleNode;
@@ -22,7 +23,7 @@ import java.util.List;
 public class AutoDriveAction extends DriveAction {
     private static Quaternion qLeft90 = new Quaternion().fromAngleAxis(FastMath.HALF_PI, Vector3f.UNIT_Y);
     private static Quaternion qRight90= new Quaternion().fromAngleAxis(-FastMath.HALF_PI, Vector3f.UNIT_Y);
-    private List<Vector3f>  waypoints = new ArrayList<Vector3f>();
+    private List<Vector3f>  waypoints = new ArrayList<>();
     private boolean reverseToTarget = false;
     private boolean pointsPlotted;
 
@@ -38,9 +39,9 @@ public class AutoDriveAction extends DriveAction {
     }
 
     public boolean doAction(GameVehicleNode c, Node rootNode, GameAnimChannel channel, float tpf) {
-//        if(!pointsPlotted && c instanceof AntiTankGunNode && Country.GERMAN == c.getCountry()){
+//        if(!pointsPlotted && c instanceof GameVehicleNode){
 //            pointsPlotted = true;
-//            c.plotPath(waypoints);
+//            c.showPath(waypoints);
 //        }
         final Vector3f localTranslation = c.getLocalTranslation();
         if(!waypoints.isEmpty()){

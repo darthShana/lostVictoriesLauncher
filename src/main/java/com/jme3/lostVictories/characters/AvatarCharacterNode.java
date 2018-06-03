@@ -151,7 +151,7 @@ public class AvatarCharacterNode extends GameCharacterNode<BetterSoldierControl>
             hud.addMessage("you can ask your units to get in as well, just select them and right click on the vehicle you control");
         }
 
-        characterAction.calculatePath(getLocalTranslation(), contactPoint, pathFinder);
+        characterAction.calculatePath(this, getLocalTranslation(), contactPoint, pathFinder);
         
     }
 

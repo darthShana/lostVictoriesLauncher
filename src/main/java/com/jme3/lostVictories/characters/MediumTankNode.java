@@ -20,6 +20,7 @@ import com.jme3.lostVictories.characters.physicsControl.BetterVehicleControl;
 import com.jme3.lostVictories.effects.ParticleManager;
 import com.jme3.lostVictories.network.messages.SquadType;
 import com.jme3.lostVictories.objectives.RotateTurretAndShoot;
+import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.Node;
@@ -110,7 +111,7 @@ public class MediumTankNode extends GameVehicleNode{
 
     @Override
     public float getMaxStearingAngle() {
-        return .5f;
+        return FastMath.QUARTER_PI;
     }
 
     @Override
