@@ -9,10 +9,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.jme3.ai.navmesh.NavigationProvider;
 import com.jme3.asset.AssetManager;
+import com.jme3.lostVictories.Country;
 import com.jme3.lostVictories.WorldMap;
 import com.jme3.lostVictories.actions.AIAction;
 import com.jme3.lostVictories.characters.*;
+import com.jme3.lostVictories.characters.weapons.Weapon;
 import com.jme3.lostVictories.minimap.MinimapPresentable;
+import com.jme3.lostVictories.network.messages.SquadType;
 import com.jme3.lostVictories.network.messages.Vector;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
@@ -30,7 +33,7 @@ import static com.jme3.lostVictories.characters.RemoteBehaviourControler.MAPPER;
 public class AttackTargetsInDirection extends Objective<CadetCorporal> implements MinimapPresentable{
     Set<Vector3f> lastKnownLocations;
     private Node rootNode;
-    private AttackState state = AttackState.MOVE_INTO_POSITION;
+    AttackState state = AttackState.MOVE_INTO_POSITION;
     private Map<UUID, Objective> issuesObjectives = new HashMap<>();
 
     private AttackTargetsInDirection(){}
@@ -112,11 +115,15 @@ public class AttackTargetsInDirection extends Objective<CadetCorporal> implement
             for(int x = -delta;x<delta;x=x+5){
                 for(int z=-delta;z<delta;z=z+5){
                     if(!attemptedX.contains(x) || !attemptedZ.contains(z)) {
+
+
                         Float terrainHeight = WorldMap.get().getTerrainHeight(new Vector3f(localTranslation.x + x, 120, localTranslation.z + z));
                         if (terrainHeight != null) {
                             Vector3f possibleAttackPos = new Vector3f(localTranslation.x + x, terrainHeight + 3, localTranslation.z + z);
                             for(Vector3f target:targets){
-                                if (WorldMap.get().hasLOS(character, possibleAttackPos, target.subtract(possibleAttackPos), target, rootNode)) {
+                                if(character.isTeam(Weapon.mortar()) && character.getLocalTranslation().distance(target)<Weapon.mortar().getMaxRange()){
+                                    return new Vector3f[]{possibleAttackPos, target};
+                                }else if (WorldMap.get().hasLOS(character, possibleAttackPos, target.subtract(possibleAttackPos), target, rootNode)) {
                                     return new Vector3f[]{possibleAttackPos, target};
                                 }
                             }
@@ -139,8 +146,22 @@ public class AttackTargetsInDirection extends Objective<CadetCorporal> implement
         MOVE_INTO_POSITION {
             @Override
             AIAction planObjective(CadetCorporal character, Map<UUID, Objective> issuesObjectives, WorldMap worldMap, Set<Vector3f> lastKnownLocations, Node rootNode) {
-
-                Vector3f[] loc = findAttackPosition(character, character.getLocalTranslation(), lastKnownLocations, rootNode);
+                Vector3f initialLocation = null;
+                if(character.getSquadType()== SquadType.MORTAR_TEAM){
+                    Optional<Commandable> first = character.getCharactersUnderCommand().stream().filter(unit -> unit.getWeapon() == Weapon.mortar()).findFirst();
+                    if(first.isPresent()){
+                        initialLocation = first.get().getLocalTranslation();
+                    }
+                }else if(character.getSquadType() == SquadType.MG42_TEAM){
+                    Optional<Commandable> first = character.getCharactersUnderCommand().stream().filter(unit -> unit.getWeapon() == Weapon.mg42()).findFirst();
+                    if(first.isPresent()){
+                        initialLocation = first.get().getLocalTranslation();
+                    }
+                }
+                if(initialLocation==null){
+                    initialLocation = character.getLocalTranslation();
+                }
+                Vector3f[] loc = findAttackPosition(character, initialLocation, lastKnownLocations, rootNode);
                 if(loc!=null) {
                     character.getCharactersUnderCommand().stream().filter(unit->!issuesObjectives.containsKey(unit.getIdentity())).forEach(unit -> {
                         Cover cover = new Cover(loc[0], loc[1], rootNode);
@@ -148,7 +169,6 @@ public class AttackTargetsInDirection extends Objective<CadetCorporal> implement
                         issuesObjectives.put(unit.getIdentity(), cover);
                     });
                     if(!issuesObjectives.containsKey(character.getIdentity())){
-                        System.out.println(character.getCountry()+"issues "+character.getWeapon()+ " cover from "+loc[1]);
                         Cover cover = new Cover(loc[0], loc[1], rootNode);
                         issuesObjectives.put(character.getIdentity(), cover);
                     }

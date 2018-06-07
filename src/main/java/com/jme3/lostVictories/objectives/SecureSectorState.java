@@ -182,10 +182,10 @@ enum SecureSectorState {
             Set<UUID> stillArround = c.getCharactersUnderCommand().stream().map(unit -> unit.getIdentity()).collect(Collectors.toSet());
             objective.issuedOrders.entrySet().removeIf(uuidObjectiveEntry ->
                             uuidObjectiveEntry.getValue().isComplete ||
-                            stillArround.contains(uuidObjectiveEntry.getKey()));
+                            !stillArround.contains(uuidObjectiveEntry.getKey()));
 
             Set<Vector3f> activities = enemyActivity.activity();
-            if(!  activities.isEmpty()) {
+            if(!activities.isEmpty()) {
                 System.out.println(c.getCountry()+" detected enemy activity:"+activities);
                 c.getCharactersUnderCommand().stream()
                         .filter(unit -> unit.getRank() == Rank.CADET_CORPORAL)
@@ -194,6 +194,7 @@ enum SecureSectorState {
                     AttackTargetsInDirection ab = new AttackTargetsInDirection(activities, rootNode);
                     objective.issuedOrders.put(commandable.getIdentity(), ab);
                     commandable.addObjective(ab);
+                    System.out.println("issues attack to corporal:"+commandable.getIdentity());
 
                 });
             }

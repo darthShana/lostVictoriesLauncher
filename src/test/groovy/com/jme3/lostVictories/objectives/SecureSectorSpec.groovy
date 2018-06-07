@@ -4,6 +4,7 @@ import com.jme3.lostVictories.WorldMap
 import com.jme3.lostVictories.characters.CadetCorporal
 import com.jme3.lostVictories.characters.EnemyActivityReport
 import com.jme3.lostVictories.characters.Lieutenant
+import com.jme3.lostVictories.characters.Rank
 import com.jme3.lostVictories.structures.GameBunkerNode
 import com.jme3.lostVictories.structures.GameHouseNode
 import com.jme3.math.Vector3f
@@ -14,7 +15,9 @@ import java.awt.geom.Rectangle2D
 class SecureSectorSpec extends Specification {
     def bunker1 = Stub(GameBunkerNode.class)
     def bunker2 = Stub(GameBunkerNode.class)
-    def secureSector = new SecureSector(defences: [bunker1, bunker2])
+    def house1 = Stub(GameBunkerNode.class)
+    def house2 = Stub(GameBunkerNode.class)
+    def secureSector = new SecureSector(defences: [bunker1, bunker2], houses: [house1, house2], minimumFightingStrength: 1)
 
     def "test get vacant defences"(){
         expect:
@@ -93,13 +96,53 @@ class SecureSectorSpec extends Specification {
         character.getCharactersUnderCommand() >> [corp2]
         secureSector.state = SecureSectorState.DEFEND_SECTOR
         secureSector.issuedOrders[corp1.identity] = new OccupyStructure()
-        character.getEnemyActivity() >> new EnemyActivityReport([new Vector3f(100, 10, 100)] as Set, [] as Set)
+        def activity = [:]
+        activity[new Vector3f(100, 10, 100)] = System.currentTimeMillis()
+        character.getEnemyActivity() >> new EnemyActivityReport(activity:activity)
         secureSector.planObjective(character, Mock(WorldMap.class))
 
         then:
         secureSector.state == SecureSectorState.DEFEND_SECTOR
         !secureSector.issuedOrders[corp1.identity]
         secureSector.issuedOrders[corp2.identity] instanceof OccupyStructure
+    }
+
+    def "don't issues attack orders to busy units"(){
+        given:
+        def corp1 = Mock(CadetCorporal.class)
+        corp1.getIdentity() >> UUID.randomUUID()
+        corp1.getRank() >> Rank.CADET_CORPORAL
+        def corp2 = Mock(CadetCorporal.class)
+        corp2.getIdentity() >> UUID.randomUUID()
+        corp2.getRank() >> Rank.CADET_CORPORAL
+        def character = Mock(Lieutenant.class)
+        character.getIdentity() >> UUID.randomUUID()
+        character.getCurrentStrength() >> 15
+
+        when:
+        character.getCharactersUnderCommand() >> [corp1, corp2]
+        def activity = [:]
+        activity[new Vector3f(100, 10, 100)] = System.currentTimeMillis()
+        character.getEnemyActivity() >> new EnemyActivityReport(activity:activity)
+
+        secureSector.state = SecureSectorState.ATTACK_TARGET
+        secureSector.planObjective(character, Mock(WorldMap.class))
+        def obj1 = secureSector.issuedOrders[corp1.identity]
+        def obj2 = secureSector.issuedOrders[corp2.identity]
+
+        then:
+        obj1 instanceof AttackTargetsInDirection
+        obj2 instanceof AttackTargetsInDirection
+
+        when:
+        secureSector.planObjective(character, Mock(WorldMap.class))
+        def obj3 = secureSector.issuedOrders[corp1.identity]
+        def obj4 = secureSector.issuedOrders[corp2.identity]
+
+        then:
+        obj1 == obj3
+        obj2 == obj4
+
     }
 
 }
