@@ -64,12 +64,9 @@ public class OccupyStructure extends Objective<CadetCorporal> {
 
     @Override
     public Objective fromJson(JsonNode json, GameCharacterNode character, NavigationProvider pathFinder, Node rootNode, WorldMap map) throws IOException {
-        Optional<GameBunkerNode> defenciveStructure = map.getDefensiveStructure(UUID.fromString(json.get("defenciveStructure").asText()));
-        if(defenciveStructure.isPresent()) {
-            return new OccupyStructure(defenciveStructure.get());
-        }else{
-            return null;
-        }
+        GameBunkerNode defenciveStructure = map.getDefensiveStructure(UUID.fromString(json.get("defenciveStructure").asText()));
+        return new OccupyStructure(defenciveStructure);
+
     }
 
     enum State {

@@ -20,10 +20,10 @@ import com.lostVictories.api.BunkerMessage;
 import com.lostVictories.api.LostVictoryCheckout;
 import jme3tools.optimize.GeometryBatchFactory;
 
-import java.util.EnumMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static com.jme3.lostVictories.network.NetworkClient.uuid;
 
 /**
  *
@@ -102,9 +102,14 @@ public class StructureLoader {
         checkout.getHousesList().stream().map(h->new HouseMessage(h)).forEach(h->addHouse(h, worldMap));
         checkout.getBunkersList().forEach(b->addBunker(b, worldMap));
 
+        checkout.getSectorsList().stream().map(s->new GameSector(
+                uuid(s.getSectorID()),
+                s.getHousesList().stream().map(hid->worldMap.getHouse(uuid(hid))).collect(Collectors.toSet()),
+                s.getDefencesList().stream().map(did->worldMap.getDefensiveStructure(uuid(did))).collect(Collectors.toSet())))
+                .forEach(sector->worldMap.addSector(sector));
 
 
-        final Set<GameSector> calculateGameSector = WorldMap.calculateGameSector(worldMap.getAllHouses());
+        final Collection<GameSector> calculateGameSector = worldMap.getAllGameSectors();
         for(GameSector sector:calculateGameSector){
             Node sec = new Node();
             for(GameStructureNode s:sector.getHouses()){
@@ -149,9 +154,9 @@ public class StructureLoader {
         node.setLocalTranslation(l);
         node.setLocalRotation(r);
 
-        GameBunkerNode b = new GameBunkerNode(node, this.bulletAppState, new CollisionShapeFactoryProvider());
+        GameBunkerNode b = new GameBunkerNode(uuid(message.getId()), node, this.bulletAppState, new CollisionShapeFactoryProvider());
         sceneGraph.attachChild(b);
-        worldMap.addStructure(b);
+        worldMap.addBunker(b);
         return b;
     }
 

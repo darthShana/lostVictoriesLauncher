@@ -14,7 +14,6 @@ import com.jme3.scene.Node;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.Map.Entry;
 
 import static com.jme3.lostVictories.characters.RemoteBehaviourControler.MAPPER;
 
@@ -37,7 +36,7 @@ public class CaptureTown extends Objective<Soldier>{
 
     public AIAction planObjective(Soldier character, WorldMap worldMap) {
         
-        Set<GameSector> gameSectors = worldMap.getGameSectors();
+        Collection<GameSector> gameSectors = worldMap.getAllGameSectors();
 
         Set<Commandable> available = new HashSet<>();
         Set<UUID> stillAround = new HashSet<>();
@@ -69,7 +68,9 @@ public class CaptureTown extends Objective<Soldier>{
 
 
         if(toUse!=null){
-            final SecureSector secureSector = new SecureSector(toSecure.getHouses(), toSecure.getDefences(), rootNode, 15, 5, character.getLocalTranslation());
+            final SecureSector secureSector = new SecureSector(toSecure, rootNode, 15, 5, character.getLocalTranslation());
+            System.out.println(toUse.getIdentity()+": secure sector houses:"+toSecure.getHouses().size()+" bunkers:"+toSecure.getDefences().size());
+
             toUse.addObjective(secureSector);
             sectorAssignments.put(toSecure, toUse.getIdentity());
             attempted.add(toSecure);
@@ -90,10 +91,8 @@ public class CaptureTown extends Objective<Soldier>{
     public CaptureTown fromJson(JsonNode json, GameCharacterNode character, NavigationProvider pathFinder, Node rootNode, WorldMap map) throws IOException {
         return new CaptureTown((HeerCaptain) character, rootNode);
     }
-    
 
-
-    private GameSector findClosestUnsecuredGameSector(GameCharacterNode character, Set<GameSector> gameSectors, Set<GameSector> exclude) {
+    private GameSector findClosestUnsecuredGameSector(GameCharacterNode character, Collection<GameSector> gameSectors, Set<GameSector> exclude) {
         GameSector closest = null;
         for(GameSector gameSector:gameSectors){
             if(!gameSector.isSecured(character.getCountry()) && !exclude.contains(gameSector)){

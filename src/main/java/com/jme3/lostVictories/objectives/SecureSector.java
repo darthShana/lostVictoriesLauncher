@@ -37,6 +37,8 @@ import static com.jme3.lostVictories.characters.RemoteBehaviourControler.MAPPER;
  * @author dharshanar
  */
 public class SecureSector extends Objective<Lieutenant> implements MinimapPresentable{
+
+    private UUID sectorId;
     private Set<GameBunkerNode> defences;
     Set<GameHouseNode> houses;
     private Node rootNode;
@@ -53,9 +55,10 @@ public class SecureSector extends Objective<Lieutenant> implements MinimapPresen
 
     private SecureSector(){}
     
-    SecureSector(Set<GameHouseNode> houses, Set<GameBunkerNode> defences, Node rooNode, int deploymentStrength, int minimumFightingStrenght, Vector3f homeBase) {
-        this.houses = houses;
-        this.defences = defences;
+    SecureSector(GameSector sector, Node rooNode, int deploymentStrength, int minimumFightingStrenght, Vector3f homeBase) {
+        this.sectorId = sector.getId();
+        this.houses = sector.getHouses();
+        this.defences = sector.getDefences();
         this.rootNode = rooNode;
         
         float totalX = 0, totalY = 0,totalZ = 0;
@@ -83,7 +86,6 @@ public class SecureSector extends Objective<Lieutenant> implements MinimapPresen
         this.deploymentStrength = deploymentStrength;
         this.minimumFightingStrength = minimumFightingStrenght;
         this.homeBase = homeBase;
-        System.out.println("secure sector:"+boundary+" houses:"+houses.size()+" bunkers:"+defences.size());
     }
 
     @Override
@@ -125,9 +127,9 @@ public class SecureSector extends Objective<Lieutenant> implements MinimapPresen
        }
         
         ObjectNode node = MAPPER.createObjectNode();
-        node.set("houses", MAPPER.valueToTree(houses.stream().map(h->h.getId()).collect(Collectors.toSet())));
-        node.set("centre", MAPPER.valueToTree(new Vector(centre)));
-        node.set("homeBase", MAPPER.valueToTree(new Vector(homeBase)));
+
+        node.set("sectorId", MAPPER.valueToTree(sectorId));
+        node.put("homeBase", MAPPER.valueToTree(new Vector(homeBase)));
         node.put("deploymentStrength", deploymentStrength);
         node.put("minimumFightingStrength", minimumFightingStrength);
         return node;
@@ -135,33 +137,24 @@ public class SecureSector extends Objective<Lieutenant> implements MinimapPresen
 
     @Override
     public Objective fromJson(JsonNode json, GameCharacterNode character, NavigationProvider pathFinder, Node rootNode, WorldMap map) throws IOException {
-        JavaType type = MAPPER.getTypeFactory().constructCollectionType(Set.class, UUID.class);
         int ds = json.get("deploymentStrength").asInt();
         int mfs = json.get("minimumFightingStrength").asInt();
         Vector h = MAPPER.treeToValue(json.get("homeBase"), Vector.class);
-        Vector cent = MAPPER.treeToValue(json.get("centre"), Vector.class);
 
-        Set<GameHouseNode> hs = new HashSet<>();
-        Set<GameBunkerNode> defences = new HashSet<>();
-        Optional<GameSector> sector = map.findSector(cent);
-        if(sector.isPresent()){            
-            hs.addAll(sector.get().getHouses());
-            defences.addAll(sector.get().getDefences());
-        }else{
-            System.out.println("unable to find sector:"+cent);
-        }
-        
+        GameSector sectorId = map.getGameSector(UUID.fromString(json.get("sectorId").asText()));
+
+
         if(!(character instanceof Lieutenant)){
             System.out.println("found rank mismatch:"+character.getIdentity());
         }
         
-        return new SecureSector(hs, defences, rootNode, ds, mfs, h.toVector());
+        return new SecureSector(sectorId, rootNode, ds, mfs, h.toVector());
     }
 
 
 
     public List<String> getInstructions() {
-        List<String> instructions = new ArrayList<String>();
+        List<String> instructions = new ArrayList<>();
         instructions.add("secure the houses in this sector");
         return instructions;
     }

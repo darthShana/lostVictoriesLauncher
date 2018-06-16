@@ -13,10 +13,11 @@ import java.util.UUID;
 public class GameBunkerNode extends GameStructureNode{
 
 
-    private UUID identity = UUID.randomUUID();
+    private UUID identity;
 
-    public GameBunkerNode(Node house, BulletAppState bulletAppState, CollisionShapeFactoryProvider collisionShapeFactoryProvider) {
+    public GameBunkerNode(UUID id, Node house, BulletAppState bulletAppState, CollisionShapeFactoryProvider collisionShapeFactoryProvider) {
         super(house, bulletAppState, collisionShapeFactoryProvider);
+        this.identity = id;
         Quaternion q = new Quaternion(house.getLocalRotation());
         house.setLocalRotation(Quaternion.ZERO);
         setLocalRotation(q);

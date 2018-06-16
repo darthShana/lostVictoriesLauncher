@@ -15,60 +15,30 @@ import java.awt.*;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class GameSector {
-    
-    private final Set<Rectangle> rects = new HashSet<Rectangle>();
-    private final Set<GameStructureNode> structures = new HashSet<GameStructureNode>();
 
-    public GameSector(Rectangle rect) {
-        this.rects.add(rect);
+    private UUID id;
+    private final Set<GameHouseNode> houses;
+    private final Set<GameBunkerNode> defences;
+
+    public GameSector(UUID id, Set<GameHouseNode> houses, Set<GameBunkerNode> defences) {
+        this.id = id;
+        this.houses = houses;
+        this.defences = defences;
     }
 
-    public boolean isJoinedTo(GameSector s) {
-        for(Rectangle r1: rects){
-            for(Rectangle r2:s.rects){
-                if(new Rectangle(r1.x-1, r1.y-1, r1.width+2, r1.height+2).intersects(r2)){
-                    return true;
-                }
-            }
-
-        }
-        return false;
+    public UUID getId(){
+        return id;
     }
 
-    public void merge(GameSector neighbour) {
-        structures.addAll(neighbour.structures);
-        rects.addAll(neighbour.rects);
+    public void add(GameHouseNode structure) {
+        houses.add(structure);
     }
-
-    public boolean containsStructure(GameStructureNode house) {
-        for(Rectangle r:rects){
-            if(r.contains(house.getLocalTranslation().x, house.getLocalTranslation().z)){
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    public boolean containsPoint(float x, float z) {
-        if(rects.isEmpty()){
-            return false;
-        }
-        Rectangle union = null;
-        for(Iterator<Rectangle> it = rects.iterator();it.hasNext();){
-            if(union == null){
-                union = it.next();
-            }else{
-                union.add(it.next());
-            }
-        }
-        return (union!=null)?union.contains(x, z):false;
-    }
-
-    public void add(GameStructureNode structure) {
-        structures.add(structure);
+    public void add(GameBunkerNode structure) {
+        defences.add(structure);
     }
 
     public boolean isSecured(Country country) {
@@ -76,20 +46,24 @@ public class GameSector {
     }
 
     public Vector3f location() {
-        final Rectangle next = rects.iterator().next();
-        return new Vector3f((float)next.getCenterX(), 0, (float)next.getCenterY());
+        Vector3f f = houses.iterator().next().getLocalTranslation();
+        return new Vector3f(f.x, f.y, f.z);
     }
 
     public Set<GameHouseNode> getHouses(){
-        return structures.stream().filter(s->s instanceof GameHouseNode).map(s->(GameHouseNode)s).collect(Collectors.toSet());
+        return houses;
     }
 
     public Set<GameBunkerNode> getDefences() {
-        return structures.stream().filter(s->s instanceof GameBunkerNode).map(s->(GameBunkerNode)s).collect(Collectors.toSet());
+        return defences;
     }
 
     public Set<GameStructureNode> getStructures() {
-        return structures;
+        Set<GameStructureNode> all = new HashSet<>();
+        all.addAll(houses);
+        all.addAll(defences);
+
+        return all;
     }
 
 }

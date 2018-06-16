@@ -59,8 +59,9 @@ public class WorldMap {
 
     private final Set<GameStructureNode> structures = new HashSet<>();
     private final Map<UUID, GameHouseNode> houses = new HashMap<>();
+    private final Map<UUID, GameBunkerNode> defences = new HashMap<>();
     private final Map<UUID, UnclaimedEquipmentNode> unclaimedEquipment = new HashMap<>();
-    Set<GameSector> gameSectors;
+    Map<UUID, GameSector> gameSectors = new HashMap<>();
 
     private WorldMap(Node traversableSurfaces, ActorSystem actorSystem) {
         this.traversableSurfaces = traversableSurfaces;
@@ -70,6 +71,11 @@ public class WorldMap {
     public void addHouse(GameHouseNode addHouse) {
         houses.put(addHouse.getId(), addHouse);
         structures.add(addHouse);
+    }
+
+    public void addBunker(GameBunkerNode bunker){
+        defences.put(bunker.getIdentity(), bunker);
+        structures.add(bunker);
     }
 
     public void addStructure(GameStructureNode structureNode){
@@ -266,8 +272,8 @@ public class WorldMap {
         return houses.get(id);
     }
 
-    public Optional<GameBunkerNode> getDefensiveStructure(UUID defenciveStructure) {
-        return structures.stream().filter(s->s instanceof GameBunkerNode).map(d->(GameBunkerNode)d).filter(b->b.getIdentity().equals(defenciveStructure)).findAny();
+    public GameBunkerNode getDefensiveStructure(UUID defenciveStructure) {
+        return defences.get(defenciveStructure);
     }
 
     public boolean hasUnclaimedEquipment(UnClaimedEquipmentMessage eq) {
@@ -337,81 +343,6 @@ public class WorldMap {
         return false;
     }
 
-    public Set<GameSector> getGameSectors() {
-        if(gameSectors==null){
-            Set<GameStructureNode> set = new HashSet<>();
-            set.addAll(getAllHouses());
-            set.addAll(getAllBunkers());
-            gameSectors = calculateGameSector(set);
-            gameSectors.forEach(d-> System.out.println("houses:"+d.getHouses().size()+" defences:"+d.getDefences().size()));
-        }
-        return gameSectors;
-    }
-    
-    public static <T extends GameStructureNode> Set<GameSector> calculateGameSector(Set<T> allStructures) {
-        Set<GameSector> ret = new HashSet<>();
-
-        for(int y = WorldMap.mapBounds.y;y<=WorldMap.mapBounds.getMaxY();y=y+33){
-            for(int x = WorldMap.mapBounds.x;x<=WorldMap.mapBounds.getMaxX();x=x+33){
-                ret.add(new GameSector(new Rectangle(x, y, 33, 33)));
-            }
-        }
-        
-        for(GameStructureNode structure:allStructures){
-            for(GameSector sector:ret){
-                if(sector.containsStructure(structure)){
-                    sector.add(structure);
-                }
-            }
-        }
-        
-        for(Iterator<GameSector> it = ret.iterator();it.hasNext();){
-            if(it.next().getStructures().isEmpty()){
-                it.remove();
-            }
-        }
-        
-        Set<GameSector> merged = new HashSet<>();
-        GameSector next = ret.iterator().next();
-        merged.add(next);
-        ret.remove(next);
-		
-        while(!ret.isEmpty()){
-            boolean foundMerge = false;
-            for(GameSector sector:merged){
-                Optional<GameSector> neighbour = findNeighbouringSector(sector, ret);
-                if(neighbour.isPresent()){
-                    sector.merge(neighbour.get());
-                    ret.remove(neighbour.get());
-                    foundMerge = true;
-                }
-            }
-            if(!foundMerge){
-                next = ret.iterator().next();
-                merged.add(next);
-                ret.remove(next);
-            }
-        		
-        }
-        System.out.println("calculated game sectors:"+merged.size());
-
-        return merged;
-    }
-    
-    public static Optional<GameSector> findNeighbouringSector(GameSector sector, Set<GameSector> ret) {
-        for(GameSector s:ret){
-            if(sector.isJoinedTo(s)){
-                return Optional.of(s);
-            }
-        }
-        return Optional.empty();
-    }
-
-    public Optional<GameSector> findSector(Vector centre) {
-        return getGameSectors().stream().filter(sector->sector.containsPoint(centre.x, centre.z)).findAny();
-    }
-
-
     public void characterMoved(GameCharacterNode node) {
         characterLocator.tell(new LocateCharacterRequest(node), ActorRef.noSender());
     }
@@ -421,5 +352,17 @@ public class WorldMap {
         Rectangle.Float rectangle = new Rectangle.Float(localTranslation.x-CHARACTER_SIZE, localTranslation.z-CHARACTER_SIZE, CHARACTER_SIZE*2, CHARACTER_SIZE*2);
 
         characters.updateCharacter(rectangle, character);
+    }
+
+    public void addSector(GameSector sector) {
+        this.gameSectors.put(sector.getId(), sector);
+    }
+
+    public Collection<GameSector> getAllGameSectors() {
+        return gameSectors.values();
+    }
+
+    public GameSector getGameSector(UUID sectorId) {
+        return gameSectors.get(sectorId);
     }
 }
