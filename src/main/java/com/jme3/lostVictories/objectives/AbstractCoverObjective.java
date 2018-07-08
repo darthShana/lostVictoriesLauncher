@@ -10,7 +10,6 @@ import com.jme3.lostVictories.actions.AIAction;
 import com.jme3.lostVictories.characters.AICharacterNode;
 import com.jme3.lostVictories.characters.GameCharacterNode;
 import com.jme3.lostVictories.characters.Soldier;
-import com.jme3.lostVictories.characters.weapons.Weapon;
 import com.jme3.lostVictories.network.messages.Vector;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;

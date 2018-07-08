@@ -31,6 +31,7 @@ import static com.jme3.lostVictories.characters.RemoteBehaviourControler.MAPPER;
  * @author dharshanar
  */
 public class AttackTargetsInDirection extends Objective<CadetCorporal> implements MinimapPresentable{
+
     Set<Vector3f> lastKnownLocations;
     private Node rootNode;
     AttackState state = AttackState.MOVE_INTO_POSITION;
@@ -44,8 +45,8 @@ public class AttackTargetsInDirection extends Objective<CadetCorporal> implement
     }
 
     public AIAction planObjective(CadetCorporal character, WorldMap worldMap) {
-        AIAction action = state.planObjective(character, issuesObjectives, worldMap, lastKnownLocations, rootNode);
 
+        AIAction action = state.planObjective(character, issuesObjectives, worldMap, lastKnownLocations, rootNode);
         state = state.transition(character, worldMap, issuesObjectives);
         if(state == AttackState.COMPLETE){
             isComplete = true;
@@ -110,7 +111,7 @@ public class AttackTargetsInDirection extends Objective<CadetCorporal> implement
         Set<Integer> attemptedZ = new HashSet<>();
 
 
-        while (delta<50){
+        while (delta<100){
 
             for(int x = -delta;x<delta;x=x+5){
                 for(int z=-delta;z<delta;z=z+5){
@@ -121,9 +122,10 @@ public class AttackTargetsInDirection extends Objective<CadetCorporal> implement
                         if (terrainHeight != null) {
                             Vector3f possibleAttackPos = new Vector3f(localTranslation.x + x, terrainHeight + 3, localTranslation.z + z);
                             for(Vector3f target:targets){
-                                if(character.isTeam(Weapon.mortar()) && character.getLocalTranslation().distance(target)<Weapon.mortar().getMaxRange()){
+                                float distance = possibleAttackPos.distance(target);
+                                if(character.isTeam(Weapon.mortar()) && distance <Weapon.mortar().getMaxRange()){
                                     return new Vector3f[]{possibleAttackPos, target};
-                                }else if (WorldMap.get().hasLOS(character, possibleAttackPos, target.subtract(possibleAttackPos), target, rootNode)) {
+                                }else if (distance <character.getMaxRange() && WorldMap.get().hasLOS(character, possibleAttackPos, target.subtract(possibleAttackPos), target, rootNode)) {
                                     return new Vector3f[]{possibleAttackPos, target};
                                 }
                             }
@@ -182,7 +184,11 @@ public class AttackTargetsInDirection extends Objective<CadetCorporal> implement
 
             @Override
             AttackState transition(CadetCorporal character, WorldMap worldMap, Map<UUID, Objective> issuesObjectives) {
-                return ATTACK_TARGET;
+                if(issuesObjectives.get(character.getIdentity())!=null && !issuesObjectives.get(character.getIdentity()).isComplete) {
+                    return ATTACK_TARGET;
+                }else{
+                    return COMPLETE;
+                }
             }
         }, ATTACK_TARGET {
             @Override
@@ -192,7 +198,7 @@ public class AttackTargetsInDirection extends Objective<CadetCorporal> implement
 
             @Override
             AttackState transition(CadetCorporal character, WorldMap worldMap, Map<UUID, Objective> issuesObjectives) {
-                Set<UUID> units = character.getCharactersUnderCommand().stream().map(unit -> unit.getIdentity()).collect(Collectors.toSet());
+                Set<UUID> units = character.getCharactersUnderCommand().stream().map(Commandable::getIdentity).collect(Collectors.toSet());
                 issuesObjectives.entrySet().removeIf(e->!units.contains(e.getKey()) || e.getValue().isComplete);
                 return issuesObjectives.isEmpty()?COMPLETE:ATTACK_TARGET;
             }

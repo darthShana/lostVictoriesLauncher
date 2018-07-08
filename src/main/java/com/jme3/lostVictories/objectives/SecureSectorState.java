@@ -179,7 +179,7 @@ enum SecureSectorState {
         @Override
         AIAction<AICharacterNode> planObjective(Lieutenant c, WorldMap worldMap, Node rootNode, SecureSector objective) {
             final EnemyActivityReport enemyActivity = c.getEnemyActivity();
-            Set<UUID> stillArround = c.getCharactersUnderCommand().stream().map(unit -> unit.getIdentity()).collect(Collectors.toSet());
+            Set<UUID> stillArround = c.getCharactersUnderCommand().stream().map(Commandable::getIdentity).collect(Collectors.toSet());
             objective.issuedOrders.entrySet().removeIf(uuidObjectiveEntry ->
                             uuidObjectiveEntry.getValue().isComplete ||
                             !stillArround.contains(uuidObjectiveEntry.getKey()));

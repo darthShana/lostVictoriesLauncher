@@ -45,7 +45,7 @@ public class CharacterMovedActor extends AbstractActor {
                     .filter(c->!c.isFirering())
                     .filter(c->c instanceof AICharacterNode)
                     .map(c->(AICharacterNode)c)
-                    .forEach(c->proximityAttackRouter.tell(new CharacterMovedAction(c, character), ActorRef.noSender()));
+                    .forEach(c-> proximityAttackRouter.tell(new CharacterMovedAction(c, character), ActorRef.noSender()));
 
             map.getCharactersInLineOfSightRange(character).stream()
                     .filter(c->!c.isAlliedWith(character))
@@ -53,7 +53,7 @@ public class CharacterMovedActor extends AbstractActor {
                     .filter(c->!attackRange.contains(c))
                     .filter(c->c instanceof AICharacterNode)
                     .map(c->(AICharacterNode)c)
-                    .forEach(c->proximityAttackRouter.tell(new CharacterMovedAction(c, character), ActorRef.noSender()));
+                    .forEach(c-> proximityAttackRouter.tell(new CharacterMovedAction(c, character), ActorRef.noSender()));
         }).build();
     }
 }

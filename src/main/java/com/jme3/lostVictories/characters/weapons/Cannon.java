@@ -30,7 +30,7 @@ public class Cannon extends Weapon{
     
     @Override
     public float getMaxRange() {
-        return 200;
+        return 150;
     }
 
     @Override

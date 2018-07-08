@@ -51,7 +51,7 @@ public class RotateTurretAndShoot extends Objective<MediumTankNode> implements A
 
     @Override
     public boolean doAction(MediumTankNode aThis, Node rootNode, GameAnimChannel channel, float tpf) {
-        if(aThis.isReadyToShoot(target.subtract(aThis.getShootingLocation()))){
+        if(aThis.isReadyToShoot(target)){
             aThis.shoot(target);
             isComplete = true;
             return true;

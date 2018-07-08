@@ -156,8 +156,8 @@ public abstract class AICharacterNode<T extends GameCharacterControl> extends Ga
         return ret;
     }
 
-    public boolean isReadyToShoot(Vector3f targetDirection) {
-        return model.isReadyToShoot(channel, getAimingDirection(), targetDirection);
+    public boolean isReadyToShoot(Vector3f targetLocation) {
+        return model.isReadyToShoot(channel, getAimingDirection(), targetLocation.subtract(getShootingLocation()));
     }
 
     public Set<GameVehicleNode> getVehicles() {

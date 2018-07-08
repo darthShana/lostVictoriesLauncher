@@ -35,7 +35,7 @@ public class SteerToTarget extends Objective<GameVehicleNode> {
     }
 
     public AIAction planObjective(GameVehicleNode character, WorldMap worldMap) {
-        if(character.isReadyToShoot(target.subtract(character.getShootingLocation()))){
+        if(character.isReadyToShoot(target)){
             isComplete = true;
             return new ShootPointAction(target, false);
         }else{

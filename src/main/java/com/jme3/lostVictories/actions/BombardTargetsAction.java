@@ -32,7 +32,7 @@ public class BombardTargetsAction implements AIAction<AICharacterNode> {
             return true;
         }
         final Vector3f localTranslation = targets.iterator().next().getLocalTranslation();
-        if(character.isReadyToShoot(localTranslation.subtract(character.getLocalTranslation()))){
+        if(character.isReadyToShoot(localTranslation)){
             character.shoot(localTranslation);
             return true;            
         } else {

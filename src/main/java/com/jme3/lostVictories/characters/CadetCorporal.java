@@ -136,21 +136,6 @@ public class CadetCorporal extends Soldier implements CommandingOfficer{
         return false;
     }
 
-    @Override
-    public boolean hasProjectilePathWeapon() {
-        if(super.hasProjectilePathWeapon()){
-            return true;
-        }
-        for(Commandable n:charactersToCommand){
-            if(n instanceof GameCharacterNode){
-                if(((GameCharacterNode)n).hasProjectilePathWeapon()){
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
     public Commandable findSoldierWithWeapon(Weapon weapon) {
         for(Commandable c: getCharactersUnderCommand()){
             if(c.getWeapon() == weapon){

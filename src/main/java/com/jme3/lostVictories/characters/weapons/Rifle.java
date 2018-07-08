@@ -34,7 +34,7 @@ public class Rifle extends Weapon{
     
     @Override
     public float getMaxRange(){
-        return 100;
+        return 75;
     }
 
     @Override

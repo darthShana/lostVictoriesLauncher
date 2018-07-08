@@ -50,7 +50,7 @@ public class MoveAction implements AIAction<Soldier> {
     public boolean doAction(Soldier c, Node rootNode, GameAnimChannel channel, float tpf) {
         Vector3f currentPos = c.getLocalTranslation();
 
-        if(!waypoints.isEmpty() && WorldMap.isClose(currentPos, waypoints.get(0))){
+        if(!waypoints.isEmpty() && WorldMap.isClose(currentPos, waypoints.get(0), 0.4f)){
             waypoints.remove(0);
         }
         
